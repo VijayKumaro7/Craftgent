@@ -1,0 +1,52 @@
+# ── Stage 1: Python dependency builder ───────────────────────────────────
+FROM python:3.12-slim AS builder
+
+WORKDIR /build
+
+# System libs needed at build time only
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc g++ libpq-dev curl \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir --prefix=/install -r requirements.txt
+
+
+# ── Stage 2: Runtime image ────────────────────────────────────────────────
+FROM python:3.12-slim AS runtime
+
+# Security: non-root user
+RUN groupadd --system craftgent \
+    && useradd  --system --gid craftgent --home /app --shell /sbin/nologin craftgent
+
+# Runtime system deps only (libpq for asyncpg)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 curl \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Copy installed packages from builder
+COPY --from=builder /install /usr/local
+
+# Copy application source
+COPY --chown=craftgent:craftgent . .
+
+# Drop privileges
+USER craftgent
+
+EXPOSE 8000
+
+# Health check hits our own /api/health endpoint
+HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
+    CMD curl -sf http://localhost:8000/api/health || exit 1
+
+# Production: multiple workers, no reload, access log to stdout
+CMD ["uvicorn", "app.main:app", \
+     "--host", "0.0.0.0", \
+     "--port", "8000", \
+     "--workers", "4", \
+     "--no-access-log", \
+     "--proxy-headers", \
+     "--forwarded-allow-ips", "*"]
