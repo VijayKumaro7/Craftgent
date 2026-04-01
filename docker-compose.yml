@@ -1,0 +1,123 @@
+version: "3.9"
+
+# ── Phase 2: api + db + redis + celery-worker ────────────────────────────
+# Phase 3 will add: chromadb
+
+services:
+
+  # ── PostgreSQL ────────────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-craftgent}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-craftgent}
+      POSTGRES_DB: ${POSTGRES_DB:-craftgent}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-craftgent}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Redis — broker + pub/sub bus ──────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── ChromaDB — vector memory store ──────────────────────────────────
+  chromadb:
+    image: chromadb/chroma:0.6.3
+    restart: unless-stopped
+    environment:
+      CHROMA_SERVER_HOST: 0.0.0.0
+      CHROMA_SERVER_HTTP_PORT: 8001
+    ports:
+      - "8001:8001"
+    volumes:
+      - chroma_data:/chroma/chroma
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/api/v1/heartbeat"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  # ── FastAPI backend ───────────────────────────────────────────────────
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-craftgent}:${POSTGRES_PASSWORD:-craftgent}@db:5432/${POSTGRES_DB:-craftgent}
+      REDIS_URL: redis://redis:6379/0
+      CHROMA_HOST: chromadb
+      CHROMA_PORT: 8001
+      APP_ENV: ${APP_ENV:-development}
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      chromadb:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    command: >
+      uvicorn app.main:app
+        --host 0.0.0.0
+        --port 8000
+        --reload
+        --reload-dir /app/app
+
+  # ── Celery worker — runs agent tasks ─────────────────────────────────
+  worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-craftgent}:${POSTGRES_PASSWORD:-craftgent}@db:5432/${POSTGRES_DB:-craftgent}
+      REDIS_URL: redis://redis:6379/0
+      CHROMA_HOST: chromadb
+      CHROMA_PORT: 8001
+      APP_ENV: ${APP_ENV:-development}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      chromadb:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    command: >
+      celery -A app.tasks.celery_app worker
+        --loglevel=info
+        --queues=agents
+        --concurrency=2
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  chroma_data:
+    driver: local
