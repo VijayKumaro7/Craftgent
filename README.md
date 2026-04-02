@@ -2,133 +2,105 @@
 
 **Minecraft-style AI Agent Command Center**
 
-Multi-agent chat system powered by Claude claude-sonnet-4-20250514, FastAPI, LangGraph,
-WebSockets, ChromaDB, and Celery. Built across 4 phases — from scaffold to production.
+Multi-agent chat system powered by Claude Sonnet, FastAPI, LangGraph, WebSockets, ChromaDB, and Celery.
+
+**📍 Project Status:** Currently in **Phase 1-2 (Backend Development)**. The backend infrastructure is scaffolded and functional. Frontend, deployment infrastructure, and agent refinement coming in Phase 3-4. See [ROADMAP.md](./ROADMAP.md) for details.
 
 ---
 
-## Architecture
+## Planned Architecture
 
 ```
-Browser (React + Vite)
+Browser (React + Vite)          [Phase 3+]
     │  WebSocket  │  REST
     ▼             ▼
-Nginx (prod) → FastAPI (8000)
+Nginx (prod) → FastAPI (8000)   [✅ In Progress]
                    │
           ┌────────┼────────┐
           ▼        ▼        ▼
        Celery    Redis    PostgreSQL
        Worker   (broker   (sessions,
        (agents)  + pubsub) messages, xp)
+       [Phase 2] [Phase 1] [✅ Phase 1]
           │
      LangGraph
     NEXUS → ALEX / VORTEX
+    [Phase 2+]
           │
     ChromaDB (RAG memory)
+    [Phase 2+]
     Tools: web_search, code_exec, sql_query
 ```
 
-## Stack
+## Stack (Target)
 
-| Layer     | Technology                                              |
-|-----------|--------------------------------------------------------|
-| Frontend  | React 18, Vite, TypeScript, Tailwind, Zustand          |
-| Backend   | FastAPI, Python 3.12, SQLAlchemy async, Alembic        |
-| AI        | Anthropic claude-sonnet-4-20250514, LangGraph, LangChain       |
-| Memory    | ChromaDB, sentence-transformers all-MiniLM-L6-v2       |
-| Tasks     | Celery 5, Redis 7                                      |
-| Auth      | JWT (python-jose), bcrypt                              |
-| Infra     | Docker Compose, Nginx, GitHub Actions, Railway         |
+| Layer     | Technology                                              | Status |
+|-----------|--------------------------------------------------------|--------|
+| Frontend  | React 18, Vite, TypeScript, Tailwind, Zustand          | Phase 3+ |
+| Backend   | FastAPI, Python 3.12, SQLAlchemy async, Alembic        | ✅ In Progress |
+| AI        | Anthropic Claude Sonnet, LangGraph, LangChain           | Phase 2+ |
+| Memory    | ChromaDB, sentence-transformers                        | Phase 2+ |
+| Tasks     | Celery 5, Redis 7                                      | Phase 1+ |
+| Auth      | JWT (python-jose), bcrypt                              | ✅ In Progress |
+| Infra     | Docker, Nginx, GitHub Actions                          | Phase 3+ |
 
 ---
 
-## Quick Start (Local Dev)
+## Getting Started (Backend Development)
 
 ### Prerequisites
-- Docker Desktop
-- Node 20+
 - Python 3.12+
+- PostgreSQL 14+
+- Redis 7+
+- ANTHROPIC_API_KEY (get from [console.anthropic.com](https://console.anthropic.com))
 
-### 1. Clone + configure
-
-```bash
-git clone <your-repo>
-cd craftgent
-cp .env.example .env
-# Edit .env — set ANTHROPIC_API_KEY and SECRET_KEY at minimum
-```
-
-### 2. Start infrastructure (DB + Redis + ChromaDB)
+### 1. Setup
 
 ```bash
-docker compose up db redis chromadb -d
-```
+git clone https://github.com/vijaykumaro7/craftgent.git
+cd craftgent/backend
 
-### 3. Backend
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-```bash
-cd backend
+# Install dependencies
 pip install -r requirements.txt
-alembic upgrade head          # run all migrations
-uvicorn app.main:app --reload # http://localhost:8000
+
+# Setup environment (copy and fill in required variables)
+cp ../.env.example .env
+# Edit .env — required: ANTHROPIC_API_KEY, SECRET_KEY
 ```
 
-### 4. Frontend
+### 2. Database Setup
 
 ```bash
-cd frontend
-npm install
-npm run dev                   # http://localhost:5173
+# Ensure PostgreSQL is running, then:
+alembic upgrade head    # Run all migrations
 ```
 
-### Or: one command (Docker)
+### 3. Run Backend
 
 ```bash
-docker compose up --build     # starts everything
-# → open http://localhost:5173
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+# Open http://localhost:8000/docs for Swagger UI
+```
+
+### Quick Test
+
+```bash
+curl http://localhost:8000/api/health
 ```
 
 ---
 
-## Production Deployment
+## Development Workflow
 
-### Railway (recommended)
-
-```bash
-# 1. Set secrets in GitHub repo settings:
-#    RAILWAY_TOKEN, ANTHROPIC_API_KEY, SECRET_KEY
-#    VITE_API_URL, VITE_WS_URL, POSTGRES_*, REDIS_PASSWORD
-
-# 2. Push to main — CI runs automatically:
-git push origin main
-# → runs: test → build → push images → deploy
-```
-
-### Self-hosted (VPS)
-
-```bash
-cp .env.example .env.prod
-# Fill all values
-
-docker compose -f docker-compose.prod.yml up --build -d
-# → Nginx on :80, API behind proxy, migrations run on startup
-```
-
----
-
-## Developer Commands
-
-```bash
-make install          # install all deps
-make dev-backend      # FastAPI with hot reload
-make dev-frontend     # Vite dev server
-make test             # pytest (backend)
-make lint             # ruff + mypy
-make migrate          # alembic upgrade head
-make migrate-new m="your message"  # new migration
-make docker-up        # all services
-make docker-down      # stop all
-```
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for:
+- Running tests
+- Code style and linting
+- Creating migrations
+- Contributing guidelines
 
 ---
 
@@ -140,14 +112,13 @@ POST /api/auth/register       → create account
 POST /api/auth/login          → get access + refresh token
 POST /api/auth/refresh        → refresh access token
 GET  /api/auth/me             → current user info
-WS   /api/ws/{session_id}     → main chat WebSocket
-GET  /api/sessions/{id}       → session + message history
-GET  /api/stats               → live agent XP + levels
+WS   /api/ws/{session_id}     → main chat WebSocket [Phase 2+]
+GET  /api/sessions/{id}       → session + message history [Phase 2+]
+GET  /api/stats               → live agent XP + levels [Phase 2+]
 GET  /docs                    → Swagger UI (dev only)
-GET  /metrics                 → Prometheus metrics
 ```
 
-## WebSocket Protocol
+## WebSocket Protocol (Planned for Phase 2)
 
 ```
 Client → Server:
@@ -164,7 +135,7 @@ Server → Client:
   {"type": "pong"}
 ```
 
-## Agents
+## Agents (Phase 2+)
 
 | Agent  | Role           | Tools                      | Routes when...             |
 |--------|----------------|----------------------------|-----------------------------|
@@ -193,48 +164,51 @@ Server → Client:
 
 ```bash
 cd backend
-pytest tests/ -v           # 45 tests across all 4 phases
-pytest tests/test_phase1.py  # Phase 1: health, chat endpoints
-pytest tests/test_phase2.py  # Phase 2: auth, JWT, WebSocket manager
-pytest tests/test_phase3.py  # Phase 3: memory, tools, XP, routing
+pytest tests/ -v                # Run all tests
+pytest tests/test_phase1.py     # Phase 1: health, auth endpoints
+pytest tests/test_phase2.py     # Phase 2: JWT, WebSocket manager
+pytest tests/test_phase3.py     # Phase 3: memory, tools, XP, routing
 ```
 
-## Project Structure
+## Current Project Structure
 
 ```
 craftgent/
-├── .github/workflows/ci.yml    ← GitHub Actions CI/CD
-├── docker-compose.yml          ← dev: api + db + redis + chromadb + worker
-├── docker-compose.prod.yml     ← prod: + nginx, hardened, internal network
-├── nginx/craftgent.conf        ← reverse proxy config
-├── Makefile                    ← developer shortcuts
-├── backend/
+├── README.md                   ✅ (you are here)
+├── ROADMAP.md                  ✅ Project phases and timeline
+├── CONTRIBUTING.md             ✅ Development guidelines
+├── backend/                    ✅ Phase 1-2
 │   ├── app/
 │   │   ├── main.py             ← FastAPI app factory
 │   │   ├── core/               ← config, logging, metrics
-│   │   ├── db/                 ← async SQLAlchemy engine
+│   │   ├── db/                 ← async SQLAlchemy, models
 │   │   ├── models/             ← User, ChatSession, Message, AgentStats
 │   │   ├── schemas/            ← Pydantic request/response models
-│   │   ├── auth/               ← JWT + bcrypt
-│   │   ├── agents/             ← LangGraph graph + system prompts
-│   │   ├── memory/             ← ChromaDB RAG memory service
-│   │   ├── tools/              ← web_search, code_exec, sql_query
-│   │   ├── tasks/              ← Celery app, Redis bus, agent tasks
-│   │   ├── ws/                 ← WebSocket connection manager
-│   │   └── api/                ← routers: health, chat, auth, ws, stats
-│   ├── alembic/                ← DB migrations
-│   └── tests/                  ← 45 tests
-└── frontend/
-    └── src/
-        ├── types/              ← shared TypeScript interfaces
-        ├── api/                ← axios client + SSE/fetch helpers
-        ├── store/              ← Zustand: app state + auth state
-        ├── hooks/              ← useWebSocket, useAgentStats
-        └── components/
-            ├── auth/           ← LoginScreen
-            ├── layout/         ← TopBar, Hotbar, SkyBackground
-            ├── chat/           ← ChatPanel (streaming)
-            ├── agents/         ← AgentSidebar (pixel heads, XP bars)
-            ├── tasks/          ← TaskPanel (inventory, quests, crafting)
-            └── ui/             ← McBar, PixelHead
+│   │   ├── auth/               ← JWT + bcrypt authentication
+│   │   ├── agents/             ← LangGraph graph + system prompts [Phase 2+]
+│   │   ├── memory/             ← ChromaDB RAG memory service [Phase 2+]
+│   │   ├── tools/              ← web_search, code_exec, sql_query [Phase 2+]
+│   │   ├── tasks/              ← Celery app, Redis bus, tasks [Phase 2+]
+│   │   ├── ws/                 ← WebSocket connection manager [Phase 2+]
+│   │   └── api/                ← routers: health, auth, chat (Phase 2+), ws, stats
+│   ├── alembic/                ← Database migrations
+│   └── tests/                  ← Test suite
+├── frontend/                   [Phase 3+] Not yet implemented
+│   └── src/
+│       ├── components/
+│       ├── store/              ← Zustand: app + auth state
+│       └── types/              ← TypeScript interfaces
+├── .github/workflows/          [Phase 3+] CI/CD pipelines - planned
+├── docker-compose.yml          [Phase 3+] Full stack - planned
+├── nginx/                      [Phase 3+] Reverse proxy - planned
+└── Dockerfile / docker-compose configs for production - [Phase 3+]
 ```
+
+---
+
+## Resources
+
+- **API Docs:** `http://localhost:8000/docs` (when running locally)
+- **Contributing:** See [CONTRIBUTING.md](./CONTRIBUTING.md)
+- **Project Plan:** See [ROADMAP.md](./ROADMAP.md)
+- **Anthropic Claude API:** https://console.anthropic.com
