@@ -7,9 +7,9 @@ Multi-agent chat system powered by Claude Sonnet, FastAPI, LangGraph, WebSockets
 **📍 Project Status:** 
 - ✅ **Phase 1-2:** Backend (FastAPI, auth, chat) — **COMPLETE & FUNCTIONAL**
 - ✅ **Phase 3:** Frontend (React + Vite) — **COMPLETE & READY TO TEST**
-- ⏳ **Phase 4:** Deployment (Docker, Nginx, CI/CD) — **PLANNED**
+- ✅ **Phase 4:** Deployment (Docker, Nginx, CI/CD) — **COMPLETE & PRODUCTION-READY**
 
-See [ROADMAP.md](./ROADMAP.md) for detailed timeline and [frontend/README.md](./frontend/README.md) for frontend setup.
+See [ROADMAP.md](./ROADMAP.md) for detailed timeline, [frontend/README.md](./frontend/README.md) for frontend, and [DEPLOYMENT.md](./DEPLOYMENT.md) for deployment guide.
 
 ---
 
@@ -45,9 +45,9 @@ Nginx (prod) → FastAPI (8000)   [✅ In Progress]
 | Backend   | FastAPI, Python 3.12, SQLAlchemy async, Alembic        | ✅ Phase 1-2 Complete |
 | AI        | Anthropic Claude Sonnet, LangGraph, LangChain           | Phase 2 (Planned) |
 | Memory    | ChromaDB, sentence-transformers                        | Phase 2 (Planned) |
-| Tasks     | Celery 5, Redis 7                                      | Phase 1+ Ready |
-| Auth      | JWT (python-jose), bcrypt                              | ✅ Complete |
-| Infra     | Docker, Nginx, GitHub Actions                          | Phase 4 (Planned) |
+| Tasks     | Celery 5, Redis 7                                      | ✅ Phase 1+ Ready |
+| Auth      | JWT (python-jose), bcrypt                              | ✅ Phase 1-2 Complete |
+| Infra     | Docker Compose, Nginx, GitHub Actions                  | ✅ Phase 4 Complete |
 
 ---
 
@@ -123,6 +123,73 @@ npm run dev
 5. **Enjoy:** Watch the response stream in real-time!
 
 ---
+
+---
+
+## Deployment (Phase 4) 🚀
+
+### What's Included
+
+✅ **Docker Compose**
+- Development setup (all services with hot reload)
+- Production setup (optimized, hardened)
+- Includes: PostgreSQL, Redis, ChromaDB, FastAPI, React, Celery
+
+✅ **Nginx Reverse Proxy**
+- HTTPS/TLS termination
+- API routing to FastAPI
+- Frontend static serving
+- Rate limiting
+- Security headers (HSTS, CSP, X-Frame-Options)
+- Gzip compression
+- Static asset caching
+
+✅ **CI/CD Pipeline (GitHub Actions)**
+- Automated testing (backend + frontend)
+- Docker image builds and pushes
+- Security scanning
+- Automated deployment to production
+- Database migrations on deploy
+- Health checks
+
+✅ **Documentation**
+- Comprehensive deployment guide
+- Server setup instructions
+- SSL/TLS configuration
+- Backup strategy
+- Monitoring and maintenance
+- Security checklist
+- Troubleshooting guide
+
+### Quick Deploy
+
+```bash
+# Development (all services + hot reload)
+docker-compose up -d
+# → Open http://localhost:5173
+
+# Production (optimized, secured, Nginx proxy)
+docker-compose -f docker-compose.prod.yml up -d
+# → Open https://your-domain.com
+
+# See DEPLOYMENT.md for detailed instructions
+```
+
+### Production Features
+
+| Feature | Status |
+|---------|--------|
+| Container orchestration | ✅ Docker Compose |
+| Reverse proxy | ✅ Nginx |
+| SSL/TLS termination | ✅ Let's Encrypt ready |
+| Rate limiting | ✅ 20 req/s API |
+| Security headers | ✅ HSTS, CSP, X-Frame-Options |
+| Gzip compression | ✅ Enabled |
+| Static caching | ✅ 30 days |
+| Backup automation | ✅ Daily PostgreSQL |
+| Health checks | ✅ All services |
+| Log rotation | ✅ JSON driver, 10MB max |
+| CI/CD automation | ✅ GitHub Actions |
 
 ---
 
@@ -345,6 +412,7 @@ craftgent/
 - **Interactive API Docs:** `http://localhost:8000/docs` (when backend running)
 - **API Documentation Guide:** [docs/API-SCREENSHOTS.md](./docs/API-SCREENSHOTS.md)
 - **Frontend Documentation:** [frontend/README.md](./frontend/README.md)
+- **Deployment Guide:** [DEPLOYMENT.md](./DEPLOYMENT.md)
 - **Project Roadmap:** [ROADMAP.md](./ROADMAP.md)
 - **Contributing Guidelines:** [CONTRIBUTING.md](./CONTRIBUTING.md)
 - **Anthropic Claude API:** https://console.anthropic.com
