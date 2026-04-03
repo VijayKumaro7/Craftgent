@@ -43,10 +43,10 @@ export function ChatMessage({ msg, isStreaming = false }: ChatMessageProps) {
           <span className={`font-bold ${senderColor}`}>{sender}</span>
           {timestamp && <span className="text-white/50 text-[12px] ml-2">{timestamp}</span>}
         </div>
-        {/* Copy button on hover */}
+        {/* Copy button - visible on mobile, hover on desktop */}
         <button
           onClick={handleCopyMessage}
-          className="opacity-0 group-hover:opacity-100 font-pixel text-[8px] px-1.5 py-0.5 rounded bg-blue-900/50 hover:bg-blue-800/70 text-blue-300 transition"
+          className="md:opacity-0 md:group-hover:opacity-100 font-pixel text-[7px] md:text-[8px] px-2 md:px-1.5 py-1.5 md:py-0.5 rounded bg-blue-900/50 hover:bg-blue-800/70 text-blue-300 transition min-h-[1.5rem] md:min-h-auto flex items-center justify-center"
           aria-label="Copy message"
         >
           {copied ? '✓' : 'COPY'}

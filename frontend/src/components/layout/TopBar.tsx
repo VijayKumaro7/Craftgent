@@ -3,10 +3,12 @@
  */
 import { useAppStore }  from '@/store/useAppStore'
 import { useAuthStore } from '@/store/useAuthStore'
+import { useTheme } from './ThemeProvider'
 
 export function TopBar() {
   const { activeAgent, isStreaming } = useAppStore()
   const { username, logout } = useAuthStore()
+  const { theme, toggleTheme } = useTheme()
 
   return (
     <header className="col-span-3 flex items-center justify-between px-3 relative overflow-hidden"
@@ -36,6 +38,11 @@ export function TopBar() {
         {username && <span className="font-pixel text-[5px] text-white/80">👤 {username}</span>}
         <span className="inline-block w-2 h-2 rounded-full bg-[#5aff5a] animate-[blink_1s_steps(1)_infinite]" />
         <span className="font-pixel text-[5px] text-white">ONLINE</span>
+        <button onClick={toggleTheme}
+          className="font-pixel text-[5px] text-white/60 px-2 py-1 hover:text-white hover:bg-black/30 focus:outline-none"
+          title={`Toggle ${theme === 'dark' ? 'light' : 'dark'} mode`}>
+          {theme === 'dark' ? '☀️' : '🌙'} {theme.toUpperCase()}
+        </button>
         <button onClick={logout}
           className="font-pixel text-[5px] text-white/60 px-2 py-1 hover:text-white hover:bg-black/30 focus:outline-none">
           LOGOUT ✕

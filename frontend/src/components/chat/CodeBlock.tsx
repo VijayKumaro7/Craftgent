@@ -27,10 +27,10 @@ export function CodeBlock({ children, className = '', language = 'plaintext' }: 
         <span className="font-terminal text-[11px] text-white/60">{lang}</span>
         <button
           onClick={handleCopy}
-          className="font-pixel text-[8px] px-2 py-1 rounded bg-green-900/50 hover:bg-green-800/70 text-green-300 transition"
+          className="font-pixel text-[7px] md:text-[8px] px-2 md:px-2 py-1.5 md:py-1 rounded bg-green-900/50 hover:bg-green-800/70 text-green-300 transition min-h-[1.5rem] md:min-h-auto active:scale-95"
           aria-label="Copy code"
         >
-          {copied ? '✓ COPIED' : 'COPY'}
+          {copied ? '✓' : 'COPY'}
         </button>
       </div>
 

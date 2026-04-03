@@ -15,6 +15,7 @@ import { Hotbar }             from '@/components/layout/Hotbar'
 import { AgentSidebar }       from '@/components/agents/AgentSidebar'
 import { ChatPanel }          from '@/components/chat/ChatPanel'
 import { TaskPanel }          from '@/components/tasks/TaskPanel'
+import { NotificationStack }  from '@/components/ui/NotificationStack'
 
 function Shell() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 900)
@@ -41,6 +42,7 @@ function Shell() {
     <>
       <SkyBackground />
       <div className="scanlines fixed inset-0 pointer-events-none" style={{ zIndex: 9995 }} />
+      <NotificationStack />
       <div className="relative h-screen" style={{
         zIndex: 10,
         display: 'grid',

@@ -85,8 +85,8 @@ export function ChatPanel() {
           aria-label="Chat input"
         />
         <button onClick={handleSend} disabled={!canSend}
-          className={`px-4 font-pixel text-[6px] text-white border-l-[3px] border-black/60 focus:outline-none ${canSend ? 'cursor-pointer hover:opacity-90' : 'cursor-not-allowed opacity-40'}`}
-          style={{ background: canSend ? '#5d9e32' : '#444' }}
+          className={`px-3 md:px-4 py-2 font-pixel text-[6px] text-white border-l-[3px] border-black/60 focus:outline-none transition-all active:scale-95 ${canSend ? 'cursor-pointer hover:opacity-90' : 'cursor-not-allowed opacity-40'}`}
+          style={{ background: canSend ? '#5d9e32' : '#444', minHeight: '2.5rem' }}
           aria-label="Send message"
         >SEND ▶</button>
       </div>
