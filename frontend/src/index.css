@@ -1,0 +1,127 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-bg-primary: #0f0f0f;
+  --color-bg-secondary: #1a1a1a;
+  --color-border: #2a2a2a;
+  --color-text-primary: #e0e0e0;
+  --color-text-secondary: #a0a0a0;
+  --color-agent-nexus: #3b82f6;
+  --color-agent-alex: #10b981;
+  --color-agent-vortex: #8b5cf6;
+}
+
+* {
+  @apply dark;
+}
+
+html {
+  @apply bg-[#0f0f0f] text-[#e0e0e0];
+}
+
+body {
+  @apply bg-[#0f0f0f] text-[#e0e0e0] antialiased;
+  font-family: 'Courier New', monospace;
+}
+
+#root {
+  @apply min-h-screen;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  @apply w-2 h-2;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-[#1a1a1a];
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-[#3a3a3a] rounded hover:bg-[#4a4a4a];
+}
+
+/* Message bubbles */
+.message-user {
+  @apply ml-auto max-w-md px-4 py-2 rounded-lg bg-[#3b82f6] text-white rounded-br-none;
+}
+
+.message-assistant {
+  @apply mr-auto max-w-md px-4 py-2 rounded-lg bg-[#1a1a1a] text-[#e0e0e0] border border-[#2a2a2a] rounded-bl-none;
+}
+
+.message-system {
+  @apply mx-auto max-w-md px-4 py-2 rounded-lg bg-[#4a4a4a] text-[#c0c0c0] text-center text-sm;
+}
+
+/* Loading animation */
+.loading-spinner {
+  @apply inline-block w-4 h-4 border-2 border-[#3a3a3a] border-t-[#3b82f6] rounded-full animate-spin;
+}
+
+/* Agent badge colors */
+.agent-nexus {
+  @apply bg-blue-600 text-white;
+}
+
+.agent-alex {
+  @apply bg-green-600 text-white;
+}
+
+.agent-vortex {
+  @apply bg-purple-600 text-white;
+}
+
+/* XP Bar */
+.xp-bar {
+  @apply w-full h-2 bg-[#2a2a2a] rounded-full overflow-hidden;
+}
+
+.xp-bar-fill {
+  @apply h-full bg-gradient-to-r from-blue-500 to-green-500 transition-all duration-300;
+}
+
+/* Input focus states */
+input:focus,
+textarea:focus {
+  @apply outline-none ring-2 ring-blue-500 ring-offset-2 ring-offset-[#0f0f0f];
+}
+
+/* Button states */
+button:disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+/* Transitions */
+.transition-fast {
+  @apply transition-all duration-200;
+}
+
+.transition-smooth {
+  @apply transition-all duration-300;
+}
+
+/* Code block styling */
+code {
+  @apply bg-[#1a1a1a] px-2 py-1 rounded border border-[#2a2a2a] text-[#e0e0e0] text-sm;
+}
+
+pre {
+  @apply bg-[#1a1a1a] p-4 rounded border border-[#2a2a2a] overflow-x-auto;
+}
+
+pre code {
+  @apply bg-transparent p-0 border-none;
+}
+
+/* Links */
+a {
+  @apply text-blue-400 hover:text-blue-300 transition-colors;
+}
+
+/* Placeholder text */
+::placeholder {
+  @apply text-[#6a6a6a];
+}
