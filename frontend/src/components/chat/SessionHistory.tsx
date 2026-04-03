@@ -28,6 +28,7 @@ function timeAgo(dateStr: string): string {
 export function SessionHistory() {
   const [open, setOpen]   = useState(false)
   const [page, setPage]   = useState(1)
+  const [searchQuery, setSearchQuery] = useState('')
   const { data, isLoading, isError } = useSessionList(page)
   const { addSystemMessage, setSessionId, setActiveAgent } = useAppStore()
   const { isAuthenticated } = useAuthStore()
@@ -47,6 +48,13 @@ export function SessionHistory() {
     }
   }
 
+  // Filter sessions by search query
+  const filteredSessions = data?.sessions.filter(session =>
+    session.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (session.last_message?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
+    session.active_agent.toLowerCase().includes(searchQuery.toLowerCase())
+  ) ?? []
+
   return (
     <div className="border-t border-white/10">
       {/* Toggle button */}
@@ -59,26 +67,46 @@ export function SessionHistory() {
       </button>
 
       {open && (
-        <div className="max-h-[240px] overflow-y-auto" style={{ scrollbarWidth: 'thin', scrollbarColor: '#1e1e3a transparent' }}>
-          {isLoading && (
-            <div className="px-2 py-3 font-pixel text-[5px] text-white/40 text-center animate-pulse">
-              LOADING...
-            </div>
-          )}
+        <div className="flex flex-col max-h-[240px]" style={{ scrollbarWidth: 'thin', scrollbarColor: '#1e1e3a transparent' }}>
+          {/* Search input */}
+          <div className="px-2 py-1.5 border-b border-white/10">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder="Search..."
+              className="w-full bg-black/40 border border-white/20 rounded px-1.5 py-0.5 font-terminal text-[12px] text-white placeholder:text-white/30 focus:outline-none focus:border-white/40"
+              aria-label="Search sessions"
+            />
+          </div>
 
-          {isError && (
-            <div className="px-2 py-3 font-pixel text-[5px] text-mc-redstone text-center">
-              FAILED TO LOAD
-            </div>
-          )}
+          {/* Sessions list */}
+          <div className="flex-1 overflow-y-auto">
+            {isLoading && (
+              <div className="px-2 py-3 font-pixel text-[5px] text-white/40 text-center animate-pulse">
+                LOADING...
+              </div>
+            )}
 
-          {data?.sessions.length === 0 && (
-            <div className="px-2 py-3 font-pixel text-[5px] text-white/30 text-center">
-              NO PAST SESSIONS
-            </div>
-          )}
+            {isError && (
+              <div className="px-2 py-3 font-pixel text-[5px] text-mc-redstone text-center">
+                FAILED TO LOAD
+              </div>
+            )}
 
-          {data?.sessions.map(session => (
+            {data?.sessions.length === 0 && (
+              <div className="px-2 py-3 font-pixel text-[5px] text-white/30 text-center">
+                NO PAST SESSIONS
+              </div>
+            )}
+
+            {filteredSessions.length === 0 && searchQuery && (
+              <div className="px-2 py-3 font-pixel text-[5px] text-white/30 text-center">
+                NO MATCHES
+              </div>
+            )}
+
+            {filteredSessions.map(session => (
             <button
               key={session.id}
               onClick={() => loadSession(session.id, session.active_agent)}
@@ -104,7 +132,8 @@ export function SessionHistory() {
                 {session.message_count} msg{session.message_count !== 1 ? 's' : ''}
               </div>
             </button>
-          ))}
+            ))}
+          </div>
 
           {/* Pagination */}
           {data && data.total > data.per_page && (

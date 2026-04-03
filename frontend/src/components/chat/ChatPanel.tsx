@@ -5,13 +5,8 @@
 import { useRef, useEffect, useState } from 'react'
 import { useAppStore } from '@/store/useAppStore'
 import { useWebSocket, type WsStatus } from '@/hooks/useWebSocket'
-import type { ChatMessage } from '@/types'
-
-function StreamCursor() {
-  return (
-    <span className="inline-block w-[2px] h-[0.9em] bg-chat-agent ml-px align-middle animate-[blink_0.7s_steps(1)_infinite]" />
-  )
-}
+import { ChatMessage } from './ChatMessage'
+import { TypingIndicator } from './TypingIndicator'
 
 function StatusPill({ status }: { status: WsStatus }) {
   const cfg: Record<WsStatus, { color: string; label: string }> = {
@@ -29,21 +24,8 @@ function StatusPill({ status }: { status: WsStatus }) {
   )
 }
 
-function MessageBubble({ msg }: { msg: ChatMessage }) {
-  const isSystem = msg.role === 'system'
-  const isUser   = msg.role === 'user'
-  const senderColor = isSystem ? 'text-chat-sys' : isUser ? 'text-chat-user' : 'text-chat-agent'
-  const sender      = isSystem ? '[SERVER]' : isUser ? 'Operator:' : `${msg.agent ?? 'NEXUS'}:`
-  return (
-    <div className="font-terminal text-[19px] leading-[1.8] drop-shadow-[1px_1px_0_#000] animate-[fadeIn_0.1s_steps(2,end)]">
-      <span className={`font-bold ${senderColor}`}>{sender} </span>
-      <span className="text-[#e8e8e8]">{msg.content}{msg.streaming && <StreamCursor />}</span>
-    </div>
-  )
-}
-
 export function ChatPanel() {
-  const { messages, addSystemMessage, addUserMessage, clearMessages, isStreaming } = useAppStore()
+  const { messages, addSystemMessage, addUserMessage, clearMessages, isStreaming, activeAgent } = useAppStore()
   const { status, send } = useWebSocket()
   const [input, setInput] = useState('')
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -86,7 +68,8 @@ export function ChatPanel() {
 
       <div ref={scrollRef} className="relative z-10 flex-1 overflow-y-auto px-3 py-2 flex flex-col gap-0.5"
         style={{ background: 'rgba(0,0,0,0.55)', scrollbarWidth: 'thin', scrollbarColor: '#1e1e3a transparent' }}>
-        {messages.map(msg => <MessageBubble key={msg.id} msg={msg} />)}
+        {messages.map(msg => <ChatMessage key={msg.id} msg={msg} isStreaming={msg.streaming} />)}
+        {isStreaming && <TypingIndicator agentName={activeAgent} />}
       </div>
 
       <div className="relative z-10 flex items-stretch h-9 border-t-[3px] border-black/80" style={{ background: 'rgba(0,0,0,0.72)' }}>

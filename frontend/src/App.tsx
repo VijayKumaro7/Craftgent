@@ -17,8 +17,15 @@ import { ChatPanel }          from '@/components/chat/ChatPanel'
 import { TaskPanel }          from '@/components/tasks/TaskPanel'
 
 function Shell() {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 900)
   const addSystemMessage = useAppStore(s => s.addSystemMessage)
   const { username }     = useAuthStore()
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 900)
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   useEffect(() => {
     const seq = [
@@ -37,18 +44,36 @@ function Shell() {
       <div className="relative h-screen" style={{
         zIndex: 10,
         display: 'grid',
-        gridTemplateColumns: '200px 1fr 224px',
-        gridTemplateRows: '44px 1fr 68px',
+        gridTemplateColumns: isMobile ? '1fr' : '200px 1fr 224px',
+        gridTemplateRows: isMobile ? '44px 1fr 68px 68px' : '44px 1fr 68px',
         border: '3px solid rgba(255,255,255,0.15)',
         boxShadow: '0 0 0 1px rgba(0,0,0,0.8)',
       }}>
         <TopBar />
-        <AgentSidebar />
+        {/* Left sidebar - hidden on mobile */}
+        {!isMobile && <AgentSidebar />}
         <main className="relative overflow-hidden" style={{ background: 'rgba(0,0,0,0.0)' }}>
           <ChatPanel />
         </main>
-        <TaskPanel />
-        <Hotbar />
+        {/* Right sidebar - hidden on mobile */}
+        {!isMobile && <TaskPanel />}
+        {/* Bottom bar spans full width on mobile */}
+        <div style={{ gridColumn: isMobile ? '1 / -1' : 'auto', gridRow: isMobile ? 'auto' : 'auto' }}>
+          <Hotbar />
+        </div>
+        {/* Mobile bottom navigation for sidebars */}
+        {isMobile && (
+          <div style={{ gridColumn: '1 / -1', gridRow: 'auto', background: 'rgba(0,0,0,0.72)', borderTop: '3px solid rgba(255,255,255,0.15)', overflow: 'y-auto' }}>
+            <div style={{ display: 'flex', height: '100%' }}>
+              <div style={{ flex: 1, overflowY: 'auto' }}>
+                <AgentSidebar />
+              </div>
+              <div style={{ flex: 1, overflowY: 'auto', borderLeft: '3px solid rgba(255,255,255,0.15)' }}>
+                <TaskPanel />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   )
