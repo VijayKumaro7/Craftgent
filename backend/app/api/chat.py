@@ -17,9 +17,10 @@ from anthropic import AsyncAnthropic, APIStatusError, APIConnectionError
 
 from app.core.config import get_settings, Settings
 from app.db.base import get_db
-from app.models.models import AgentName, ChatSession, Message, MessageRole
+from app.models.models import AgentName, ChatSession, Message, MessageRole, User
 from app.schemas.schemas import ChatRequest, SessionOut, ErrorResponse
 from app.agents.prompts import get_system_prompt
+from app.auth.dependencies import get_current_user
 
 router = APIRouter()
 logger = structlog.get_logger()
@@ -191,8 +192,19 @@ async def chat(
 async def get_session(
     session_id: uuid.UUID,
     db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
 ) -> SessionOut:
+    """
+    Get a chat session with full message history.
+    SECURITY: User must own the session (verified via JWT + user_id check).
+    """
     session = await db.get(ChatSession, session_id)
     if not session:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found")
+
+    # SECURITY: Verify the requesting user owns this session
+    if session.user_id != user.id:
+        logger.warning("unauthorized_session_access", session_id=str(session_id), user_id=str(user.id))
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You do not have access to this session")
+
     return SessionOut.model_validate(session)

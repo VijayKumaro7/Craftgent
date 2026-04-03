@@ -75,12 +75,13 @@ def create_app() -> FastAPI:
     # ── CORS ──────────────────────────────────────────────────────────────
     # Allows the Vite dev server (localhost:5173) to call the API.
     # In production, lock this down to your actual domain.
+    # SECURITY: Only allow necessary methods and headers to reduce attack surface
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origin_list,
         allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_methods=["GET", "POST", "OPTIONS"],  # Restrict to necessary methods only
+        allow_headers=["Content-Type", "Authorization"],  # Only necessary headers
     )
 
     # ── Global error handler ──────────────────────────────────────────────

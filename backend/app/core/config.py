@@ -15,7 +15,7 @@ class Settings(BaseSettings):
 
     # App
     app_env: str = "development"
-    secret_key: str = "change-me"
+    secret_key: str  # CRITICAL: Must be set via environment variable (no default for security)
     debug: bool = False
 
     # Anthropic

@@ -38,11 +38,23 @@ MAX_CONTEXT = 20   # messages to include as history
 
 
 async def _get_or_create_session(session_id: str, user_id: str, db: AsyncSession) -> ChatSession:
-    """Fetch existing session or create a new one."""
+    """
+    Fetch existing session or create a new one.
+    SECURITY: Verify user owns the session if it exists.
+    """
     try:
         sid = uuid.UUID(session_id)
         session = await db.get(ChatSession, sid)
         if session:
+            # SECURITY: Verify the requesting user owns this session
+            if str(session.user_id) != user_id:
+                logger.warning(
+                    "unauthorized_ws_session_access",
+                    session_id=session_id,
+                    session_owner=str(session.user_id),
+                    requester=user_id,
+                )
+                raise ValueError(f"Session {session_id} does not belong to user {user_id}")
             return session
     except ValueError:
         pass
@@ -158,7 +170,14 @@ async def websocket_endpoint(
                     continue
 
                 # Get/create session
-                chat_session = await _get_or_create_session(session_id, str(user.id), db)
+                try:
+                    chat_session = await _get_or_create_session(session_id, str(user.id), db)
+                except ValueError as e:
+                    await websocket.send_text(json.dumps({
+                        "type": "error", "data": "Unauthorized — you do not have access to this session"
+                    }))
+                    continue
+
                 history = _build_history(chat_session.messages)
 
                 log.info("chat_message_received", user=user.username, msg_len=len(user_message))
