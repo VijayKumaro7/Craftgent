@@ -1,0 +1,222 @@
+version: '3.9'
+
+services:
+  # ─────────────────────────────────────────────────────────────────────────
+  # PostgreSQL Database (Production)
+  # ─────────────────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: craftgent-postgres
+    environment:
+      POSTGRES_USER: craftgent
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: craftgent
+      POSTGRES_INITDB_ARGS: "-c max_connections=100"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backups:/backups
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U craftgent -d craftgent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - craftgent-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Redis Cache & Message Broker (Production)
+  # ─────────────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: craftgent-redis
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - craftgent-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # ChromaDB Vector Database (Production)
+  # ─────────────────────────────────────────────────────────────────────────
+  chromadb:
+    image: ghcr.io/chroma-core/chroma:latest
+    container_name: craftgent-chromadb
+    environment:
+      CHROMA_DB_IMPL: duckdb+parquet
+      CHROMA_PORT: 8001
+    volumes:
+      - chroma_data:/chroma/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/api/v1/heartbeat"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - craftgent-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Backend API (Production)
+  # ─────────────────────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    container_name: craftgent-backend
+    restart: unless-stopped
+    environment:
+      # Database
+      DATABASE_URL: postgresql+asyncpg://craftgent:${POSTGRES_PASSWORD}@postgres:5432/craftgent
+      # Redis
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379/0
+      # ChromaDB
+      CHROMA_HOST: chromadb
+      CHROMA_PORT: 8001
+      # API
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      SECRET_KEY: ${SECRET_KEY}
+      CORS_ORIGINS: ${CORS_ORIGINS}
+      APP_ENV: production
+      # Security
+      SECURE_COOKIES: "true"
+      SECURE_HSTS_MAX_AGE: "31536000"
+    expose:
+      - "8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      chromadb:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    networks:
+      - craftgent-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Frontend (Production)
+  # ─────────────────────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: craftgent-frontend
+    restart: unless-stopped
+    expose:
+      - "3000"
+    depends_on:
+      - backend
+    networks:
+      - craftgent-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Celery Worker (Phase 2+)
+  # ─────────────────────────────────────────────────────────────────────────
+  celery-worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    container_name: craftgent-celery
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+asyncpg://craftgent:${POSTGRES_PASSWORD}@postgres:5432/craftgent
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379/0
+      CHROMA_HOST: chromadb
+      CHROMA_PORT: 8001
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      SECRET_KEY: ${SECRET_KEY}
+      APP_ENV: production
+    depends_on:
+      - redis
+      - postgres
+      - chromadb
+    networks:
+      - craftgent-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    command: celery -A app.tasks worker -l info -c 4 --max-tasks-per-child=1000
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Nginx Reverse Proxy (Production)
+  # ─────────────────────────────────────────────────────────────────────────
+  nginx:
+    image: nginx:alpine
+    container_name: craftgent-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/craftgent.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - nginx_cache:/var/cache/nginx
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - craftgent-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  postgres_data:
+  redis_data:
+  chroma_data:
+  nginx_cache:
+
+networks:
+  craftgent-network:
+    driver: bridge

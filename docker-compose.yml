@@ -1,0 +1,164 @@
+version: '3.9'
+
+services:
+  # ─────────────────────────────────────────────────────────────────────────
+  # PostgreSQL Database
+  # ─────────────────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: craftgent-postgres
+    environment:
+      POSTGRES_USER: craftgent
+      POSTGRES_PASSWORD: craftgent_dev_password
+      POSTGRES_DB: craftgent
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U craftgent -d craftgent"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - craftgent-network
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Redis Cache & Message Broker
+  # ─────────────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: craftgent-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - redis_data:/data
+    networks:
+      - craftgent-network
+    command: redis-server --appendonly yes
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # ChromaDB Vector Database
+  # ─────────────────────────────────────────────────────────────────────────
+  chromadb:
+    image: ghcr.io/chroma-core/chroma:latest
+    container_name: craftgent-chromadb
+    environment:
+      CHROMA_DB_IMPL: duckdb+parquet
+      CHROMA_PORT: 8001
+    ports:
+      - "8001:8001"
+    volumes:
+      - chroma_data:/chroma/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/api/v1/heartbeat"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - craftgent-network
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Backend API
+  # ─────────────────────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: craftgent-backend
+    environment:
+      # Database
+      DATABASE_URL: postgresql+asyncpg://craftgent:craftgent_dev_password@postgres:5432/craftgent
+      # Redis
+      REDIS_URL: redis://redis:6379/0
+      # ChromaDB
+      CHROMA_HOST: chromadb
+      CHROMA_PORT: 8001
+      # API
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      SECRET_KEY: ${SECRET_KEY:-dev-secret-key-change-in-production}
+      CORS_ORIGINS: http://localhost:5173,http://localhost:3000
+      APP_ENV: development
+      # Uvicorn
+      LOG_LEVEL: info
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      chromadb:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - craftgent-network
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Frontend Development Server
+  # ─────────────────────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: craftgent-frontend
+    environment:
+      VITE_API_URL: http://localhost:8000
+      VITE_WS_URL: ws://localhost:8000
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/index.html:/app/index.html
+    networks:
+      - craftgent-network
+    command: npm run dev -- --host 0.0.0.0
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Celery Worker (Phase 2+)
+  # ─────────────────────────────────────────────────────────────────────────
+  celery-worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: craftgent-celery
+    environment:
+      DATABASE_URL: postgresql+asyncpg://craftgent:craftgent_dev_password@postgres:5432/craftgent
+      REDIS_URL: redis://redis:6379/0
+      CHROMA_HOST: chromadb
+      CHROMA_PORT: 8001
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      SECRET_KEY: ${SECRET_KEY:-dev-secret-key-change-in-production}
+      APP_ENV: development
+    depends_on:
+      - redis
+      - postgres
+      - chromadb
+    volumes:
+      - ./backend:/app
+    networks:
+      - craftgent-network
+    command: celery -A app.tasks worker -l info -c 4
+
+volumes:
+  postgres_data:
+  redis_data:
+  chroma_data:
+
+networks:
+  craftgent-network:
+    driver: bridge
