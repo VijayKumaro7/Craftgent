@@ -7,6 +7,7 @@ import { useSessionList } from '@/hooks/useSessionList'
 import { useAppStore }    from '@/store/useAppStore'
 import { useAuthStore }   from '@/store/useAuthStore'
 import { apiClient }      from '@/api/client'
+import { SkeletonSessions } from '@/components/ui/SkeletonSession'
 
 const AGENT_COLORS: Record<string, string> = {
   NEXUS:  '#55ffff',
@@ -30,7 +31,7 @@ export function SessionHistory() {
   const [page, setPage]   = useState(1)
   const [searchQuery, setSearchQuery] = useState('')
   const { data, isLoading, isError } = useSessionList(page)
-  const { addSystemMessage, setSessionId, setActiveAgent } = useAppStore()
+  const { addSystemMessage, addSession } = useAppStore()
   const { isAuthenticated } = useAuthStore()
 
   if (!isAuthenticated) return null
@@ -38,10 +39,10 @@ export function SessionHistory() {
   const loadSession = async (sessionId: string, agent: string) => {
     try {
       const { data: session } = await apiClient.get(`/api/sessions/${sessionId}`)
-      // Restore session context into the store
-      setSessionId(sessionId)
-      setActiveAgent(agent as ReturnType<typeof useAppStore.getState>['activeAgent'])
-      addSystemMessage(`[SERVER] Resumed session from ${timeAgo(session.created_at)}. ${session.messages?.length ?? 0} messages loaded.`)
+      // Restore session context into the store as a new tab
+      const messages = session.messages ?? []
+      addSession(sessionId, agent as ReturnType<typeof useAppStore.getState>['activeAgent'], messages)
+      addSystemMessage(`[SERVER] Resumed session from ${timeAgo(session.created_at)}. ${messages.length} messages loaded.`)
       setOpen(false)
     } catch {
       addSystemMessage('[ERROR] Could not load session.')
@@ -83,9 +84,7 @@ export function SessionHistory() {
           {/* Sessions list */}
           <div className="flex-1 overflow-y-auto">
             {isLoading && (
-              <div className="px-2 py-3 font-pixel text-[5px] text-white/40 text-center animate-pulse">
-                LOADING...
-              </div>
+              <SkeletonSessions count={3} />
             )}
 
             {isError && (

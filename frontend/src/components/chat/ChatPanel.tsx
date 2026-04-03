@@ -5,8 +5,9 @@
 import { useRef, useEffect, useState } from 'react'
 import { useAppStore } from '@/store/useAppStore'
 import { useWebSocket, type WsStatus } from '@/hooks/useWebSocket'
-import { ChatMessage } from './ChatMessage'
+import { VirtualizedMessageList } from './VirtualizedMessageList'
 import { TypingIndicator } from './TypingIndicator'
+import { SessionTabs } from './SessionTabs'
 
 function StatusPill({ status }: { status: WsStatus }) {
   const cfg: Record<WsStatus, { color: string; label: string }> = {
@@ -66,9 +67,13 @@ export function ChatPanel() {
         backgroundImage: 'repeating-linear-gradient(90deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 32px),repeating-linear-gradient(0deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 32px)',
       }} />
 
-      <div ref={scrollRef} className="relative z-10 flex-1 overflow-y-auto px-3 py-2 flex flex-col gap-0.5"
-        style={{ background: 'rgba(0,0,0,0.55)', scrollbarWidth: 'thin', scrollbarColor: '#1e1e3a transparent' }}>
-        {messages.map(msg => <ChatMessage key={msg.id} msg={msg} isStreaming={msg.streaming} />)}
+      <div className="relative z-10">
+        <SessionTabs />
+      </div>
+
+      <div ref={scrollRef} className="relative z-10 flex-1 overflow-hidden"
+        style={{ background: 'rgba(0,0,0,0.55)' }}>
+        <VirtualizedMessageList messages={messages} isStreaming={isStreaming} />
         {isStreaming && <TypingIndicator agentName={activeAgent} />}
       </div>
 

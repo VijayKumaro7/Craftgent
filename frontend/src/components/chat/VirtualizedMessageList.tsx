@@ -10,11 +10,12 @@ interface VirtualizedMessageListProps {
 
 export function VirtualizedMessageList({ messages, isStreaming = false }: VirtualizedMessageListProps) {
   const parentRef = useRef<HTMLDivElement>(null)
+
   const virtualizer = useVirtualizer({
     count: messages.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 80, // Average message height in pixels
-    overscan: 10, // Render 10 items outside viewport for smooth scrolling
+    estimateSize: () => 80,
+    overscan: 10,
     measureElement: (element) => {
       return element?.getBoundingClientRect().height ?? 80
     },
@@ -25,10 +26,10 @@ export function VirtualizedMessageList({ messages, isStreaming = false }: Virtua
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
-    if (parentRef.current) {
-      parentRef.current.scrollTop = parentRef.current.scrollHeight
+    if (parentRef.current && virtualItems.length > 0) {
+      virtualizer.scrollToIndex(messages.length - 1, { align: 'end' })
     }
-  }, [messages.length, isStreaming])
+  }, [messages.length, isStreaming, virtualizer, virtualItems])
 
   return (
     <div
@@ -38,16 +39,14 @@ export function VirtualizedMessageList({ messages, isStreaming = false }: Virtua
         overflow: 'auto',
         scrollbarWidth: 'thin',
         scrollbarColor: '#1e1e3a transparent',
+        position: 'relative',
       }}
     >
       <div
         style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 2,
-          padding: '0.75rem',
-          height: `${totalSize}px`,
+          position: 'relative',
           width: '100%',
+          height: `${totalSize}px`,
         }}
       >
         {virtualItems.map((virtualItem) => {
@@ -61,8 +60,11 @@ export function VirtualizedMessageList({ messages, isStreaming = false }: Virtua
                 position: 'absolute',
                 top: 0,
                 left: 0,
-                width: '100%',
+                right: 0,
                 transform: `translateY(${virtualItem.start}px)`,
+                width: '100%',
+                padding: '0 0.75rem',
+                boxSizing: 'border-box',
               }}
             >
               <ChatMessageComponent
