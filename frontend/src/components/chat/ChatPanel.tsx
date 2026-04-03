@@ -2,12 +2,14 @@
  * ChatPanel — main chat area (Phase 2 version).
  * Uses useWebSocket() instead of SSE streamChat().
  */
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { useAppStore } from '@/store/useAppStore'
 import { useWebSocket, type WsStatus } from '@/hooks/useWebSocket'
 import { VirtualizedMessageList } from './VirtualizedMessageList'
 import { TypingIndicator } from './TypingIndicator'
 import { SessionTabs } from './SessionTabs'
+import { FileUpload } from './FileUpload'
+import type { UploadedFile } from '@/hooks/useFileUpload'
 
 function StatusPill({ status }: { status: WsStatus }) {
   const cfg: Record<WsStatus, { color: string; label: string }> = {
@@ -28,6 +30,8 @@ function StatusPill({ status }: { status: WsStatus }) {
 export function ChatPanel() {
   const { messages, addSystemMessage, addUserMessage, clearMessages, isStreaming, activeAgent, inputValue, setInputValue } = useAppStore()
   const { status, send } = useWebSocket()
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([])
+  const [showFileUpload, setShowFileUpload] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
   const inputRef  = useRef<HTMLInputElement>(null)
 
@@ -49,9 +53,21 @@ export function ChatPanel() {
     const trimmed = inputValue.trim()
     if (!trimmed || isStreaming) return
     if (trimmed.startsWith('/')) { handleCommand(trimmed); setInputValue(''); return }
-    addUserMessage(trimmed)
+
+    let messageContent = trimmed
+    // Append file references if any
+    if (uploadedFiles.length > 0) {
+      const fileRefs = uploadedFiles
+        .map(f => `[${f.name}](file://${f.token || f.url || f.id})`)
+        .join(' ')
+      messageContent = `${trimmed}\n\n${fileRefs}`
+      setUploadedFiles([])
+      setShowFileUpload(false)
+    }
+
+    addUserMessage(messageContent)
     setInputValue('')
-    send(trimmed)
+    send(messageContent)
   }
 
   const handleKey = (e: React.KeyboardEvent) => {
@@ -76,8 +92,23 @@ export function ChatPanel() {
         {isStreaming && <TypingIndicator agentName={activeAgent} />}
       </div>
 
+      {/* File upload panel */}
+      {showFileUpload && (
+        <div className="relative z-10 px-3 py-2 border-t-2 border-white/10" style={{ background: 'rgba(0,0,0,0.55)' }}>
+          <FileUpload onFilesSelected={setUploadedFiles} />
+        </div>
+      )}
+
       <div className="relative z-10 flex items-stretch h-9 border-t-[3px] border-black/80" style={{ background: 'rgba(0,0,0,0.72)' }}>
         <StatusPill status={status} />
+        <button
+          onClick={() => setShowFileUpload(!showFileUpload)}
+          className="flex items-center px-2 border-r-2 border-white/10 font-pixel text-[5px] text-chat-sys hover:bg-white/5 focus:outline-none transition-colors"
+          title="Toggle file upload"
+          aria-label="Upload file"
+        >
+          📎 {uploadedFiles.length > 0 && <span className="ml-1 text-white/70">{uploadedFiles.length}</span>}
+        </button>
         <div className="flex items-center px-2 border-r-2 border-white/10">
           <span className="font-pixel text-[8px] text-chat-sys">T›</span>
         </div>
