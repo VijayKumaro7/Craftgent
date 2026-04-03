@@ -2,7 +2,7 @@
  * ChatPanel — main chat area (Phase 2 version).
  * Uses useWebSocket() instead of SSE streamChat().
  */
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect } from 'react'
 import { useAppStore } from '@/store/useAppStore'
 import { useWebSocket, type WsStatus } from '@/hooks/useWebSocket'
 import { VirtualizedMessageList } from './VirtualizedMessageList'
@@ -26,9 +26,8 @@ function StatusPill({ status }: { status: WsStatus }) {
 }
 
 export function ChatPanel() {
-  const { messages, addSystemMessage, addUserMessage, clearMessages, isStreaming, activeAgent } = useAppStore()
+  const { messages, addSystemMessage, addUserMessage, clearMessages, isStreaming, activeAgent, inputValue, setInputValue } = useAppStore()
   const { status, send } = useWebSocket()
-  const [input, setInput] = useState('')
   const scrollRef = useRef<HTMLDivElement>(null)
   const inputRef  = useRef<HTMLInputElement>(null)
 
@@ -47,11 +46,11 @@ export function ChatPanel() {
   }
 
   const handleSend = () => {
-    const trimmed = input.trim()
+    const trimmed = inputValue.trim()
     if (!trimmed || isStreaming) return
-    if (trimmed.startsWith('/')) { handleCommand(trimmed); setInput(''); return }
+    if (trimmed.startsWith('/')) { handleCommand(trimmed); setInputValue(''); return }
     addUserMessage(trimmed)
-    setInput('')
+    setInputValue('')
     send(trimmed)
   }
 
@@ -59,7 +58,7 @@ export function ChatPanel() {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() }
   }
 
-  const canSend = input.trim().length > 0 && !isStreaming && status === 'connected'
+  const canSend = inputValue.trim().length > 0 && !isStreaming && status === 'connected'
 
   return (
     <div className="flex flex-col h-full">
@@ -82,8 +81,8 @@ export function ChatPanel() {
         <div className="flex items-center px-2 border-r-2 border-white/10">
           <span className="font-pixel text-[8px] text-chat-sys">T›</span>
         </div>
-        <input ref={inputRef} type="text" value={input}
-          onChange={e => setInput(e.target.value)} onKeyDown={handleKey}
+        <input ref={inputRef} type="text" value={inputValue}
+          onChange={e => setInputValue(e.target.value)} onKeyDown={handleKey}
           disabled={isStreaming || status !== 'connected'}
           placeholder={isStreaming ? 'Agent is thinking...' : status !== 'connected' ? 'Connecting...' : 'Press T to chat... /help for commands'}
           className="flex-1 bg-transparent border-none outline-none font-terminal text-[20px] text-white placeholder:text-white/30 px-3 caret-chat-agent"

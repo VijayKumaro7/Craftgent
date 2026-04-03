@@ -8,6 +8,7 @@ import { useAppStore } from '@/store/useAppStore'
 import { PixelHead }   from '@/components/ui/PixelHead'
 import { McBar }         from '@/components/ui/McBar'
 import { SessionHistory } from '@/components/chat/SessionHistory'
+import { TemplatesPanel } from '@/components/chat/TemplatesPanel'
 
 const ABILITIES = [
   { label: 'WEB SEARCH', on: true  },
@@ -35,7 +36,7 @@ function Chip({ children, color }: { children: React.ReactNode; color: string })
 }
 
 export function AgentSidebar() {
-  const { activeAgent, setActiveAgent, isStreaming } = useAppStore()
+  const { activeAgent, setActiveAgent, isStreaming, insertIntoInput } = useAppStore()
 
   return (
     <aside className="bg-[rgba(0,0,0,0.72)] border-r-[3px] border-black/60 overflow-y-auto flex flex-col select-none" style={{ scrollbarWidth: 'none' }}>
@@ -102,8 +103,9 @@ export function AgentSidebar() {
         <div className="text-yellow-300">Moon Phase: 🌕</div>
       </div>
 
-      {/* Past session browser — sits at the bottom of the sidebar */}
+      {/* Panels at the bottom of the sidebar */}
       <div className="mt-auto">
+        <TemplatesPanel onSelectTemplate={insertIntoInput} />
         <SessionHistory />
       </div>
     </aside>

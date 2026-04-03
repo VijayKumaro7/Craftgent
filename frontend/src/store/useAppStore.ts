@@ -65,6 +65,11 @@ interface AppState {
 
   // Inventory
   inventory: InventorySlot[]
+
+  // Input
+  inputValue: string
+  setInputValue: (value: string) => void
+  insertIntoInput: (text: string) => void
 }
 
 // ── Initial data ──────────────────────────────────────────────────────────
@@ -279,6 +284,18 @@ export const useAppStore = create<AppState>()(
 
       // Inventory
       inventory: INITIAL_INVENTORY,
+
+      // Input
+      inputValue: '',
+      setInputValue: (value) => set({ inputValue: value }, false, 'setInputValue'),
+      insertIntoInput: (text) =>
+        set(
+          (s) => ({
+            inputValue: s.inputValue + (s.inputValue && !s.inputValue.endsWith(' ') ? ' ' : '') + text,
+          }),
+          false,
+          'insertIntoInput'
+        ),
     }),
     { name: 'CraftAgent' }
   )
