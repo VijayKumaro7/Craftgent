@@ -94,6 +94,61 @@ curl http://localhost:8000/api/health
 
 ---
 
+## API Documentation
+
+### Interactive Swagger UI
+
+The backend includes interactive **Swagger/OpenAPI** documentation. Once the backend is running, open your browser:
+
+**👉 http://localhost:8000/docs**
+
+The Swagger UI provides:
+- ✅ Full endpoint listing with descriptions
+- ✅ Request/response schemas with examples
+- ✅ **Try-it-out** functionality to test endpoints directly
+- ✅ Authentication examples and JWT workflows
+- ✅ Type hints and validation rules
+
+#### Key Endpoints to Explore
+
+**Authentication Flow:**
+1. `POST /api/auth/register` — Create a new account
+2. `POST /api/auth/login` — Get access & refresh tokens
+3. `GET /api/auth/me` — Get current user info
+4. `POST /api/auth/refresh` — Refresh your access token
+
+**Health & Status:**
+- `GET /api/health` — Service health check
+
+**Phase 2+ Endpoints** (in development):
+- `WS /api/ws/{session_id}` — WebSocket chat connection
+- `GET /api/sessions/{id}` — Retrieve chat history
+- `GET /api/stats` — Agent XP and level stats
+
+#### How to Test Endpoints
+
+1. **Without Authentication:**
+   - Click on `GET /api/health`
+   - Click "Try it out"
+   - Click "Execute"
+   - View response
+
+2. **With Authentication:**
+   - First, register: `POST /api/auth/register` with email/password
+   - Then login: `POST /api/auth/login` to get token
+   - Copy the access token
+   - Click the 🔒 lock icon in Swagger UI
+   - Paste token in "Value" field
+   - Now test authenticated endpoints
+
+#### API Screenshots
+
+For visual reference of the Swagger UI, see:
+- [Swagger API Documentation](./docs/API-SCREENSHOTS.md) — Guide for capturing and viewing screenshots
+- Screenshots will be added as development progresses
+
+---
+
 ## Development Workflow
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for:
@@ -208,7 +263,8 @@ craftgent/
 
 ## Resources
 
-- **API Docs:** `http://localhost:8000/docs` (when running locally)
+- **Interactive API Docs:** `http://localhost:8000/docs` (when backend is running locally)
+- **API Documentation Guide:** [docs/API-SCREENSHOTS.md](./docs/API-SCREENSHOTS.md) — How to capture and view Swagger UI
 - **Contributing:** See [CONTRIBUTING.md](./CONTRIBUTING.md)
 - **Project Plan:** See [ROADMAP.md](./ROADMAP.md)
 - **Anthropic Claude API:** https://console.anthropic.com
