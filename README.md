@@ -4,7 +4,12 @@
 
 Multi-agent chat system powered by Claude Sonnet, FastAPI, LangGraph, WebSockets, ChromaDB, and Celery.
 
-**📍 Project Status:** Currently in **Phase 1-2 (Backend Development)**. The backend infrastructure is scaffolded and functional. Frontend, deployment infrastructure, and agent refinement coming in Phase 3-4. See [ROADMAP.md](./ROADMAP.md) for details.
+**📍 Project Status:** 
+- ✅ **Phase 1-2:** Backend (FastAPI, auth, chat) — **COMPLETE & FUNCTIONAL**
+- ✅ **Phase 3:** Frontend (React + Vite) — **COMPLETE & READY TO TEST**
+- ⏳ **Phase 4:** Deployment (Docker, Nginx, CI/CD) — **PLANNED**
+
+See [ROADMAP.md](./ROADMAP.md) for detailed timeline and [frontend/README.md](./frontend/README.md) for frontend setup.
 
 ---
 
@@ -36,29 +41,34 @@ Nginx (prod) → FastAPI (8000)   [✅ In Progress]
 
 | Layer     | Technology                                              | Status |
 |-----------|--------------------------------------------------------|--------|
-| Frontend  | React 18, Vite, TypeScript, Tailwind, Zustand          | Phase 3+ |
-| Backend   | FastAPI, Python 3.12, SQLAlchemy async, Alembic        | ✅ In Progress |
-| AI        | Anthropic Claude Sonnet, LangGraph, LangChain           | Phase 2+ |
-| Memory    | ChromaDB, sentence-transformers                        | Phase 2+ |
-| Tasks     | Celery 5, Redis 7                                      | Phase 1+ |
-| Auth      | JWT (python-jose), bcrypt                              | ✅ In Progress |
-| Infra     | Docker, Nginx, GitHub Actions                          | Phase 3+ |
+| Frontend  | React 18, Vite, TypeScript, Tailwind, Zustand          | ✅ Phase 3 Complete |
+| Backend   | FastAPI, Python 3.12, SQLAlchemy async, Alembic        | ✅ Phase 1-2 Complete |
+| AI        | Anthropic Claude Sonnet, LangGraph, LangChain           | Phase 2 (Planned) |
+| Memory    | ChromaDB, sentence-transformers                        | Phase 2 (Planned) |
+| Tasks     | Celery 5, Redis 7                                      | Phase 1+ Ready |
+| Auth      | JWT (python-jose), bcrypt                              | ✅ Complete |
+| Infra     | Docker, Nginx, GitHub Actions                          | Phase 4 (Planned) |
 
 ---
 
-## Getting Started (Backend Development)
+## Getting Started (Full Stack)
 
 ### Prerequisites
+
+**Backend:**
 - Python 3.12+
 - PostgreSQL 14+
 - Redis 7+
-- ANTHROPIC_API_KEY (get from [console.anthropic.com](https://console.anthropic.com))
+- ANTHROPIC_API_KEY from [console.anthropic.com](https://console.anthropic.com)
 
-### 1. Setup
+**Frontend:**
+- Node.js 18+
+- npm or yarn
+
+### 1. Backend Setup
 
 ```bash
-git clone https://github.com/vijaykumaro7/craftgent.git
-cd craftgent/backend
+cd backend
 
 # Create virtual environment
 python -m venv venv
@@ -67,30 +77,99 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 # Install dependencies
 pip install -r requirements.txt
 
-# Setup environment (copy and fill in required variables)
+# Setup environment
 cp ../.env.example .env
-# Edit .env — required: ANTHROPIC_API_KEY, SECRET_KEY
-```
+# Edit .env — set ANTHROPIC_API_KEY and SECRET_KEY
 
-### 2. Database Setup
+# Database migrations
+alembic upgrade head
 
-```bash
-# Ensure PostgreSQL is running, then:
-alembic upgrade head    # Run all migrations
-```
-
-### 3. Run Backend
-
-```bash
+# Start backend (runs on port 8000)
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-# Open http://localhost:8000/docs for Swagger UI
 ```
 
-### Quick Test
+**Backend available at:**
+- 🔌 API: `http://localhost:8000`
+- 📚 Swagger UI: `http://localhost:8000/docs`
+
+### 2. Frontend Setup
+
+**In a new terminal:**
 
 ```bash
-curl http://localhost:8000/api/health
+cd frontend
+
+# Install dependencies
+npm install
+
+# Copy environment file
+cp .env.example .env.local
+# Default is correct: VITE_API_URL=http://localhost:8000
+
+# Start development server (runs on port 5173)
+npm run dev
 ```
+
+**Frontend available at:**
+- 🎮 App: `http://localhost:5173`
+- Automatically connects to backend API
+
+### 3. Test the Application
+
+1. **Open browser:** http://localhost:5173
+2. **Register:** Create a new account
+3. **Login:** Use your credentials
+4. **Chat:** Send a message to an AI agent
+5. **Enjoy:** Watch the response stream in real-time!
+
+---
+
+---
+
+## Frontend (Phase 3) 🎮
+
+### What's Implemented
+
+✅ **Authentication**
+- User registration and login
+- JWT token management with auto-refresh
+- Protected routes with auth guard
+- Persistent sessions using localStorage
+
+✅ **Chat Interface**
+- Real-time message display with streaming (SSE)
+- Agent selector (NEXUS/ALEX/VORTEX)
+- Message bubbles with agent badges
+- Auto-scrolling message list
+- Responsive dark theme UI
+
+✅ **User Experience**
+- Minecraft-themed dark UI with Tailwind CSS
+- Cobalt and emerald color scheme
+- Smooth animations and transitions
+- Mobile-responsive layout
+- Session history sidebar
+
+### Quick Start
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+**Then open:** http://localhost:5173
+
+### Frontend Tech Stack
+
+- **React 18** + **TypeScript** for type safety
+- **Vite** for fast development
+- **Zustand** for state management
+- **Axios** with JWT interceptors
+- **Tailwind CSS** for styling
+- **React Router v6** for navigation
+
+See [frontend/README.md](./frontend/README.md) for comprehensive documentation.
 
 ---
 
@@ -263,8 +342,9 @@ craftgent/
 
 ## Resources
 
-- **Interactive API Docs:** `http://localhost:8000/docs` (when backend is running locally)
-- **API Documentation Guide:** [docs/API-SCREENSHOTS.md](./docs/API-SCREENSHOTS.md) — How to capture and view Swagger UI
-- **Contributing:** See [CONTRIBUTING.md](./CONTRIBUTING.md)
-- **Project Plan:** See [ROADMAP.md](./ROADMAP.md)
+- **Interactive API Docs:** `http://localhost:8000/docs` (when backend running)
+- **API Documentation Guide:** [docs/API-SCREENSHOTS.md](./docs/API-SCREENSHOTS.md)
+- **Frontend Documentation:** [frontend/README.md](./frontend/README.md)
+- **Project Roadmap:** [ROADMAP.md](./ROADMAP.md)
+- **Contributing Guidelines:** [CONTRIBUTING.md](./CONTRIBUTING.md)
 - **Anthropic Claude API:** https://console.anthropic.com
