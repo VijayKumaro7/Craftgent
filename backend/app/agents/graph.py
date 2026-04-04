@@ -26,9 +26,10 @@ MODEL = "claude-sonnet-4-20250514"
 MAX_TOKENS = 2048
 
 AGENT_TOOLS: dict[AgentName, list[BaseTool]] = {
-    AgentName.NEXUS:  [web_search],
-    AgentName.ALEX:   [execute_python, web_search],
-    AgentName.VORTEX: [query_analytics, web_search],
+    AgentName.NEXUS:      [web_search],
+    AgentName.ALEX:       [execute_python, web_search],
+    AgentName.VORTEX:     [query_analytics, web_search],
+    AgentName.RESEARCHER: [web_search],  # Elite research agent with extended web search
 }
 
 class AgentState(TypedDict):
@@ -48,22 +49,26 @@ def _llm(tools=None, streaming=True):
 # ── Router ────────────────────────────────────────────────────────────────
 ROUTER_SYS = """You are NEXUS, orchestrator of CraftAgent.
 Reply with ONE word only:
-- "code"   → code generation, debugging, technical implementation
-- "data"   → SQL, analytics, statistics, data pipelines
-- "answer" → research, explanations, general questions"""
+- "code"       → code generation, debugging, technical implementation
+- "data"       → SQL, analytics, statistics, data pipelines
+- "research"   → deep research, source verification, literature synthesis, academic analysis
+- "answer"     → general explanations, casual questions"""
 
 async def router_node(state: AgentState) -> dict:
     resp = await _llm(streaming=False).ainvoke(
         [SystemMessage(content=ROUTER_SYS)] + state["messages"])
     decision = resp.content.strip().lower()
-    if decision not in ("code", "data", "answer"):
+    if decision not in ("code", "data", "research", "answer"):
         decision = "answer"
     logger.info("route", session=state["session_id"], decision=decision)
     return {"route_decision": decision}
 
-def route(state: AgentState) -> Literal["nexus_answer", "alex_code", "vortex_data"]:
-    return {"code": "alex_code", "data": "vortex_data"}.get(
-        state.get("route_decision", "answer"), "nexus_answer")
+def route(state: AgentState) -> Literal["nexus_answer", "alex_code", "vortex_data", "researcher_answer"]:
+    return {
+        "code": "alex_code",
+        "data": "vortex_data",
+        "research": "researcher_answer",
+    }.get(state.get("route_decision", "answer"), "nexus_answer")
 
 # ── Memory injection ──────────────────────────────────────────────────────
 async def inject_memory(state: AgentState) -> dict:
@@ -175,12 +180,14 @@ def build_agent_graph():
     g.add_node("nexus_answer",  _make_agent_node(AgentName.NEXUS))
     g.add_node("alex_code",     _make_agent_node(AgentName.ALEX))
     g.add_node("vortex_data",   _make_agent_node(AgentName.VORTEX))
+    g.add_node("researcher_answer", _make_agent_node(AgentName.RESEARCHER))
     g.set_entry_point("inject_memory")
     g.add_edge("inject_memory", "router")
     g.add_conditional_edges("router", route)
     g.add_edge("nexus_answer", END)
     g.add_edge("alex_code",    END)
     g.add_edge("vortex_data",  END)
+    g.add_edge("researcher_answer", END)
     return g.compile()
 
 agent_graph = build_agent_graph()
