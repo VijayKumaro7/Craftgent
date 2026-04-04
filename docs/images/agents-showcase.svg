@@ -1,0 +1,181 @@
+<svg viewBox="0 0 1440 1000" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1440" height="1000" fill="#0a0e27"/>
+
+  <!-- Title -->
+  <text x="720" y="40" font-family="monospace" font-size="24" font-weight="bold" fill="#55ffff" text-anchor="middle">CraftAgent Team - All 4 Specialized Agents</text>
+
+  <!-- NEXUS Card -->
+  <g>
+    <!-- Card background -->
+    <rect x="30" y="80" width="320" height="380" fill="rgba(85, 255, 255, 0.1)" stroke="#55ffff" stroke-width="2" rx="4"/>
+
+    <!-- Agent color bar -->
+    <rect x="30" y="80" width="320" height="8" fill="#55ffff"/>
+
+    <!-- Pixel Head (simplified) -->
+    <rect x="130" y="100" width="120" height="120" fill="#c07850"/>
+    <rect x="145" y="100" width="90" height="40" fill="#3a2010"/>
+    <circle cx="160" cy="125" r="5" fill="#44aaff"/>
+    <circle cx="185" cy="125" r="5" fill="#44aaff"/>
+
+    <!-- Name -->
+    <text x="190" y="240" font-family="monospace" font-size="16" font-weight="bold" fill="#55ffff" text-anchor="middle">NEXUS</text>
+    <text x="190" y="260" font-family="monospace" font-size="12" fill="#aaaaaa" text-anchor="middle">Research Mage</text>
+
+    <!-- Stats -->
+    <text x="50" y="290" font-family="monospace" font-size="10" fill="#ffffff">Class: Research Mage</text>
+    <text x="50" y="310" font-family="monospace" font-size="10" fill="#ffffff">Level: 12 | XP: 67%</text>
+
+    <text x="50" y="335" font-family="monospace" font-size="9" fill="#aaaaaa">HP: 90/100</text>
+    <rect x="50" y="340" width="70" height="8" fill="#333" stroke="#1a1a1a" stroke-width="1"/>
+    <rect x="50" y="340" width="63" height="8" fill="#5d9e32"/>
+
+    <text x="50" y="365" font-family="monospace" font-size="9" fill="#aaaaaa">MP: 74/100</text>
+    <rect x="50" y="370" width="70" height="8" fill="#333" stroke="#1a1a1a" stroke-width="1"/>
+    <rect x="50" y="370" width="52" height="8" fill="#3050c0"/>
+
+    <!-- Specialty -->
+    <text x="50" y="405" font-family="monospace" font-size="9" fill="#55ffff">🔍 Specialty:</text>
+    <text x="50" y="420" font-family="monospace" font-size="8" fill="#aaaaaa">Research, Analysis,</text>
+    <text x="50" y="432" font-family="monospace" font-size="8" fill="#aaaaaa">Knowledge Synthesis</text>
+  </g>
+
+  <!-- ALEX Card -->
+  <g>
+    <!-- Card background -->
+    <rect x="380" y="80" width="320" height="380" fill="rgba(170, 255, 170, 0.1)" stroke="#aaffaa" stroke-width="2" rx="4"/>
+
+    <!-- Agent color bar -->
+    <rect x="380" y="80" width="320" height="8" fill="#aaffaa"/>
+
+    <!-- Pixel Head -->
+    <rect x="480" y="100" width="120" height="120" fill="#d0a070"/>
+    <rect x="495" y="110" width="20" height="40" fill="#2a5a2a"/>
+    <rect x="535" y="110" width="20" height="40" fill="#2a5a2a"/>
+    <circle cx="505" cy="135" r="5" fill="#44ee44"/>
+    <circle cx="535" cy="135" r="5" fill="#44ee44"/>
+
+    <!-- Name -->
+    <text x="540" y="240" font-family="monospace" font-size="16" font-weight="bold" fill="#aaffaa" text-anchor="middle">ALEX</text>
+    <text x="540" y="260" font-family="monospace" font-size="12" fill="#aaaaaa" text-anchor="middle">Code Warrior</text>
+
+    <!-- Stats -->
+    <text x="400" y="290" font-family="monospace" font-size="10" fill="#ffffff">Class: Code Warrior</text>
+    <text x="400" y="310" font-family="monospace" font-size="10" fill="#ffffff">Level: 8 | XP: 42%</text>
+
+    <text x="400" y="335" font-family="monospace" font-size="9" fill="#aaaaaa">HP: 55/100</text>
+    <rect x="400" y="340" width="70" height="8" fill="#333" stroke="#1a1a1a" stroke-width="1"/>
+    <rect x="400" y="340" width="38" height="8" fill="#5d9e32"/>
+
+    <text x="400" y="365" font-family="monospace" font-size="9" fill="#aaaaaa">MP: 99/100</text>
+    <rect x="400" y="370" width="70" height="8" fill="#333" stroke="#1a1a1a" stroke-width="1"/>
+    <rect x="400" y="370" width="69" height="8" fill="#3050c0"/>
+
+    <!-- Specialty -->
+    <text x="400" y="405" font-family="monospace" font-size="9" fill="#aaffaa">⚡ Specialty:</text>
+    <text x="400" y="420" font-family="monospace" font-size="8" fill="#aaaaaa">Code Generation,</text>
+    <text x="400" y="432" font-family="monospace" font-size="8" fill="#aaaaaa">Debugging, Architecture</text>
+  </g>
+
+  <!-- VORTEX Card -->
+  <g>
+    <!-- Card background -->
+    <rect x="730" y="80" width="320" height="380" fill="rgba(204, 136, 255, 0.1)" stroke="#cc88ff" stroke-width="2" rx="4"/>
+
+    <!-- Agent color bar -->
+    <rect x="730" y="80" width="320" height="8" fill="#cc88ff"/>
+
+    <!-- Pixel Head -->
+    <rect x="830" y="100" width="120" height="120" fill="#3a3a3a"/>
+    <rect x="845" y="100" width="90" height="30" fill="#1a1a1a"/>
+    <circle cx="860" cy="125" r="5" fill="#ff3333"/>
+    <circle cx="885" cy="125" r="5" fill="#ff3333"/>
+
+    <!-- Name -->
+    <text x="890" y="240" font-family="monospace" font-size="16" font-weight="bold" fill="#cc88ff" text-anchor="middle">VORTEX</text>
+    <text x="890" y="260" font-family="monospace" font-size="12" fill="#aaaaaa" text-anchor="middle">Data Creeper</text>
+
+    <!-- Stats -->
+    <text x="750" y="290" font-family="monospace" font-size="10" fill="#ffffff">Class: Data Creeper</text>
+    <text x="750" y="310" font-family="monospace" font-size="10" fill="#ffffff">Level: 15 | XP: 81%</text>
+
+    <text x="750" y="335" font-family="monospace" font-size="9" fill="#aaaaaa">HP: 72/100</text>
+    <rect x="750" y="340" width="70" height="8" fill="#333" stroke="#1a1a1a" stroke-width="1"/>
+    <rect x="750" y="340" width="50" height="8" fill="#5d9e32"/>
+
+    <text x="750" y="365" font-family="monospace" font-size="9" fill="#aaaaaa">MP: 88/100</text>
+    <rect x="750" y="370" width="70" height="8" fill="#333" stroke="#1a1a1a" stroke-width="1"/>
+    <rect x="750" y="370" width="62" height="8" fill="#3050c0"/>
+
+    <!-- Specialty -->
+    <text x="750" y="405" font-family="monospace" font-size="9" fill="#cc88ff">📊 Specialty:</text>
+    <text x="750" y="420" font-family="monospace" font-size="8" fill="#aaaaaa">Data Analysis, SQL,</text>
+    <text x="750" y="432" font-family="monospace" font-size="8" fill="#aaaaaa">Statistics, Pipelines</text>
+  </g>
+
+  <!-- RESEARCHER Card -->
+  <g>
+    <!-- Card background -->
+    <rect x="1080" y="80" width="320" height="380" fill="rgba(212, 165, 116, 0.1)" stroke="#d4a574" stroke-width="2" rx="4"/>
+
+    <!-- Agent color bar -->
+    <rect x="1080" y="80" width="320" height="8" fill="#d4a574"/>
+
+    <!-- Pixel Head -->
+    <rect x="1180" y="100" width="120" height="120" fill="#4a3728"/>
+    <rect x="1195" y="100" width="90" height="45" fill="#8b6914"/>
+    <circle cx="1210" cy="130" r="5" fill="#d4a574"/>
+    <circle cx="1235" cy="130" r="5" fill="#d4a574"/>
+
+    <!-- Name -->
+    <text x="1240" y="240" font-family="monospace" font-size="16" font-weight="bold" fill="#d4a574" text-anchor="middle">RESEARCHER</text>
+    <text x="1240" y="260" font-family="monospace" font-size="12" fill="#aaaaaa" text-anchor="middle">Chief Investigator</text>
+
+    <!-- Stats -->
+    <text x="1100" y="290" font-family="monospace" font-size="10" fill="#ffffff">Class: Archaeologist</text>
+    <text x="1100" y="310" font-family="monospace" font-size="10" fill="#ffffff">Level: 18 | XP: 33%</text>
+
+    <text x="1100" y="335" font-family="monospace" font-size="9" fill="#aaaaaa">HP: 85/100</text>
+    <rect x="1100" y="340" width="70" height="8" fill="#333" stroke="#1a1a1a" stroke-width="1"/>
+    <rect x="1100" y="340" width="60" height="8" fill="#5d9e32"/>
+
+    <text x="1100" y="365" font-family="monospace" font-size="9" fill="#aaaaaa">MP: 95/100</text>
+    <rect x="1100" y="370" width="70" height="8" fill="#333" stroke="#1a1a1a" stroke-width="1"/>
+    <rect x="1100" y="370" width="66" height="8" fill="#3050c0"/>
+
+    <!-- Specialty -->
+    <text x="1100" y="405" font-family="monospace" font-size="9" fill="#d4a574">🔍 Specialty:</text>
+    <text x="1100" y="420" font-family="monospace" font-size="8" fill="#aaaaaa">Deep Research, Source</text>
+    <text x="1100" y="432" font-family="monospace" font-size="8" fill="#aaaaaa">Verification, Synthesis</text>
+  </g>
+
+  <!-- Routing Logic Below -->
+  <g>
+    <text x="720" y="520" font-family="monospace" font-size="14" font-weight="bold" fill="#55ffff" text-anchor="middle">Intelligent Query Routing</text>
+
+    <!-- Flow diagram -->
+    <rect x="250" y="560" width="400" height="80" fill="rgba(85, 255, 255, 0.1)" stroke="#55ffff" stroke-width="2" rx="4"/>
+    <text x="260" y="580" font-family="monospace" font-size="10" fill="#ffffff">User: "Write a Python function"</text>
+    <text x="260" y="600" font-family="monospace" font-size="10" fill="#ffffff">↓ Router detects "code" keyword</text>
+    <text x="260" y="620" font-family="monospace" font-size="10" fill="#ffffff">→ Routes to ALEX (Code Warrior)</text>
+
+    <rect x="790" y="560" width="400" height="80" fill="rgba(170, 255, 170, 0.1)" stroke="#aaffaa" stroke-width="2" rx="4"/>
+    <text x="800" y="580" font-family="monospace" font-size="10" fill="#ffffff">User: "Analyze this CSV file"</text>
+    <text x="800" y="600" font-family="monospace" font-size="10" fill="#ffffff">↓ Router detects "data" keyword</text>
+    <text x="800" y="620" font-family="monospace" font-size="10" fill="#ffffff">→ Routes to VORTEX (Data Creeper)</text>
+
+    <rect x="250" y="670" width="400" height="80" fill="rgba(212, 165, 116, 0.1)" stroke="#d4a574" stroke-width="2" rx="4"/>
+    <text x="260" y="690" font-family="monospace" font-size="10" fill="#ffffff">User: "Research AI history"</text>
+    <text x="260" y="710" font-family="monospace" font-size="10" fill="#ffffff">↓ Router detects "research" keyword</text>
+    <text x="260" y="730" font-family="monospace" font-size="10" fill="#ffffff">→ Routes to RESEARCHER (Archaeologist)</text>
+
+    <rect x="790" y="670" width="400" height="80" fill="rgba(85, 255, 255, 0.1)" stroke="#55ffff" stroke-width="2" rx="4"/>
+    <text x="800" y="690" font-family="monospace" font-size="10" fill="#ffffff">User: "What is machine learning?"</text>
+    <text x="800" y="710" font-family="monospace" font-size="10" fill="#ffffff">↓ Ambiguous query (no keyword match)</text>
+    <text x="800" y="730" font-family="monospace" font-size="10" fill="#ffffff">→ Routes to NEXUS (Default Orchestrator)</text>
+  </g>
+
+  <!-- Footer -->
+  <text x="720" y="980" font-family="monospace" font-size="9" fill="#666" text-anchor="middle">4 Specialized Agents • Automatic Intelligent Routing • Real-time Streaming • Minecraft-Themed UI</text>
+</svg>
