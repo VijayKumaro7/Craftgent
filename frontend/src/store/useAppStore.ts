@@ -21,6 +21,12 @@ function uid(): string {
 
 // ── State shape ───────────────────────────────────────────────────────────
 
+interface SessionTab {
+  id: string
+  agent: AgentName
+  messages: ChatMessage[]
+}
+
 interface AppState {
   // Agent
   activeAgent: AgentName
@@ -29,6 +35,12 @@ interface AppState {
   // Session
   sessionId: string | null
   setSessionId: (id: string) => void
+
+  // Session tabs (multi-tab support)
+  openSessions: SessionTab[]
+  addSession: (sessionId: string, agent: AgentName, messages: ChatMessage[]) => void
+  switchSession: (sessionId: string) => void
+  closeSession: (sessionId: string) => void
 
   // Messages
   messages: ChatMessage[]
@@ -53,6 +65,11 @@ interface AppState {
 
   // Inventory
   inventory: InventorySlot[]
+
+  // Input
+  inputValue: string
+  setInputValue: (value: string) => void
+  insertIntoInput: (text: string) => void
 }
 
 // ── Initial data ──────────────────────────────────────────────────────────
@@ -88,6 +105,74 @@ export const useAppStore = create<AppState>()(
       // Session
       sessionId: null,
       setSessionId: (id) => set({ sessionId: id }, false, 'setSessionId'),
+
+      // Session tabs
+      openSessions: [],
+
+      addSession: (sessionId, agent, messages) =>
+        set(
+          (s) => {
+            const existing = s.openSessions.find(tab => tab.id === sessionId)
+            if (existing) return s // don't add duplicate
+            return {
+              openSessions: [...s.openSessions, { id: sessionId, agent, messages }],
+              sessionId,
+              messages,
+              activeAgent: agent,
+            }
+          },
+          false,
+          'addSession'
+        ),
+
+      switchSession: (sessionId) =>
+        set(
+          (s) => {
+            const tab = s.openSessions.find(t => t.id === sessionId)
+            if (!tab) return s
+            return {
+              sessionId,
+              messages: tab.messages,
+              activeAgent: tab.agent,
+            }
+          },
+          false,
+          'switchSession'
+        ),
+
+      closeSession: (sessionId) =>
+        set(
+          (s) => {
+            const remaining = s.openSessions.filter(t => t.id !== sessionId)
+            const wasActive = s.sessionId === sessionId
+            if (!wasActive) return { openSessions: remaining }
+            // If closing active session, switch to the last open one
+            if (remaining.length > 0) {
+              const next = remaining[remaining.length - 1]
+              return {
+                openSessions: remaining,
+                sessionId: next.id,
+                messages: next.messages,
+                activeAgent: next.agent,
+              }
+            }
+            // If no sessions left, reset
+            return {
+              openSessions: remaining,
+              sessionId: null,
+              messages: [
+                {
+                  id: uid(),
+                  role: 'system',
+                  content: 'CraftAgent v0.1.0 initialized. All agents online. Type a message to begin.',
+                  createdAt: new Date(),
+                },
+              ],
+            }
+          },
+          false,
+          'closeSession'
+        ),
 
       // Messages — start with a boot message
       messages: [
@@ -199,6 +284,18 @@ export const useAppStore = create<AppState>()(
 
       // Inventory
       inventory: INITIAL_INVENTORY,
+
+      // Input
+      inputValue: '',
+      setInputValue: (value) => set({ inputValue: value }, false, 'setInputValue'),
+      insertIntoInput: (text) =>
+        set(
+          (s) => ({
+            inputValue: s.inputValue + (s.inputValue && !s.inputValue.endsWith(' ') ? ' ' : '') + text,
+          }),
+          false,
+          'insertIntoInput'
+        ),
     }),
     { name: 'CraftAgent' }
   )

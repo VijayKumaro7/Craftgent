@@ -5,7 +5,7 @@
  * If not authenticated: shows LoginScreen.
  * If authenticated: shows the full Minecraft UI shell.
  */
-import { useEffect, useState } from 'react'
+import { useEffect, useState, lazy, Suspense } from 'react'
 import { useAuthStore }       from '@/store/useAuthStore'
 import { useAppStore }        from '@/store/useAppStore'
 import { LoginScreen }        from '@/components/auth/LoginScreen'
@@ -13,8 +13,11 @@ import { SkyBackground }      from '@/components/layout/SkyBackground'
 import { TopBar }             from '@/components/layout/TopBar'
 import { Hotbar }             from '@/components/layout/Hotbar'
 import { AgentSidebar }       from '@/components/agents/AgentSidebar'
-import { ChatPanel }          from '@/components/chat/ChatPanel'
-import { TaskPanel }          from '@/components/tasks/TaskPanel'
+import { NotificationStack }  from '@/components/ui/NotificationStack'
+import { SkeletonMessages }   from '@/components/ui/SkeletonMessage'
+
+const ChatPanel = lazy(() => import('@/components/chat/ChatPanel').then(m => ({ default: m.ChatPanel })))
+const TaskPanel = lazy(() => import('@/components/tasks/TaskPanel').then(m => ({ default: m.TaskPanel })))
 
 function Shell() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 900)
@@ -41,6 +44,7 @@ function Shell() {
     <>
       <SkyBackground />
       <div className="scanlines fixed inset-0 pointer-events-none" style={{ zIndex: 9995 }} />
+      <NotificationStack />
       <div className="relative h-screen" style={{
         zIndex: 10,
         display: 'grid',
@@ -53,10 +57,16 @@ function Shell() {
         {/* Left sidebar - hidden on mobile */}
         {!isMobile && <AgentSidebar />}
         <main className="relative overflow-hidden" style={{ background: 'rgba(0,0,0,0.0)' }}>
-          <ChatPanel />
+          <Suspense fallback={<SkeletonMessages count={5} />}>
+            <ChatPanel />
+          </Suspense>
         </main>
         {/* Right sidebar - hidden on mobile */}
-        {!isMobile && <TaskPanel />}
+        {!isMobile && (
+          <Suspense fallback={<div style={{ background: 'rgba(0,0,0,0.72)' }} />}>
+            <TaskPanel />
+          </Suspense>
+        )}
         {/* Bottom bar spans full width on mobile */}
         <div style={{ gridColumn: isMobile ? '1 / -1' : 'auto', gridRow: isMobile ? 'auto' : 'auto' }}>
           <Hotbar />
@@ -69,7 +79,9 @@ function Shell() {
                 <AgentSidebar />
               </div>
               <div style={{ flex: 1, overflowY: 'auto', borderLeft: '3px solid rgba(255,255,255,0.15)' }}>
-                <TaskPanel />
+                <Suspense fallback={<div />}>
+                  <TaskPanel />
+                </Suspense>
               </div>
             </div>
           </div>

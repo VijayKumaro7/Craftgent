@@ -21,7 +21,8 @@
     "react-markdown": "^9.0.1",
     "remark-gfm": "^4.0.0",
     "prism-react-renderer": "^2.4.0",
-    "dayjs": "^1.11.13"
+    "dayjs": "^1.11.13",
+    "@tanstack/react-virtual": "^3.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.3.17",

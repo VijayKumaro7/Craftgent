@@ -3,10 +3,13 @@
  */
 import { useAppStore }  from '@/store/useAppStore'
 import { useAuthStore } from '@/store/useAuthStore'
+import { useTheme } from './ThemeProvider'
+import { CustomizationPanel } from './CustomizationPanel'
 
 export function TopBar() {
   const { activeAgent, isStreaming } = useAppStore()
   const { username, logout } = useAuthStore()
+  const { theme, toggleTheme } = useTheme()
 
   return (
     <header className="col-span-3 flex items-center justify-between px-3 relative overflow-hidden"
@@ -32,12 +35,18 @@ export function TopBar() {
         ))}
       </div>
 
-      <div className="flex items-center gap-2 z-10">
-        {username && <span className="font-pixel text-[5px] text-white/80">👤 {username}</span>}
+      <div className="flex items-center gap-0.5 z-10 h-full">
+        {username && <span className="font-pixel text-[5px] text-white/80 px-2">👤 {username}</span>}
         <span className="inline-block w-2 h-2 rounded-full bg-[#5aff5a] animate-[blink_1s_steps(1)_infinite]" />
-        <span className="font-pixel text-[5px] text-white">ONLINE</span>
+        <span className="font-pixel text-[5px] text-white px-2">ONLINE</span>
+        <CustomizationPanel />
+        <button onClick={toggleTheme}
+          className="font-pixel text-[5px] text-white/60 px-2 border-r-2 border-white/10 h-full hover:text-white hover:bg-black/30 focus:outline-none"
+          title={`Toggle ${theme === 'dark' ? 'light' : 'dark'} mode`}>
+          {theme === 'dark' ? '☀️' : '🌙'} {theme.toUpperCase()}
+        </button>
         <button onClick={logout}
-          className="font-pixel text-[5px] text-white/60 px-2 py-1 hover:text-white hover:bg-black/30 focus:outline-none">
+          className="font-pixel text-[5px] text-white/60 px-2 h-full hover:text-white hover:bg-black/30 focus:outline-none">
           LOGOUT ✕
         </button>
       </div>

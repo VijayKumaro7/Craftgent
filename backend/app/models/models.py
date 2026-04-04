@@ -19,9 +19,10 @@ def utcnow() -> datetime:
 
 
 class AgentName(str, enum.Enum):
-    NEXUS = "NEXUS"      # Research agent
-    ALEX = "ALEX"        # Code agent
-    VORTEX = "VORTEX"   # Data agent
+    NEXUS = "NEXUS"        # Research agent
+    ALEX = "ALEX"          # Code agent
+    VORTEX = "VORTEX"      # Data agent
+    RESEARCHER = "RESEARCHER"  # Elite research agent (Archaeologist)
 
 
 class MessageRole(str, enum.Enum):

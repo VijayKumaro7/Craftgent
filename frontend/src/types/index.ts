@@ -1,6 +1,6 @@
 // ── Agent types ──────────────────────────────────────────────────────────
 
-export type AgentName = 'NEXUS' | 'ALEX' | 'VORTEX'
+export type AgentName = 'NEXUS' | 'ALEX' | 'VORTEX' | 'RESEARCHER'
 
 export interface AgentProfile {
   name: AgentName
@@ -34,6 +34,13 @@ export const AGENTS: Record<AgentName, AgentProfile> = {
     class: '§ Data Creeper',
     hp: 72, mp: 88, level: 15, xp: 81,
     palette: ['#3a3a3a', '#1a1a1a', '#ff3333'],
+  },
+  RESEARCHER: {
+    name: 'RESEARCHER',
+    role: 'Chief Investigator',
+    class: '§ Archaeologist',
+    hp: 85, mp: 95, level: 18, xp: 33,
+    palette: ['#4a3728', '#8b6914', '#d4a574'],
   },
 }
 
