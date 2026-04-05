@@ -1,0 +1,127 @@
+<svg width="1400" height="900" xmlns="http://www.w3.org/2000/svg">
+  <!-- Title -->
+  <text x="700" y="30" font-size="32" font-weight="bold" text-anchor="middle" fill="#333">Chat Interface - Main Interaction Area (Annotated)</text>
+
+  <!-- Main Chat Area -->
+  <rect x="30" y="60" width="1340" height="820" fill="#fff" stroke="#2c3e50" stroke-width="3" rx="8"/>
+
+  <!-- Top Bar -->
+  <rect x="30" y="60" width="1340" height="60" fill="#2c3e50" stroke="#1a252f" stroke-width="3" rx="8" rx-top="8"/>
+  <text x="60" y="95" font-size="18" fill="#fff" font-weight="bold">Craftgent 🎮</text>
+  <circle cx="1310" cy="90" r="10" fill="#27ae60"/>
+  <text x="1330" y="95" font-size="11" fill="#fff" text-anchor="start">Connected</text>
+
+  <!-- Agent Selector at top -->
+  <text x="1000" y="95" font-size="11" fill="#ddd">Current Agent:</text>
+  <rect x="1070" y="73" width="100" height="34" fill="#3498db" stroke="#2980b9" stroke-width="1" rx="3"/>
+  <text x="1120" y="96" font-size="12" text-anchor="middle" fill="#fff" font-weight="bold">ALEX 🔧</text>
+
+  <!-- Chat Messages Area -->
+  <rect x="50" y="140" width="1300" height="580" fill="#fafafa" stroke="#ecf0f1" stroke-width="1" rx="4" overflow="auto"/>
+
+  <!-- Annotation - Messages Area -->
+  <text x="65" y="165" font-size="11" fill="#2980b9" font-weight="bold">📌 Message History</text>
+
+  <!-- Message 1: User -->
+  <rect x="70" y="190" width="550" height="70" fill="#e8f4f8" stroke="#3498db" stroke-width="1" rx="6"/>
+  <circle cx="85" cy="205" r="12" fill="#3498db"/>
+  <text x="105" y="210" font-size="11" fill="#333" font-weight="bold">You</text>
+  <text x="105" y="227" font-size="10" fill="#666">2:34 PM</text>
+  <text x="105" y="248" font-size="11" fill="#555">Analyze this CSV file and create a summary report</text>
+
+  <!-- Annotation for User Message -->
+  <line x1="620" y1="225" x2="700" y2="225" stroke="#3498db" stroke-width="2"/>
+  <rect x="700" y="210" width="130" height="30" fill="#e8f4f8" stroke="#3498db" stroke-width="1" rx="3"/>
+  <text x="710" y="230" font-size="10" fill="#2980b9" font-weight="bold">User Message</text>
+
+  <!-- Message 2: Agent Response -->
+  <rect x="70" y="280" width="900" height="100" fill="#e8f5e9" stroke="#27ae60" stroke-width="1" rx="6"/>
+  <circle cx="85" cy="300" r="12" fill="#f39c12"/>
+  <text x="105" y="305" font-size="11" fill="#333" font-weight="bold">ALEX 🔧</text>
+  <text x="105" y="322" font-size="10" fill="#666">2:35 PM</text>
+  <text x="105" y="343" font-size="11" fill="#555">I've analyzed your CSV file. Here's what I found:</text>
+  <text x="115" y="360" font-size="10" fill="#666">• Total rows: 1,250 • Missing data: 3.2% • Outliers detected: 45 rows</text>
+  <text x="115" y="376" font-size="10" fill="#666">Would you like a detailed statistical analysis?</text>
+
+  <!-- Annotation for Agent Message -->
+  <line x1="970" y1="330" x2="1050" y2="330" stroke="#27ae60" stroke-width="2"/>
+  <rect x="1050" y="315" width="130" height="30" fill="#e8f5e9" stroke="#27ae60" stroke-width="1" rx="3"/>
+  <text x="1060" y="335" font-size="10" fill="#229954" font-weight="bold">Agent Response</text>
+
+  <!-- Message 3: Code Block -->
+  <rect x="70" y="400" width="900" height="120" fill="#f5f5f5" stroke="#2c3e50" stroke-width="1" rx="6"/>
+  <circle cx="85" cy="420" r="12" fill="#9b59b6"/>
+  <text x="105" y="425" font-size="11" fill="#333" font-weight="bold">NEXUS 🧠</text>
+  <text x="105" y="442" font-size="10" fill="#666">2:36 PM</text>
+
+  <rect x="105" y="453" width="850" height="55" fill="#282c34" stroke="#1a1d25" stroke-width="1" rx="3"/>
+  <text x="120" y="472" font-size="9" fill="#61dafb" font-family="monospace" font-weight="bold">import pandas as pd</text>
+  <text x="120" y="488" font-size="9" fill="#d4d4d4" font-family="monospace">df = pd.read_csv('data.csv')</text>
+  <text x="120" y="504" font-size="9" fill="#d4d4d4" font-family="monospace">print(df.describe())  <tspan fill="#6a9955"># Statistical summary</tspan></text>
+
+  <!-- Annotation for Code Block -->
+  <line x1="970" y1="490" x2="1050" y2="490" stroke="#2196f3" stroke-width="2"/>
+  <rect x="1050" y="475" width="130" height="30" fill="#e3f2fd" stroke="#2196f3" stroke-width="1" rx="3"/>
+  <text x="1060" y="495" font-size="10" fill="#1976d2" font-weight="bold">Code Example</text>
+
+  <!-- Typing Indicator -->
+  <rect x="70" y="540" width="600" height="50" fill="#fff3e0" stroke="#ff9800" stroke-width="1" rx="6"/>
+  <circle cx="85" cy="555" r="12" fill="#ff9800" opacity="0.7"/>
+  <text x="105" y="560" font-size="11" fill="#333" font-weight="bold">VORTEX 📊</text>
+  <text x="105" y="577" font-size="10" fill="#666">is thinking...</text>
+  <circle cx="700" cy="565" r="3" fill="#ff9800"/>
+  <circle cx="710" cy="565" r="3" fill="#ff9800" opacity="0.7"/>
+  <circle cx="720" cy="565" r="3" fill="#ff9800" opacity="0.4"/>
+
+  <!-- Annotation for Typing Indicator -->
+  <line x1="620" y1="565" x2="700" y2="565" stroke="#ff9800" stroke-width="2"/>
+  <rect x="700" y="550" width="130" height="30" fill="#fff3e0" stroke="#ff9800" stroke-width="1" rx="3"/>
+  <text x="710" y="570" font-size="10" fill="#d68910" font-weight="bold">Typing Indicator</text>
+
+  <!-- Input Area -->
+  <rect x="50" y="740" width="1300" height="110" fill="#f9f9f9" stroke="#bdc3c7" stroke-width="1" rx="4"/>
+
+  <!-- Input Field Label -->
+  <text x="65" y="760" font-size="11" fill="#666" font-weight="bold">📝 Message Input Area</text>
+
+  <!-- Input Box -->
+  <rect x="65" y="775" width="1050" height="50" fill="#fff" stroke="#bdc3c7" stroke-width="1" rx="4"/>
+  <text x="80" y="805" font-size="12" fill="#999">Type your message here... or paste code, ask questions, upload files</text>
+
+  <!-- Annotation for Input -->
+  <line x1="1115" y1="800" x2="1180" y2="800" stroke="#bdc3c7" stroke-width="2"/>
+  <rect x="1180" y="785" width="130" height="30" fill="#fff" stroke="#bdc3c7" stroke-width="1" rx="3"/>
+  <text x="1190" y="805" font-size="9" fill="#666" font-weight="bold">Type Here</text>
+
+  <!-- Action Buttons -->
+  <rect x="1120" y="775" width="45" height="50" fill="#fff" stroke="#bdc3c7" stroke-width="1" rx="4"/>
+  <text x="1142" y="810" font-size="20" text-anchor="middle" fill="#3498db">📎</text>
+
+  <!-- Annotation for File Upload Button -->
+  <line x1="1120" y1="800" x2="1070" y2="800" stroke="#bdc3c7" stroke-width="2"/>
+  <rect x="980" y="785" width="85" height="30" fill="#fff" stroke="#bdc3c7" stroke-width="1" rx="3"/>
+  <text x="1022" y="805" font-size="9" text-anchor="middle" fill="#666" font-weight="bold">File Upload</text>
+
+  <!-- Send Button -->
+  <rect x="1175" y="775" width="45" height="50" fill="#27ae60" stroke="#229954" stroke-width="2" rx="4"/>
+  <text x="1197" y="810" font-size="20" text-anchor="middle" fill="#fff">↑</text>
+
+  <!-- Annotation for Send Button -->
+  <line x1="1175" y1="800" x2="1230" y2="800" stroke="#27ae60" stroke-width="2"/>
+  <rect x="1230" y="785" width="85" height="30" fill="#e8f5e9" stroke="#27ae60" stroke-width="1" rx="3"/>
+  <text x="1272" y="805" font-size="9" text-anchor="middle" fill="#229954" font-weight="bold">Send (↓)</text>
+
+  <!-- Status Bar -->
+  <rect x="50" y="840" width="1300" height="30" fill="#e8f4f8" stroke="#3498db" stroke-width="1" rx="4"/>
+  <text x="65" y="860" font-size="10" fill="#2980b9">✓ Connection stable • 25ms latency • 2 agents available</text>
+  <text x="1250" y="860" font-size="9" fill="#666" text-anchor="end">45 messages in session • Est. tokens: 2,340</text>
+
+  <!-- Right Panel: Quick Reference -->
+  <rect x="1350" y="140" width="30" height="580" fill="#f0f0f0" stroke="#bdc3c7" stroke-width="1" rx="4"/>
+
+  <!-- Keyboard Shortcuts Legend -->
+  <text x="40" y="680" font-size="11" font-weight="bold" fill="#333">💡 Quick Tips:</text>
+  <text x="40" y="700" font-size="10" fill="#666">• Enter to send • Shift+Enter for new line</text>
+  <text x="40" y="718" font-size="10" fill="#666">• Ctrl+K to open command palette</text>
+  <text x="40" y="736" font-size="10" fill="#666">• @ to mention agents • #hash for topics</text>
+</svg>

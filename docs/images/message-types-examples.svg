@@ -1,0 +1,97 @@
+<svg width="1200" height="900" xmlns="http://www.w3.org/2000/svg">
+  <!-- Title -->
+  <text x="600" y="30" font-size="32" font-weight="bold" text-anchor="middle" fill="#333">Message Types and Examples</text>
+
+  <!-- User Message -->
+  <rect x="50" y="70" width="550" height="150" fill="#f0f8ff" stroke="#3498db" stroke-width="2" rx="8"/>
+  <text x="70" y="95" font-size="12" font-weight="bold" fill="#2980b9">User Message</text>
+  <line x1="70" y1="105" x2="570" y2="105" stroke="#3498db" stroke-width="1"/>
+
+  <rect x="70" y="125" width="510" height="80" fill="#fff" stroke="#bdc3c7" stroke-width="1" rx="4"/>
+  <text x="85" y="145" font-size="12" fill="#333">You (2:34 PM)</text>
+  <text x="85" y="168" font-size="11" fill="#555">Can you help debug this Python function?</text>
+  <text x="85" y="185" font-size="11" fill="#555">It returns None instead of a list.</text>
+
+  <!-- Agent Text Response -->
+  <rect x="610" y="70" width="550" height="150" fill="#e8f5e9" stroke="#27ae60" stroke-width="2" rx="8"/>
+  <text x="630" y="95" font-size="12" font-weight="bold" fill="#229954">Text Response</text>
+  <line x1="630" y1="105" x2="1150" y2="105" stroke="#27ae60" stroke-width="1"/>
+
+  <rect x="630" y="125" width="510" height="80" fill="#fff" stroke="#bdc3c7" stroke-width="1" rx="4"/>
+  <text x="645" y="145" font-size="12" fill="#333">ALEX (2:35 PM)</text>
+  <text x="645" y="168" font-size="11" fill="#555">The issue is likely in your return statement.</text>
+  <text x="645" y="185" font-size="11" fill="#555">You might be returning outside the loop.</text>
+
+  <!-- Code Block -->
+  <rect x="50" y="240" width="550" height="220" fill="#f5f5f5" stroke="#2c3e50" stroke-width="2" rx="8"/>
+  <text x="70" y="265" font-size="12" font-weight="bold" fill="#333">Code Response</text>
+  <line x1="70" y1="275" x2="570" y2="275" stroke="#2c3e50" stroke-width="1"/>
+
+  <rect x="70" y="295" width="510" height="150" fill="#282c34" stroke="#1a1d25" stroke-width="1" rx="3"/>
+  <text x="85" y="315" font-size="10" fill="#61dafb" font-family="monospace" font-weight="bold">def get_data():</text>
+  <text x="85" y="330" font-size="10" fill="#d4d4d4" font-family="monospace">    results = []</text>
+  <text x="85" y="345" font-size="10" fill="#d4d4d4" font-family="monospace">    for item in items:</text>
+  <text x="85" y="360" font-size="10" fill="#d4d4d4" font-family="monospace">        results.append(item)</text>
+  <text x="85" y="375" font-size="10" fill="#d4d4d4" font-family="monospace">    return results</text>
+  <text x="85" y="425" font-size="9" fill="#999" font-family="monospace">Output: [items list]</text>
+
+  <!-- Error Message -->
+  <rect x="610" y="240" width="550" height="220" fill="#f9f9f9" stroke="#2c3e50" stroke-width="2" rx="8"/>
+  <text x="630" y="265" font-size="12" font-weight="bold" fill="#333">Error Code (Highlighted)</text>
+  <line x1="630" y1="275" x2="1150" y2="275" stroke="#2c3e50" stroke-width="1"/>
+
+  <rect x="630" y="295" width="510" height="150" fill="#282c34" stroke="#e74c3c" stroke-width="2" rx="3"/>
+  <text x="645" y="315" font-size="10" fill="#d4d4d4" font-family="monospace">def get_data():</text>
+  <text x="645" y="330" font-size="10" fill="#d4d4d4" font-family="monospace">    for item in items:</text>
+  <rect x="635" y="340" width="485" height="18" fill="#ffebee" stroke="#e74c3c" stroke-width="1"/>
+  <text x="645" y="355" font-size="10" fill="#d4d4d4" font-family="monospace">        return [item]</text>
+  <text x="645" y="425" font-size="9" fill="#ff6b6b" font-family="monospace">Wrong! Returns after 1st</text>
+
+  <!-- Typing Indicator -->
+  <rect x="50" y="480" width="550" height="140" fill="#f9f9f9" stroke="#bdc3c7" stroke-width="2" rx="8"/>
+  <text x="70" y="505" font-size="12" font-weight="bold" fill="#333">Typing Indicator</text>
+  <line x1="70" y1="515" x2="570" y2="515" stroke="#bdc3c7" stroke-width="1"/>
+
+  <rect x="70" y="535" width="510" height="70" fill="#fff3e0" stroke="#ff9800" stroke-width="1" rx="3"/>
+  <text x="90" y="555" font-size="11" fill="#333" font-weight="bold">VORTEX is thinking...</text>
+  <text x="90" y="575" font-size="10" fill="#666">Processing data analysis request</text>
+  <circle cx="500" cy="565" r="3" fill="#ff9800"/>
+  <circle cx="510" cy="565" r="3" fill="#ff9800" opacity="0.7"/>
+  <circle cx="520" cy="565" r="3" fill="#ff9800" opacity="0.4"/>
+
+  <!-- Status Message -->
+  <rect x="610" y="480" width="550" height="140" fill="#f9f9f9" stroke="#bdc3c7" stroke-width="2" rx="8"/>
+  <text x="630" y="505" font-size="12" font-weight="bold" fill="#333">System Message</text>
+  <line x1="630" y1="515" x2="1150" y2="515" stroke="#bdc3c7" stroke-width="1"/>
+
+  <rect x="630" y="535" width="510" height="70" fill="#e3f2fd" stroke="#2196f3" stroke-width="1" rx="3"/>
+  <text x="650" y="555" font-size="11" fill="#1976d2" font-weight="bold">Session Archived</text>
+  <text x="650" y="575" font-size="10" fill="#555">Your chat has been saved for later.</text>
+
+  <!-- Legend -->
+  <rect x="50" y="640" width="1100" height="220" fill="#f9f9f9" stroke="#bdc3c7" stroke-width="1" rx="8"/>
+  <text x="70" y="665" font-size="13" font-weight="bold" fill="#333">Message Types Legend</text>
+  <line x1="70" y1="675" x2="1130" y2="675" stroke="#bdc3c7" stroke-width="1"/>
+
+  <!-- Legend Row 1 -->
+  <rect x="70" y="695" width="500" height="60" fill="#fff" stroke="#ecf0f1" stroke-width="1" rx="3"/>
+  <circle cx="85" cy="715" r="6" fill="#3498db"/>
+  <text x="100" y="720" font-size="11" fill="#333" font-weight="bold">User Message</text>
+  <text x="100" y="738" font-size="10" fill="#666">Your input to the agents</text>
+
+  <rect x="600" y="695" width="500" height="60" fill="#fff" stroke="#ecf0f1" stroke-width="1" rx="3"/>
+  <circle cx="615" cy="715" r="6" fill="#27ae60"/>
+  <text x="630" y="720" font-size="11" fill="#333" font-weight="bold">Agent Response</text>
+  <text x="630" y="738" font-size="10" fill="#666">Answer from selected agent</text>
+
+  <!-- Legend Row 2 -->
+  <rect x="70" y="765" width="500" height="60" fill="#fff" stroke="#ecf0f1" stroke-width="1" rx="3"/>
+  <circle cx="85" cy="785" r="6" fill="#e74c3c"/>
+  <text x="100" y="790" font-size="11" fill="#333" font-weight="bold">Error Message</text>
+  <text x="100" y="808" font-size="10" fill="#666">Something went wrong</text>
+
+  <rect x="600" y="765" width="500" height="60" fill="#fff" stroke="#ecf0f1" stroke-width="1" rx="3"/>
+  <circle cx="615" cy="785" r="6" fill="#ff9800"/>
+  <text x="630" y="790" font-size="11" fill="#333" font-weight="bold">Typing Indicator</text>
+  <text x="630" y="808" font-size="10" fill="#666">Agent is processing</text>
+</svg>

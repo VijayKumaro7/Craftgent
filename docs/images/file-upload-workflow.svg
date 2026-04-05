@@ -1,0 +1,109 @@
+<svg width="1200" height="750" xmlns="http://www.w3.org/2000/svg">
+  <!-- Title -->
+  <text x="600" y="30" font-size="32" font-weight="bold" text-anchor="middle" fill="#333">File Upload Workflow</text>
+
+  <!-- Step 1 -->
+  <g>
+    <rect x="50" y="80" width="260" height="280" fill="#fff" stroke="#3498db" stroke-width="2" rx="8"/>
+    <text x="180" y="110" font-size="13" font-weight="bold" text-anchor="middle" fill="#2980b9">Step 1: Select File</text>
+    <rect x="70" y="135" width="220" height="180" fill="#f0f8ff" stroke="#3498db" stroke-width="2" stroke-dasharray="5,5" rx="4"/>
+    <text x="180" y="215" font-size="32" text-anchor="middle" fill="#3498db">📁</text>
+    <text x="180" y="250" font-size="12" text-anchor="middle" fill="#333" font-weight="bold">Drag and Drop</text>
+    <text x="70" y="335" font-size="9" fill="#999">Max: 50MB per file</text>
+  </g>
+
+  <!-- Arrow -->
+  <path d="M 330 220 L 380 220" stroke="#27ae60" stroke-width="3" fill="none" marker-end="url(#arrowgreen)"/>
+  <defs>
+    <marker id="arrowgreen" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#27ae60"/>
+    </marker>
+  </defs>
+
+  <!-- Step 2 -->
+  <g>
+    <rect x="400" y="80" width="260" height="280" fill="#fff" stroke="#f39c12" stroke-width="2" rx="8"/>
+    <text x="530" y="110" font-size="13" font-weight="bold" text-anchor="middle" fill="#d68910">Step 2: Processing</text>
+    <rect x="420" y="140" width="220" height="70" fill="#fff9e6" stroke="#f39c12" stroke-width="1" rx="4"/>
+    <text x="530" y="165" font-size="12" text-anchor="middle" fill="#333" font-weight="bold">data.csv</text>
+    <text x="530" y="183" font-size="10" text-anchor="middle" fill="#666">Uploading...</text>
+
+    <!-- Progress Bar -->
+    <rect x="420" y="225" width="220" height="15" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1" rx="3"/>
+    <rect x="420" y="225" width="165" height="15" fill="#f39c12" stroke="#d68910" stroke-width="1" rx="3"/>
+    <text x="650" y="237" font-size="10" fill="#333" font-weight="bold">75%</text>
+
+    <text x="420" y="265" font-size="10" fill="#666">- Validating format</text>
+    <text x="420" y="283" font-size="10" fill="#666">- Analyzing content</text>
+  </g>
+
+  <!-- Arrow -->
+  <path d="M 680 220 L 730 220" stroke="#27ae60" stroke-width="3" fill="none" marker-end="url(#arrowgreen)"/>
+
+  <!-- Step 3 -->
+  <g>
+    <rect x="750" y="80" width="260" height="280" fill="#fff" stroke="#27ae60" stroke-width="2" rx="8"/>
+    <text x="880" y="110" font-size="13" font-weight="bold" text-anchor="middle" fill="#229954">Step 3: Ready</text>
+    <rect x="770" y="140" width="220" height="70" fill="#e8f5e9" stroke="#27ae60" stroke-width="1" rx="4"/>
+    <text x="880" y="165" font-size="12" text-anchor="middle" fill="#333" font-weight="bold">✓ data.csv</text>
+    <text x="880" y="183" font-size="10" text-anchor="middle" fill="#666">Processed</text>
+
+    <rect x="770" y="225" width="220" height="50" fill="#fff" stroke="#27ae60" stroke-width="1" rx="4"/>
+    <text x="780" y="245" font-size="11" fill="#333" font-weight="bold">File Details:</text>
+    <text x="780" y="263" font-size="10" fill="#666">Rows: 1,250 - Columns: 8</text>
+
+    <text x="770" y="300" font-size="10" fill="#666">✓ Ready for analysis</text>
+  </g>
+
+  <!-- Info Section -->
+  <rect x="50" y="390" width="1100" height="330" fill="#f9f9f9" stroke="#bdc3c7" stroke-width="1" rx="8"/>
+  <text x="60" y="415" font-size="13" font-weight="bold" fill="#333">File Upload Processing Details</text>
+
+  <!-- Column 1 -->
+  <rect x="60" y="440" width="260" height="260" fill="#fff" stroke="#ecf0f1" stroke-width="1" rx="4"/>
+  <text x="70" y="465" font-size="12" font-weight="bold" fill="#333">Supported Types</text>
+  <line x1="70" y1="475" x2="310" y2="475" stroke="#bdc3c7" stroke-width="1"/>
+  <text x="70" y="500" font-size="11" fill="#333">Documents:</text>
+  <text x="80" y="518" font-size="10" fill="#666">- PDF, DOC, DOCX, TXT</text>
+  <text x="70" y="545" font-size="11" fill="#333">Data:</text>
+  <text x="80" y="563" font-size="10" fill="#666">- CSV, XLSX, XLS, JSON</text>
+  <text x="70" y="590" font-size="11" fill="#333">Code:</text>
+  <text x="80" y="608" font-size="10" fill="#666">- PY, JS, TS, JAVA</text>
+
+  <!-- Column 2 -->
+  <rect x="350" y="440" width="260" height="260" fill="#fff" stroke="#ecf0f1" stroke-width="1" rx="4"/>
+  <text x="360" y="465" font-size="12" font-weight="bold" fill="#333">Processing Steps</text>
+  <line x1="360" y1="475" x2="600" y2="475" stroke="#bdc3c7" stroke-width="1"/>
+  <text x="360" y="500" font-size="10" fill="#333">1. Validation</text>
+  <text x="370" y="518" font-size="9" fill="#666">Check file type and size</text>
+  <text x="360" y="540" font-size="10" fill="#333">2. Extraction</text>
+  <text x="370" y="558" font-size="9" fill="#666">Parse and index content</text>
+  <text x="360" y="580" font-size="10" fill="#333">3. Embedding</text>
+  <text x="370" y="598" font-size="9" fill="#666">Prepare for AI processing</text>
+  <text x="360" y="618" font-size="10" fill="#333">4. Ready</text>
+  <text x="370" y="636" font-size="9" fill="#666">Available in chat</text>
+
+  <!-- Column 3 -->
+  <rect x="640" y="440" width="260" height="260" fill="#fff" stroke="#ecf0f1" stroke-width="1" rx="4"/>
+  <text x="650" y="465" font-size="12" font-weight="bold" fill="#333">AI Capabilities</text>
+  <line x1="650" y1="475" x2="890" y2="475" stroke="#bdc3c7" stroke-width="1"/>
+  <text x="650" y="500" font-size="10" fill="#333">Document:</text>
+  <text x="660" y="518" font-size="9" fill="#666">- Summarize content</text>
+  <text x="660" y="533" font-size="9" fill="#666">- Extract key points</text>
+  <text x="650" y="555" font-size="10" fill="#333">Data:</text>
+  <text x="660" y="573" font-size="9" fill="#666">- Statistical analysis</text>
+  <text x="660" y="588" font-size="9" fill="#666">- Trend detection</text>
+  <text x="650" y="610" font-size="10" fill="#333">Code:</text>
+  <text x="660" y="628" font-size="9" fill="#666">- Debug and optimize</text>
+
+  <!-- Column 4 -->
+  <rect x="930" y="440" width="200" height="260" fill="#fff" stroke="#ecf0f1" stroke-width="1" rx="4"/>
+  <text x="940" y="465" font-size="12" font-weight="bold" fill="#333">Best Practices</text>
+  <line x1="940" y1="475" x2="1120" y2="475" stroke="#bdc3c7" stroke-width="1"/>
+  <text x="940" y="500" font-size="9" fill="#27ae60">DO:</text>
+  <text x="950" y="518" font-size="8" fill="#666">- Use PDF for docs</text>
+  <text x="950" y="533" font-size="8" fill="#666">- Use CSV for data</text>
+  <text x="940" y="555" font-size="9" fill="#e74c3c">DON'T:</text>
+  <text x="950" y="573" font-size="8" fill="#666">- Files over 50MB</text>
+  <text x="950" y="588" font-size="8" fill="#666">- Encrypted files</text>
+</svg>

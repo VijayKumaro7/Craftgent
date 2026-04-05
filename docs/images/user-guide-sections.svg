@@ -1,0 +1,69 @@
+<svg width="1200" height="800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Title -->
+  <text x="600" y="30" font-size="32" font-weight="bold" text-anchor="middle" fill="#333">Website Overview - Main Sections</text>
+
+  <!-- Background container -->
+  <rect x="20" y="60" width="1160" height="720" fill="#f5f5f5" stroke="#ccc" stroke-width="2" rx="8"/>
+
+  <!-- Top Bar Section -->
+  <rect x="40" y="80" width="1120" height="80" fill="#2c3e50" stroke="#1a252f" stroke-width="2" rx="4"/>
+  <text x="60" y="110" font-size="16" font-weight="bold" fill="#fff">Top Bar - Navigation</text>
+  <text x="60" y="135" font-size="13" fill="#ddd">Logo  Status  User Info  Settings  Logout</text>
+
+  <!-- Main Layout Container -->
+  <rect x="40" y="180" width="300" height="560" fill="#e8f4f8" stroke="#3498db" stroke-width="2" rx="4"/>
+  <text x="190" y="205" font-size="14" font-weight="bold" text-anchor="middle" fill="#2980b9">Left Sidebar - Agents</text>
+  <rect x="50" y="220" width="280" height="40" fill="#fff" stroke="#3498db" stroke-width="1" rx="3"/>
+  <text x="60" y="247" font-size="12" fill="#333">NEXUS Level 5</text>
+  <circle cx="290" cy="240" r="8" fill="#27ae60"/>
+
+  <rect x="50" y="270" width="280" height="40" fill="#e3f2fd" stroke="#3498db" stroke-width="2" rx="3"/>
+  <text x="60" y="297" font-size="12" fill="#333" font-weight="bold">ALEX Level 3 (Selected)</text>
+
+  <rect x="50" y="320" width="280" height="40" fill="#fff" stroke="#3498db" stroke-width="1" rx="3"/>
+  <text x="60" y="347" font-size="12" fill="#333">VORTEX Level 4</text>
+
+  <rect x="50" y="370" width="280" height="40" fill="#fff" stroke="#3498db" stroke-width="1" rx="3"/>
+  <text x="60" y="397" font-size="12" fill="#333">RESEARCHER Level 2</text>
+
+  <text x="190" y="430" font-size="11" fill="#666" text-anchor="middle">Agent Stats, Sessions</text>
+
+  <!-- Main Chat Area -->
+  <rect x="360" y="180" width="620" height="560" fill="#fff" stroke="#2c3e50" stroke-width="2" rx="4"/>
+  <text x="670" y="205" font-size="14" font-weight="bold" text-anchor="middle" fill="#2c3e50">Main Chat Area</text>
+
+  <!-- Chat Messages -->
+  <rect x="380" y="225" width="220" height="50" fill="#e8f4f8" stroke="#3498db" stroke-width="1" rx="4"/>
+  <text x="390" y="245" font-size="11" fill="#333">You</text>
+  <text x="390" y="263" font-size="11" fill="#555">How do I get started?</text>
+
+  <rect x="620" y="290" width="340" height="50" fill="#f0f0f0" stroke="#95a5a6" stroke-width="1" rx="4"/>
+  <text x="630" y="310" font-size="11" fill="#333">ALEX</text>
+  <text x="630" y="328" font-size="11" fill="#555">Here is a code example...</text>
+
+  <!-- Input Area -->
+  <rect x="380" y="680" width="500" height="40" fill="#f9f9f9" stroke="#bdc3c7" stroke-width="1" rx="3"/>
+  <text x="390" y="705" font-size="11" fill="#999">Type your message here...</text>
+  <circle cx="920" cy="700" r="15" fill="#27ae60"/>
+  <text x="920" y="705" font-size="14" fill="#fff" text-anchor="middle" font-weight="bold">send</text>
+
+  <!-- Right Sidebar - Controls -->
+  <rect x="1000" y="180" width="160" height="560" fill="#fef5e7" stroke="#f39c12" stroke-width="2" rx="4"/>
+  <text x="1080" y="205" font-size="13" font-weight="bold" text-anchor="middle" fill="#d68910">Controls</text>
+
+  <rect x="1010" y="225" width="140" height="35" fill="#fff" stroke="#f39c12" stroke-width="1" rx="3"/>
+  <text x="1080" y="250" font-size="11" text-anchor="middle" fill="#333">File Upload</text>
+
+  <rect x="1010" y="270" width="140" height="35" fill="#fff" stroke="#f39c12" stroke-width="1" rx="3"/>
+  <text x="1080" y="295" font-size="11" text-anchor="middle" fill="#333">Templates</text>
+
+  <rect x="1010" y="315" width="140" height="35" fill="#fff" stroke="#f39c12" stroke-width="1" rx="3"/>
+  <text x="1080" y="340" font-size="11" text-anchor="middle" fill="#333">Settings</text>
+
+  <rect x="1010" y="360" width="140" height="35" fill="#fff" stroke="#f39c12" stroke-width="1" rx="3"/>
+  <text x="1080" y="385" font-size="11" text-anchor="middle" fill="#333">Theme</text>
+
+  <!-- Legend at bottom -->
+  <text x="50" y="770" font-size="12" font-weight="bold" fill="#333">Key Features:</text>
+  <text x="200" y="770" font-size="11" fill="#555">Select agents  Chat  File upload  Customization</text>
+</svg>

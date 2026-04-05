@@ -6,6 +6,34 @@ This document provides comprehensive visual documentation of the CraftAgent fron
 
 ---
 
+## 📸 Quick Visual Reference Guide
+
+**New Users?** Start with these visual guides for quick reference:
+
+### Getting Started
+1. **[Website Overview](./images/user-guide-sections.png)** - See all main sections at a glance
+2. **[Login & Registration](./images/login-flow.png)** - Step-by-step authentication flow
+3. **[Your First Chat](./images/chat-interface-annotated.png)** - Navigate the main chat area
+
+### Core Features
+- **[Agent Selection](./images/agent-selection-guide.png)** - Meet your AI team and how to choose them
+- **[Message Types](./images/message-types-examples.png)** - Text, code, data, errors, and typing indicators
+- **[Template Library](./images/templates-library.png)** - Use pre-made prompts to get better answers
+
+### Advanced Features
+- **[File Upload](./images/file-upload-workflow.png)** - Upload and analyze documents/data
+- **[Session Management](./images/session-management.png)** - Organize your conversations
+- **[Customization](./images/customization-panel.png)** - Personalize response format and tone
+- **[Hotbar Controls](./images/hotbar-controls.png)** - Quick actions and keyboard shortcuts
+- **[Status Indicators](./images/status-indicators.png)** - Understand UI feedback and colors
+
+### Full Documentation
+- **[Getting Started Guide](./GETTING_STARTED.md)** - Quick 3-step setup (5 minutes)
+- **[User Guide](./USER_GUIDE.md)** - Comprehensive feature documentation
+- **[Features Overview](./FEATURES_OVERVIEW.md)** - Detailed description of all capabilities
+
+---
+
 ## Desktop View (1440×900) — Full Application
 
 ![UI Layout](./ui-layout.svg)
