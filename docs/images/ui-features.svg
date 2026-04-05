@@ -100,7 +100,7 @@
 
     <text x="965" y="425" font-family="monospace" font-size="8" fill="#ffffff">Each agent displays:</text>
     <text x="965" y="440" font-family="monospace" font-size="8" fill="#aaaaaa">  • Real-time HP/MP bars</text>
-    <text x="965" y="455" font-family="monospace" font-size="8" fill="#aaaaaa">  • Level & XP percentage</text>
+    <text x="965" y="455" font-family="monospace" font-size="8" fill="#aaaaaa">  • Level &amp; XP percentage</text>
     <text x="965" y="470" font-family="monospace" font-size="8" fill="#aaaaaa">  • Pixel art avatar</text>
 
     <text x="965" y="490" font-family="monospace" font-size="8" fill="#ffffff">✓ Click to select agent</text>
@@ -119,7 +119,7 @@
 
     <text x="65" y="685" font-family="monospace" font-size="8" fill="#ffffff">✓ Search past sessions</text>
     <text x="65" y="700" font-family="monospace" font-size="8" fill="#ffffff">✓ Load into new tab</text>
-    <text x="65" y="715" font-family="monospace" font-size="8" fill="#ffffff">✓ Shows agent & message count</text>
+    <text x="65" y="715" font-family="monospace" font-size="8" fill="#ffffff">✓ Shows agent &amp; message count</text>
     <text x="65" y="730" font-family="monospace" font-size="8" fill="#ffffff">✓ Dated organization</text>
   </g>
 

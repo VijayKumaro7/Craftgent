@@ -196,7 +196,7 @@ Craftgent features a multi-agent system with specialized agents, each with disti
 
 ### Agent Team Overview
 
-![Agents Showcase](./docs/images/agents-showcase.svg)
+![Agents Showcase](./docs/images/agents-showcase.png)
 
 ### Agent Overview
 
@@ -368,7 +368,7 @@ The Craftgent frontend is a **Minecraft-themed command center** built with React
 
 ### Full UI Layout
 
-![UI Layout](./docs/images/ui-layout.svg)
+![UI Layout](./docs/images/ui-layout.png)
 
 ### UI Components & Layout
 
@@ -408,7 +408,7 @@ Legend:
 
 ### Frontend Features Overview
 
-![Frontend Features](./docs/images/ui-features.svg)
+![Frontend Features](./docs/images/ui-features.png)
 
 ---
 
