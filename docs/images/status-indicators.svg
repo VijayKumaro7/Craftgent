@@ -1,113 +1,84 @@
 <svg width="1200" height="750" xmlns="http://www.w3.org/2000/svg">
   <!-- Title -->
-  <text x="600" y="30" font-size="32" font-weight="bold" text-anchor="middle" fill="#333">Status Indicators - Understanding UI Feedback</text>
+  <text x="600" y="30" font-size="32" font-weight="bold" text-anchor="middle" fill="#333">Status Indicators Guide</text>
 
   <!-- Connection Status Section -->
   <rect x="30" y="60" width="560" height="220" fill="#f9f9f9" stroke="#bdc3c7" stroke-width="2" rx="8"/>
-  <text x="50" y="85" font-size="12" font-weight="bold" fill="#333">🌐 Connection Status</text>
+  <text x="50" y="85" font-size="12" font-weight="bold" fill="#333">Connection Status</text>
   <line x1="50" y1="95" x2="570" y2="95" stroke="#bdc3c7" stroke-width="1"/>
 
   <!-- Connected -->
   <rect x="50" y="115" width="250" height="80" fill="#e8f5e9" stroke="#27ae60" stroke-width="1" rx="4"/>
   <circle cx="70" cy="145" r="8" fill="#27ae60"/>
-  <text x="90" y="150" font-size="11" fill="#333" font-weight="bold">Connected ✓</text>
-  <text x="90" y="167" font-size="10" fill="#666">Stable connection to server</text>
+  <text x="90" y="150" font-size="11" fill="#333" font-weight="bold">Connected</text>
+  <text x="90" y="167" font-size="10" fill="#666">Stable connection</text>
   <text x="90" y="182" font-size="9" fill="#999">Latency: 25ms</text>
 
   <!-- Connecting -->
   <rect x="310" y="115" width="250" height="80" fill="#fff3e0" stroke="#ff9800" stroke-width="1" rx="4"/>
   <circle cx="330" cy="145" r="8" fill="#ff9800"/>
   <text x="350" y="150" font-size="11" fill="#333" font-weight="bold">Connecting...</text>
-  <text x="350" y="167" font-size="10" fill="#666">Establishing connection</text>
-  <text x="350" y="182" font-size="9" fill="#999">Please wait...</text>
-
-  <!-- Disconnected -->
-  <rect x="50" y="210" width="250" height="80" fill="#ffebee" stroke="#e74c3c" stroke-width="1" rx="4"/>
-  <circle cx="70" cy="240" r="8" fill="#e74c3c"/>
-  <text x="90" y="245" font-size="11" fill="#333" font-weight="bold">Disconnected ✗</text>
-  <text x="90" y="262" font-size="10" fill="#666">Connection lost - Reconnecting...</text>
-  <text x="90" y="277" font-size="9" fill="#999">Retrying in 5 seconds</text>
-
-  <!-- Limited Connection -->
-  <rect x="310" y="210" width="250" height="80" fill="#f3e5f5" stroke="#9c27b0" stroke-width="1" rx="4"/>
-  <circle cx="330" cy="240" r="8" fill="#9c27b0"/>
-  <text x="350" y="245" font-size="11" fill="#333" font-weight="bold">Weak Connection</text>
-  <text x="350" y="262" font-size="10" fill="#666">Slower response times</text>
-  <text x="350" y="277" font-size="9" fill="#999">Latency: 150ms+</text>
+  <text x="350" y="167" font-size="10" fill="#666">Please wait</text>
+  <text x="350" y="182" font-size="9" fill="#999">Establishing</text>
 
   <!-- Agent Status Section -->
   <rect x="610" y="60" width="560" height="220" fill="#f9f9f9" stroke="#bdc3c7" stroke-width="2" rx="8"/>
-  <text x="630" y="85" font-size="12" font-weight="bold" fill="#333">🤖 Agent Status & Activity</text>
+  <text x="630" y="85" font-size="12" font-weight="bold" fill="#333">Agent Status</text>
   <line x1="630" y1="95" x2="1150" y2="95" stroke="#bdc3c7" stroke-width="1"/>
 
-  <!-- Agent Ready -->
+  <!-- Ready -->
   <rect x="630" y="115" width="250" height="80" fill="#e3f2fd" stroke="#2196f3" stroke-width="1" rx="4"/>
   <circle cx="650" cy="145" r="8" fill="#2196f3"/>
   <text x="670" y="150" font-size="11" fill="#333" font-weight="bold">Ready</text>
-  <text x="670" y="167" font-size="10" fill="#666">Waiting for your input</text>
-  <text x="670" y="182" font-size="9" fill="#999">Agent is available</text>
+  <text x="670" y="167" font-size="10" fill="#666">Waiting for input</text>
+  <text x="670" y="182" font-size="9" fill="#999">Available</text>
 
-  <!-- Agent Thinking -->
+  <!-- Thinking -->
   <rect x="890" y="115" width="250" height="80" fill="#fff9c4" stroke="#fbc02d" stroke-width="1" rx="4"/>
   <circle cx="910" cy="145" r="8" fill="#fbc02d" opacity="0.6"/>
-  <circle cx="910" cy="145" r="8" fill="none" stroke="#fbc02d" stroke-width="2"/>
-  <text x="930" y="150" font-size="11" fill="#333" font-weight="bold">Thinking... ⏳</text>
-  <text x="930" y="167" font-size="10" fill="#666">Processing your request</text>
-  <text x="930" y="182" font-size="9" fill="#999">Elapsed: 3 seconds</text>
+  <text x="930" y="150" font-size="11" fill="#333" font-weight="bold">Thinking...</text>
+  <text x="930" y="167" font-size="10" fill="#666">Processing</text>
+  <text x="930" y="182" font-size="9" fill="#999">3 seconds</text>
 
-  <!-- Agent Error -->
-  <rect x="630" y="210" width="250" height="80" fill="#ffebee" stroke="#e74c3c" stroke-width="1" rx="4"/>
-  <circle cx="650" cy="240" r="8" fill="#e74c3c"/>
-  <text x="670" y="245" font-size="11" fill="#333" font-weight="bold">Error ✗</text>
-  <text x="670" y="262" font-size="10" fill="#666">Failed to generate response</text>
-  <text x="670" y="277" font-size="9" fill="#999">Try again or change input</text>
-
-  <!-- Agent Busy -->
-  <rect x="890" y="210" width="250" height="80" fill="#f3e5f5" stroke="#9c27b0" stroke-width="1" rx="4"/>
-  <circle cx="910" cy="240" r="8" fill="#9c27b0"/>
-  <text x="930" y="245" font-size="11" fill="#333" font-weight="bold">Processing</text>
-  <text x="930" y="262" font-size="10" fill="#666">Handling multiple requests</text>
-  <text x="930" y="277" font-size="9" fill="#999">Queue position: 2</text>
-
-  <!-- Notification Types Section -->
-  <rect x="30" y="300" width="1140" height="430" fill="#f9f9f9" stroke="#bdc3c7" stroke-width="2" rx="8"/>
-  <text x="50" y="325" font-size="12" font-weight="bold" fill="#333">📢 Notification Types & Toast Messages</text>
+  <!-- Error Message Section -->
+  <rect x="30" y="300" width="1140" height="420" fill="#f9f9f9" stroke="#bdc3c7" stroke-width="2" rx="8"/>
+  <text x="50" y="325" font-size="12" font-weight="bold" fill="#333">Notification Types</text>
   <line x1="50" y1="335" x2="1150" y2="335" stroke="#bdc3c7" stroke-width="1"/>
 
-  <!-- Row 1: Success Notifications -->
+  <!-- Row 1: Success -->
   <rect x="50" y="360" width="530" height="100" fill="#fff" stroke="#ecf0f1" stroke-width="1" rx="4"/>
   <circle cx="70" cy="385" r="8" fill="#27ae60"/>
-  <text x="90" y="390" font-size="11" fill="#333" font-weight="bold">✓ Success Notification</text>
+  <text x="90" y="390" font-size="11" fill="#333" font-weight="bold">Success Notification</text>
   <text x="90" y="408" font-size="10" fill="#666">File uploaded successfully</text>
-  <text x="90" y="425" font-size="10" fill="#666">Auto-closes after 5 seconds</text>
-  <text x="90" y="442" font-size="9" fill="#999">Example: "File saved!", "Message sent!", "Settings updated!"</text>
+  <text x="90" y="425" font-size="9" fill="#999">Auto-closes after 5 seconds</text>
+  <text x="90" y="442" font-size="8" fill="#999">Example: "File saved!"</text>
 
-  <!-- Row 1: Error Notifications -->
+  <!-- Row 1: Error -->
   <rect x="600" y="360" width="530" height="100" fill="#fff" stroke="#ecf0f1" stroke-width="1" rx="4"/>
   <circle cx="620" cy="385" r="8" fill="#e74c3c"/>
-  <text x="640" y="390" font-size="11" fill="#333" font-weight="bold">✗ Error Notification</text>
-  <text x="640" y="408" font-size="10" fill="#666">Operation failed - requires action</text>
-  <text x="640" y="425" font-size="10" fill="#666">Stays visible until dismissed</text>
-  <text x="640" y="442" font-size="9" fill="#999">Example: "Connection lost", "Upload failed", "Invalid input"</text>
+  <text x="640" y="390" font-size="11" fill="#333" font-weight="bold">Error Notification</text>
+  <text x="640" y="408" font-size="10" fill="#666">Operation failed</text>
+  <text x="640" y="425" font-size="9" fill="#999">Stays visible until dismissed</text>
+  <text x="640" y="442" font-size="8" fill="#999">Example: "Connection lost"</text>
 
-  <!-- Row 2: Warning Notifications -->
+  <!-- Row 2: Warning -->
   <rect x="50" y="480" width="530" height="100" fill="#fff" stroke="#ecf0f1" stroke-width="1" rx="4"/>
   <circle cx="70" cy="505" r="8" fill="#ff9800"/>
-  <text x="90" y="510" font-size="11" fill="#333" font-weight="bold">⚠️ Warning Notification</text>
-  <text x="90" y="528" font-size="10" fill="#666">Action requires confirmation</text>
-  <text x="90" y="545" font-size="10" fill="#666">User should take note</text>
-  <text x="90" y="562" font-size="9" fill="#999">Example: "Session expiring soon", "Large file upload", "Unsaved changes"</text>
+  <text x="90" y="510" font-size="11" fill="#333" font-weight="bold">Warning Notification</text>
+  <text x="90" y="528" font-size="10" fill="#666">Action requires attention</text>
+  <text x="90" y="545" font-size="9" fill="#999">User should note</text>
+  <text x="90" y="562" font-size="8" fill="#999">Example: "Session expiring"</text>
 
-  <!-- Row 2: Info Notifications -->
+  <!-- Row 2: Info -->
   <rect x="600" y="480" width="530" height="100" fill="#fff" stroke="#ecf0f1" stroke-width="1" rx="4"/>
   <circle cx="620" cy="505" r="8" fill="#3498db"/>
-  <text x="640" y="510" font-size="11" fill="#333" font-weight="bold">ℹ️ Info Notification</text>
-  <text x="640" y="528" font-size="10" fill="#666">General information message</text>
-  <text x="640" y="545" font-size="10" fill="#666">Auto-closes after 3 seconds</text>
-  <text x="640" y="562" font-size="9" fill="#999">Example: "New feature available", "Agent switched", "Session created"</text>
+  <text x="640" y="510" font-size="11" fill="#333" font-weight="bold">Info Notification</text>
+  <text x="640" y="528" font-size="10" fill="#666">General information</text>
+  <text x="640" y="545" font-size="9" fill="#999">Auto-closes after 3 sec</text>
+  <text x="640" y="562" font-size="8" fill="#999">Example: "Agent switched"</text>
 
-  <!-- Visual Indicators Guide -->
-  <text x="50" y="620" font-size="12" font-weight="bold" fill="#333">Visual Color Legend:</text>
+  <!-- Color Legend -->
+  <text x="50" y="620" font-size="12" font-weight="bold" fill="#333">Color Legend:</text>
   <circle cx="70" cy="650" r="6" fill="#27ae60"/>
   <text x="85" y="655" font-size="10" fill="#333">Green = Success/Ready</text>
 
@@ -115,16 +86,11 @@
   <text x="85" y="680" font-size="10" fill="#333">Red = Error/Critical</text>
 
   <circle cx="350" cy="650" r="6" fill="#ff9800"/>
-  <text x="365" y="655" font-size="10" fill="#333">Orange = Warning/Caution</text>
+  <text x="365" y="655" font-size="10" fill="#333">Orange = Warning</text>
 
   <circle cx="350" cy="675" r="6" fill="#3498db"/>
   <text x="365" y="680" font-size="10" fill="#333">Blue = Info/Processing</text>
 
-  <circle cx="630" cy="650" r="6" fill="#fbc02d"/>
-  <text x="645" y="655" font-size="10" fill="#333">Yellow = Thinking/Loading</text>
-
-  <circle cx="630" cy="675" r="6" fill="#9c27b0"/>
-  <text x="645" y="680" font-size="10" fill="#333">Purple = Busy/Queued</text>
-
-  <text x="900" y="650" font-size="10" fill="#999">⏳ = Loading animation | ✓ = Success | ✗ = Error | ⚠️ = Warning | ℹ️ = Information</text>
+  <text x="650" y="655" font-size="10" fill="#666">Animated dots = Loading</text>
+  <text x="650" y="675" font-size="10" fill="#666">Check mark = Complete</text>
 </svg>

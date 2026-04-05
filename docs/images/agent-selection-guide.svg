@@ -1,138 +1,93 @@
 <svg width="1200" height="900" xmlns="http://www.w3.org/2000/svg">
   <!-- Title -->
-  <text x="600" y="30" font-size="32" font-weight="bold" text-anchor="middle" fill="#333">Agent Selection Guide - Meet Your Team</text>
+  <text x="600" y="30" font-size="32" font-weight="bold" text-anchor="middle" fill="#333">Agent Selection Guide</text>
 
   <!-- Left Panel: Agent Sidebar -->
   <rect x="30" y="60" width="280" height="800" fill="#e8f4f8" stroke="#3498db" stroke-width="2" rx="8"/>
-  <text x="170" y="90" font-size="14" font-weight="bold" text-anchor="middle" fill="#2980b9">Your Agents (Party Members)</text>
+  <text x="170" y="90" font-size="14" font-weight="bold" text-anchor="middle" fill="#2980b9">Your Agents</text>
   <line x1="50" y1="105" x2="290" y2="105" stroke="#3498db" stroke-width="1"/>
 
   <!-- Agent 1: NEXUS -->
   <rect x="50" y="130" width="240" height="70" fill="#fff" stroke="#9b59b6" stroke-width="2" rx="4"/>
   <circle cx="70" cy="165" r="15" fill="#9b59b6"/>
-  <text x="90" y="160" font-size="12" fill="#333" font-weight="bold">NEXUS 🧠</text>
-  <text x="90" y="178" font-size="11" fill="#666">Level 5 • XP: 4500/5000</text>
-  <rect x="200" y="145" width="75" height="12" fill="#27ae60" stroke="#229954" stroke-width="1" rx="2"/>
-  <text x="237" y="153" font-size="9" text-anchor="middle" fill="#fff" font-weight="bold">HP: 100/100</text>
-  <rect x="200" y="163" width="75" height="12" fill="#3498db" stroke="#2980b9" stroke-width="1" rx="2"/>
-  <text x="237" y="171" font-size="9" text-anchor="middle" fill="#fff" font-weight="bold">MP: 85/100</text>
+  <text x="90" y="160" font-size="12" fill="#333" font-weight="bold">NEXUS</text>
+  <text x="90" y="178" font-size="11" fill="#666">Level 5</text>
 
   <!-- Agent 2: ALEX (Selected) -->
   <rect x="50" y="220" width="240" height="70" fill="#fff9e6" stroke="#f39c12" stroke-width="3" rx="4"/>
   <circle cx="70" cy="255" r="15" fill="#f39c12"/>
-  <text x="90" y="250" font-size="12" fill="#333" font-weight="bold">ALEX 🔧</text>
-  <text x="90" y="268" font-size="11" fill="#666">Level 3 • XP: 2100/3000</text>
-  <rect x="200" y="235" width="75" height="12" fill="#27ae60" stroke="#229954" stroke-width="1" rx="2"/>
-  <text x="237" y="243" font-size="9" text-anchor="middle" fill="#fff" font-weight="bold">HP: 75/100</text>
-  <rect x="200" y="253" width="75" height="12" fill="#3498db" stroke="#2980b9" stroke-width="1" rx="2"/>
-  <text x="237" y="261" font-size="9" text-anchor="middle" fill="#fff" font-weight="bold">MP: 60/100</text>
-  <circle cx="270" cy="255" r="8" fill="#f39c12"/>
-  <text x="270" y="260" font-size="14" fill="#fff" text-anchor="middle" font-weight="bold">✓</text>
+  <text x="90" y="250" font-size="12" fill="#333" font-weight="bold">ALEX</text>
+  <text x="90" y="268" font-size="11" fill="#666">Level 3</text>
 
   <!-- Agent 3: VORTEX -->
   <rect x="50" y="310" width="240" height="70" fill="#fff" stroke="#e74c3c" stroke-width="2" rx="4"/>
   <circle cx="70" cy="345" r="15" fill="#e74c3c"/>
-  <text x="90" y="340" font-size="12" fill="#333" font-weight="bold">VORTEX 📊</text>
-  <text x="90" y="358" font-size="11" fill="#666">Level 4 • XP: 3800/4500</text>
-  <rect x="200" y="325" width="75" height="12" fill="#27ae60" stroke="#229954" stroke-width="1" rx="2"/>
-  <text x="237" y="333" font-size="9" text-anchor="middle" fill="#fff" font-weight="bold">HP: 90/100</text>
-  <rect x="200" y="343" width="75" height="12" fill="#3498db" stroke="#2980b9" stroke-width="1" rx="2"/>
-  <text x="237" y="351" font-size="9" text-anchor="middle" fill="#fff" font-weight="bold">MP: 95/100</text>
+  <text x="90" y="340" font-size="12" fill="#333" font-weight="bold">VORTEX</text>
+  <text x="90" y="358" font-size="11" fill="#666">Level 4</text>
 
   <!-- Agent 4: RESEARCHER -->
   <rect x="50" y="400" width="240" height="70" fill="#fff" stroke="#16a085" stroke-width="2" rx="4"/>
   <circle cx="70" cy="435" r="15" fill="#16a085"/>
-  <text x="90" y="430" font-size="12" fill="#333" font-weight="bold">RESEARCHER 🔍</text>
-  <text x="90" y="448" font-size="11" fill="#666">Level 2 • XP: 1200/2500</text>
-  <rect x="200" y="415" width="75" height="12" fill="#e67e22" stroke="#d35400" stroke-width="1" rx="2"/>
-  <text x="237" y="423" font-size="9" text-anchor="middle" fill="#fff" font-weight="bold">HP: 50/100</text>
-  <rect x="200" y="433" width="75" height="12" fill="#3498db" stroke="#2980b9" stroke-width="1" rx="2"/>
-  <text x="237" y="441" font-size="9" text-anchor="middle" fill="#fff" font-weight="bold">MP: 70/100</text>
+  <text x="90" y="430" font-size="12" fill="#333" font-weight="bold">RESEARCHER</text>
+  <text x="90" y="448" font-size="11" fill="#666">Level 2</text>
 
   <!-- Right Panel: Agent Details -->
   <rect x="340" y="60" width="820" height="800" fill="#fff" stroke="#2c3e50" stroke-width="2" rx="8"/>
-  <text x="750" y="90" font-size="14" font-weight="bold" text-anchor="middle" fill="#2c3e50">Selected Agent Details - ALEX 🔧</text>
+  <text x="750" y="90" font-size="14" font-weight="bold" text-anchor="middle" fill="#2c3e50">Selected Agent - ALEX</text>
   <line x1="360" y1="105" x2="1120" y2="105" stroke="#2c3e50" stroke-width="1"/>
 
   <!-- Agent Profile -->
   <circle cx="400" cy="180" r="40" fill="#f39c12"/>
-  <text x="400" y="190" font-size="32" text-anchor="middle" fill="#fff" font-weight="bold">🔧</text>
+  <text x="400" y="190" font-size="32" text-anchor="middle" fill="#fff" font-weight="bold">A</text>
 
   <text x="470" y="160" font-size="18" font-weight="bold" fill="#333">ALEX - Code Master</text>
-  <text x="470" y="182" font-size="12" fill="#666">Specializes in code generation and debugging</text>
-  <text x="470" y="202" font-size="11" fill="#999">Expert at: Python, JavaScript, SQL, API Design</text>
+  <text x="470" y="182" font-size="12" fill="#666">Specializes in code generation</text>
+  <text x="470" y="202" font-size="11" fill="#999">Expert at: Python, JavaScript, SQL</text>
 
   <!-- Stats Grid -->
   <rect x="360" y="240" width="520" height="150" fill="#f9f9f9" stroke="#bdc3c7" stroke-width="1" rx="4"/>
 
-  <!-- Stat 1: HP -->
-  <text x="380" y="265" font-size="12" font-weight="bold" fill="#333">Health Points (HP)</text>
+  <text x="380" y="265" font-size="12" font-weight="bold" fill="#333">Health Points</text>
   <rect x="380" y="273" width="200" height="20" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1" rx="3"/>
   <rect x="380" y="273" width="150" height="20" fill="#27ae60" stroke="#229954" stroke-width="1" rx="3"/>
   <text x="590" y="287" font-size="11" fill="#333">75/100</text>
-  <text x="380" y="305" font-size="10" fill="#666">Current health status - regenerates with activity cooldown</text>
 
-  <!-- Stat 2: MP -->
-  <text x="680" y="265" font-size="12" font-weight="bold" fill="#333">Magic Points (MP)</text>
+  <text x="680" y="265" font-size="12" font-weight="bold" fill="#333">Magic Points</text>
   <rect x="680" y="273" width="180" height="20" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1" rx="3"/>
   <rect x="680" y="273" width="108" height="20" fill="#3498db" stroke="#2980b9" stroke-width="1" rx="3"/>
   <text x="870" y="287" font-size="11" fill="#333">60/100</text>
-  <text x="680" y="305" font-size="10" fill="#666">Ability points - used for special capabilities</text>
 
-  <!-- Stat 3: Level & XP -->
-  <text x="380" y="335" font-size="12" font-weight="bold" fill="#333">Level: 3</text>
-  <text x="680" y="335" font-size="12" font-weight="bold" fill="#333">XP: 2100 / 3000</text>
-
+  <text x="380" y="335" font-size="12" font-weight="bold" fill="#333">Level 3 - XP: 2100/3000</text>
   <rect x="380" y="343" width="480" height="18" fill="#ecf0f1" stroke="#bdc3c7" stroke-width="1" rx="3"/>
   <rect x="380" y="343" width="336" height="18" fill="#f39c12" stroke="#d68910" stroke-width="1" rx="3"/>
-  <text x="430" y="356" font-size="10" fill="#fff" font-weight="bold">70% to next level</text>
 
-  <!-- Agent Abilities Section -->
+  <!-- Agent Abilities -->
   <rect x="360" y="420" width="520" height="200" fill="#f0f8ff" stroke="#3498db" stroke-width="1" rx="4"/>
-  <text x="380" y="445" font-size="12" font-weight="bold" fill="#2980b9">Special Abilities</text>
+  <text x="380" y="445" font-size="12" font-weight="bold" fill="#2980b9">Abilities</text>
 
   <rect x="380" y="465" width="480" height="35" fill="#fff" stroke="#3498db" stroke-width="1" rx="3"/>
-  <text x="390" y="483" font-size="11" fill="#333" font-weight="bold">⚡ Code Generation</text>
-  <text x="390" y="497" font-size="10" fill="#666">Generate code snippets in multiple programming languages</text>
+  <text x="390" y="483" font-size="11" fill="#333" font-weight="bold">Code Generation</text>
+  <text x="390" y="497" font-size="10" fill="#666">Generate code in multiple languages</text>
 
   <rect x="380" y="510" width="480" height="35" fill="#fff" stroke="#3498db" stroke-width="1" rx="3"/>
-  <text x="390" y="528" font-size="11" fill="#333" font-weight="bold">🐛 Debug Assistant</text>
-  <text x="390" y="542" font-size="10" fill="#666">Analyze and fix code errors with detailed explanations</text>
+  <text x="390" y="528" font-size="11" fill="#333" font-weight="bold">Debug Assistant</text>
+  <text x="390" y="542" font-size="10" fill="#666">Analyze and fix code errors</text>
 
   <rect x="380" y="555" width="480" height="35" fill="#fff" stroke="#3498db" stroke-width="1" rx="3"/>
-  <text x="390" y="573" font-size="11" fill="#333" font-weight="bold">📚 API Integration</text>
-  <text x="390" y="587" font-size="10" fill="#666">Help design and integrate external APIs</text>
+  <text x="390" y="573" font-size="11" fill="#333" font-weight="bold">API Integration</text>
+  <text x="390" y="587" font-size="10" fill="#666">Help design and integrate APIs</text>
 
-  <!-- Personality & Style -->
-  <rect x="360" y="640" width="520" height="140" fill="#fff5e6" stroke="#f39c12" stroke-width="1" rx="4"/>
-  <text x="380" y="665" font-size="12" font-weight="bold" fill="#d68910">Personality & Communication Style</text>
-  <text x="380" y="690" font-size="11" fill="#333"><tspan font-weight="bold">Tone:</tspan> Professional and technical</text>
-  <text x="380" y="710" font-size="11" fill="#333"><tspan font-weight="bold">Responses:</tspan> Detailed code explanations with examples</text>
-  <text x="380" y="730" font-size="11" fill="#333"><tspan font-weight="bold">Best for:</tspan> Complex coding tasks, debugging, API design</text>
-  <text x="380" y="750" font-size="11" fill="#333"><tspan font-weight="bold">Weakness:</tspan> Creative writing, abstract concepts</text>
+  <!-- Quick Comparison -->
+  <rect x="920" y="140" width="200" height="300" fill="#f9f9f9" stroke="#bdc3c7" stroke-width="1" rx="4"/>
+  <text x="940" y="165" font-size="11" font-weight="bold" fill="#333">Quick Comparison</text>
+  <text x="940" y="190" font-size="10" fill="#333">NEXUS - Planning</text>
+  <text x="940" y="210" font-size="10" fill="#333">ALEX - Code (Selected)</text>
+  <text x="940" y="230" font-size="10" fill="#333">VORTEX - Data</text>
+  <text x="940" y="250" font-size="10" fill="#333">RESEARCHER - Info</text>
 
-  <!-- Bottom tip -->
-  <rect x="360" y="800" width="520" height="50" fill="#e8f4e8" stroke="#27ae60" stroke-width="1" rx="4"/>
-  <text x="380" y="825" font-size="11" font-weight="bold" fill="#229954">💡 Tip:</text>
-  <text x="410" y="825" font-size="11" fill="#333">Click on any agent in the sidebar to switch. Each agent has unique</text>
-  <text x="410" y="843" font-size="11" fill="#333">strengths - choose the right one for your task to get better results!</text>
-
-  <!-- Right side: Agent Comparison -->
-  <text x="930" y="140" font-size="12" font-weight="bold" fill="#2c3e50">Quick Comparison</text>
-  <line x1="900" y1="155" x2="1100" y2="155" stroke="#bdc3c7" stroke-width="1"/>
-
-  <text x="910" y="180" font-size="10" fill="#333"><tspan font-weight="bold">NEXUS 🧠</tspan> - Planning & Strategy</text>
-  <text x="910" y="200" font-size="10" fill="#333"><tspan font-weight="bold">ALEX 🔧</tspan> - Code & Technical (Current)</text>
-  <text x="910" y="220" font-size="10" fill="#333"><tspan font-weight="bold">VORTEX 📊</tspan> - Data & Analysis</text>
-  <text x="910" y="240" font-size="10" fill="#333"><tspan font-weight="bold">RESEARCHER 🔍</tspan> - Research & Info</text>
-
-  <text x="910" y="280" font-size="11" font-weight="bold" fill="#333">Color Coding</text>
-  <circle cx="920" cy="305" r="6" fill="#9b59b6"/>
-  <text x="930" y="310" font-size="10" fill="#333">Purple = Planning</text>
-  <circle cx="920" cy="330" r="6" fill="#f39c12"/>
-  <text x="930" y="335" font-size="10" fill="#333">Orange = Code</text>
-  <circle cx="920" cy="355" r="6" fill="#e74c3c"/>
-  <text x="930" y="360" font-size="10" fill="#333">Red = Analysis</text>
-  <circle cx="920" cy="380" r="6" fill="#16a085"/>
-  <text x="930" y="385" font-size="10" fill="#333">Teal = Research</text>
+  <!-- Bottom Tip -->
+  <rect x="360" y="640" width="760" height="60" fill="#e8f5e9" stroke="#27ae60" stroke-width="1" rx="4"/>
+  <text x="380" y="665" font-size="11" font-weight="bold" fill="#229954">Tip:</text>
+  <text x="410" y="665" font-size="11" fill="#333">Click any agent in sidebar to switch.</text>
+  <text x="410" y="685" font-size="11" fill="#333">Each has unique strengths for different tasks.</text>
 </svg>
