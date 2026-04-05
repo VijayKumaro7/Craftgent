@@ -412,6 +412,41 @@ Legend:
 
 ---
 
+## 📖 User Documentation & Guides
+
+New to Craftgent? Start here! We've created comprehensive guides with visual examples to help you get the most out of the platform.
+
+### Quick Start
+- **⚡ [Getting Started](./docs/GETTING_STARTED.md)** - 3-step quick start guide (5 minutes)
+- **📚 [User Guide](./docs/USER_GUIDE.md)** - Complete feature documentation with examples
+- **🎯 [Features Overview](./docs/FEATURES_OVERVIEW.md)** - Detailed description of all capabilities
+
+### Visual Guides
+Access detailed visual documentation with annotated screenshots:
+
+| Guide | Description | Image |
+|-------|-------------|-------|
+| **Website Overview** | All main interface sections | [user-guide-sections.svg](./docs/images/user-guide-sections.svg) |
+| **Login & Registration** | Authentication flow step-by-step | [login-flow.svg](./docs/images/login-flow.svg) |
+| **Chat Interface** | Annotated main chat area | [chat-interface-annotated.svg](./docs/images/chat-interface-annotated.svg) |
+| **Agent Selection** | How to choose and switch agents | [agent-selection-guide.svg](./docs/images/agent-selection-guide.svg) |
+| **Message Types** | Different response formats with examples | [message-types-examples.svg](./docs/images/message-types-examples.svg) |
+| **Templates Library** | Browse and use prompt templates | [templates-library.svg](./docs/images/templates-library.svg) |
+| **File Upload** | Upload & process documents step-by-step | [file-upload-workflow.svg](./docs/images/file-upload-workflow.svg) |
+| **Session Management** | Create, switch, and organize sessions | [session-management.svg](./docs/images/session-management.svg) |
+| **Customization** | Personalize response format & tone | [customization-panel.svg](./docs/images/customization-panel.svg) |
+| **Hotbar Controls** | Quick actions and keyboard shortcuts | [hotbar-controls.svg](./docs/images/hotbar-controls.svg) |
+| **Status Indicators** | Understanding connection and agent status | [status-indicators.svg](./docs/images/status-indicators.svg) |
+
+### Agent Capabilities
+Each agent has unique strengths. Learn when to use each:
+- **NEXUS 🧠** - Planning, strategy, brainstorming
+- **ALEX 🔧** - Code, debugging, API design
+- **VORTEX 📊** - Data analysis, statistics, visualization
+- **RESEARCHER 🔍** - Research, information gathering, sources
+
+---
+
 ### Key UI Features
 
 **1. Agent Selection (AgentSidebar)**

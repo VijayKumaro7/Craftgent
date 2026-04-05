@@ -1,0 +1,122 @@
+<svg width="1200" height="800" xmlns="http://www.w3.org/2000/svg">
+  <!-- Title -->
+  <text x="600" y="30" font-size="32" font-weight="bold" text-anchor="middle" fill="#333">Templates Library - Prompt Templates</text>
+
+  <!-- Left Panel: Template Categories -->
+  <rect x="30" y="60" width="300" height="720" fill="#f5f5f5" stroke="#95a5a6" stroke-width="2" rx="8"/>
+  <text x="180" y="90" font-size="14" font-weight="bold" text-anchor="middle" fill="#333">Template Categories</text>
+  <line x1="50" y1="105" x2="310" y2="105" stroke="#95a5a6" stroke-width="1"/>
+
+  <!-- Category: Code -->
+  <rect x="50" y="130" width="260" height="50" fill="#e3f2fd" stroke="#2196f3" stroke-width="2" rx="4"/>
+  <circle cx="70" cy="160" r="10" fill="#2196f3"/>
+  <text x="90" y="165" font-size="12" fill="#333" font-weight="bold">💻 Code</text>
+  <text x="90" y="180" font-size="10" fill="#666">8 templates</text>
+  <text x="280" y="165" font-size="14" fill="#999">&gt;</text>
+
+  <!-- Category: Data -->
+  <rect x="50" y="195" width="260" height="50" fill="#fff3e0" stroke="#ff9800" stroke-width="1" rx="4"/>
+  <circle cx="70" cy="225" r="10" fill="#ff9800"/>
+  <text x="90" y="230" font-size="12" fill="#333" font-weight="bold">📊 Data Analysis</text>
+  <text x="90" y="245" font-size="10" fill="#666">6 templates</text>
+  <text x="280" y="230" font-size="14" fill="#999">&gt;</text>
+
+  <!-- Category: Research -->
+  <rect x="50" y="260" width="260" height="50" fill="#f3e5f5" stroke="#9c27b0" stroke-width="1" rx="4"/>
+  <circle cx="70" cy="290" r="10" fill="#9c27b0"/>
+  <text x="90" y="295" font-size="12" fill="#333" font-weight="bold">🔍 Research</text>
+  <text x="90" y="310" font-size="10" fill="#666">5 templates</text>
+  <text x="280" y="295" font-size="14" fill="#999">&gt;</text>
+
+  <!-- Category: General -->
+  <rect x="50" y="325" width="260" height="50" fill="#e8f5e9" stroke="#4caf50" stroke-width="1" rx="4"/>
+  <circle cx="70" cy="355" r="10" fill="#4caf50"/>
+  <text x="90" y="360" font-size="12" fill="#333" font-weight="bold">✨ General Writing</text>
+  <text x="90" y="375" font-size="10" fill="#666">10 templates</text>
+  <text x="280" y="360" font-size="14" fill="#999">&gt;</text>
+
+  <!-- Category: Business -->
+  <rect x="50" y="390" width="260" height="50" fill="#ffe0b2" stroke="#ff6f00" stroke-width="1" rx="4"/>
+  <circle cx="70" cy="420" r="10" fill="#ff6f00"/>
+  <text x="90" y="425" font-size="12" fill="#333" font-weight="bold">💼 Business</text>
+  <text x="90" y="440" font-size="10" fill="#666">7 templates</text>
+  <text x="280" y="425" font-size="14" fill="#999">&gt;</text>
+
+  <!-- Create Custom -->
+  <rect x="50" y="460" width="260" height="50" fill="#fff" stroke="#bdc3c7" stroke-width="2" stroke-dasharray="5,5" rx="4"/>
+  <text x="180" y="487" font-size="12" text-anchor="middle" fill="#666">➕ Create Custom</text>
+  <text x="180" y="502" font-size="9" text-anchor="middle" fill="#999">Save your own templates</text>
+
+  <!-- Favorites -->
+  <text x="50" y="545" font-size="12" font-weight="bold" fill="#333">⭐ Favorites</text>
+  <rect x="50" y="560" width="260" height="35" fill="#fef5e7" stroke="#f39c12" stroke-width="1" rx="3"/>
+  <text x="65" y="582" font-size="11" fill="#d68910" font-weight="bold">Debug Python Function</text>
+
+  <rect x="50" y="605" width="260" height="35" fill="#fef5e7" stroke="#f39c12" stroke-width="1" rx="3"/>
+  <text x="65" y="627" font-size="11" fill="#d68910" font-weight="bold">Generate Unit Tests</text>
+
+  <rect x="50" y="650" width="260" height="35" fill="#fef5e7" stroke="#f39c12" stroke-width="1" rx="3"/>
+  <text x="65" y="672" font-size="11" fill="#d68910" font-weight="bold">API Documentation</text>
+
+  <!-- Right Panel: Code Template Examples -->
+  <rect x="360" y="60" width="820" height="720" fill="#fff" stroke="#2c3e50" stroke-width="2" rx="8"/>
+  <text x="770" y="90" font-size="14" font-weight="bold" text-anchor="middle" fill="#2c3e50">Code Templates - Selected</text>
+  <line x1="380" y1="105" x2="1140" y2="105" stroke="#2c3e50" stroke-width="1"/>
+
+  <!-- Template 1 -->
+  <rect x="380" y="130" width="780" height="130" fill="#f9f9f9" stroke="#bdc3c7" stroke-width="1" rx="4"/>
+  <circle cx="400" cy="160" r="8" fill="#2196f3"/>
+  <text x="420" y="155" font-size="12" fill="#333" font-weight="bold">🐍 Debug Python Function</text>
+  <text x="420" y="172" font-size="10" fill="#666">Find and fix errors in Python code with explanations</text>
+  <rect x="920" y="150" width="80" height="28" fill="#2196f3" stroke="#1976d2" stroke-width="1" rx="3"/>
+  <text x="960" y="170" font-size="11" text-anchor="middle" fill="#fff" font-weight="bold">Use</text>
+
+  <text x="390" y="198" font-size="9" fill="#999">Prompt:</text>
+  <rect x="390" y="203" width="750" height="40" fill="#fff" stroke="#ecf0f1" stroke-width="1" rx="2"/>
+  <text x="400" y="218" font-size="9" fill="#333" font-family="monospace">Please review the following Python function and identify any bugs or</text>
+  <text x="400" y="230" font-size="9" fill="#333" font-family="monospace">inefficiencies. Provide suggestions to improve it. [PASTE CODE HERE]</text>
+
+  <!-- Template 2 -->
+  <rect x="380" y="280" width="780" height="130" fill="#f9f9f9" stroke="#bdc3c7" stroke-width="1" rx="4"/>
+  <circle cx="400" cy="310" r="8" fill="#ff9800"/>
+  <text x="420" y="305" font-size="12" fill="#333" font-weight="bold">🧪 Generate Unit Tests</text>
+  <text x="420" y="322" font-size="10" fill="#666">Create comprehensive unit tests for JavaScript functions</text>
+  <rect x="920" y="300" width="80" height="28" fill="#ff9800" stroke="#f57c00" stroke-width="1" rx="3"/>
+  <text x="960" y="320" font-size="11" text-anchor="middle" fill="#fff" font-weight="bold">Use</text>
+
+  <text x="390" y="348" font-size="9" fill="#999">Prompt:</text>
+  <rect x="390" y="353" width="750" height="40" fill="#fff" stroke="#ecf0f1" stroke-width="1" rx="2"/>
+  <text x="400" y="368" font-size="9" fill="#333" font-family="monospace">Write comprehensive Jest unit tests for this function. Include edge cases,</text>
+  <text x="400" y="380" font-size="9" fill="#333" font-family="monospace">error handling, and mock dependencies. [PASTE CODE HERE]</text>
+
+  <!-- Template 3 -->
+  <rect x="380" y="430" width="780" height="130" fill="#f9f9f9" stroke="#bdc3c7" stroke-width="1" rx="4"/>
+  <circle cx="400" cy="460" r="8" fill="#9c27b0"/>
+  <text x="420" y="455" font-size="12" fill="#333" font-weight="bold">📚 API Documentation</text>
+  <text x="420" y="472" font-size="10" fill="#666">Generate clear API documentation with examples</text>
+  <rect x="920" y="450" width="80" height="28" fill="#9c27b0" stroke="#7b1fa2" stroke-width="1" rx="3"/>
+  <text x="960" y="470" font-size="11" text-anchor="middle" fill="#fff" font-weight="bold">Use</text>
+
+  <text x="390" y="498" font-size="9" fill="#999">Prompt:</text>
+  <rect x="390" y="503" width="750" height="40" fill="#fff" stroke="#ecf0f1" stroke-width="1" rx="2"/>
+  <text x="400" y="518" font-size="9" fill="#333" font-family="monospace">Create OpenAPI/Swagger documentation for this REST API endpoint.</text>
+  <text x="400" y="530" font-size="9" fill="#333" font-family="monospace">Include request/response examples and error codes. [PASTE CODE HERE]</text>
+
+  <!-- Template 4 -->
+  <rect x="380" y="580" width="780" height="130" fill="#f9f9f9" stroke="#bdc3c7" stroke-width="1" rx="4"/>
+  <circle cx="400" cy="610" r="8" fill="#4caf50"/>
+  <text x="420" y="605" font-size="12" fill="#333" font-weight="bold">✨ Code Refactoring</text>
+  <text x="420" y="622" font-size="10" fill="#666">Improve code quality, readability, and performance</text>
+  <rect x="920" y="600" width="80" height="28" fill="#4caf50" stroke="#388e3c" stroke-width="1" rx="3"/>
+  <text x="960" y="620" font-size="11" text-anchor="middle" fill="#fff" font-weight="bold">Use</text>
+
+  <text x="390" y="648" font-size="9" fill="#999">Prompt:</text>
+  <rect x="390" y="653" width="750" height="40" fill="#fff" stroke="#ecf0f1" stroke-width="1" rx="2"/>
+  <text x="400" y="668" font-size="9" fill="#333" font-family="monospace">Refactor this code to improve readability, performance, and maintainability.</text>
+  <text x="400" y="680" font-size="9" fill="#333" font-family="monospace">Follow best practices and explain the improvements. [PASTE CODE HERE]</text>
+
+  <!-- Info at bottom -->
+  <rect x="380" y="720" width="780" height="50" fill="#e3f2fd" stroke="#2196f3" stroke-width="1" rx="4"/>
+  <text x="400" y="745" font-size="11" font-weight="bold" fill="#1976d2">💡 Quick Tip:</text>
+  <text x="500" y="745" font-size="11" fill="#333">Click "Use" to insert the template into chat. Customize the placeholder [PASTE CODE HERE] with your actual code or content.</text>
+</svg>

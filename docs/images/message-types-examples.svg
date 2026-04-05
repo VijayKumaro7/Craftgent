@@ -1,0 +1,108 @@
+<svg width="1200" height="950" xmlns="http://www.w3.org/2000/svg">
+  <!-- Title -->
+  <text x="600" y="30" font-size="32" font-weight="bold" text-anchor="middle" fill="#333">Message Types & Examples - Different Response Formats</text>
+
+  <!-- User Message -->
+  <rect x="50" y="70" width="550" height="150" fill="#f0f8ff" stroke="#3498db" stroke-width="2" rx="8"/>
+  <text x="70" y="95" font-size="12" font-weight="bold" fill="#2980b9">👤 User Message</text>
+  <line x1="70" y1="105" x2="570" y2="105" stroke="#3498db" stroke-width="1"/>
+
+  <rect x="70" y="125" width="510" height="80" fill="#fff" stroke="#bdc3c7" stroke-width="1" rx="4"/>
+  <text x="85" y="145" font-size="12" fill="#333">You (2:34 PM)</text>
+  <text x="85" y="168" font-size="11" fill="#555">Can you help me debug this Python function? It's returning</text>
+  <text x="85" y="185" font-size="11" fill="#555">None instead of the expected list of dictionaries.</text>
+
+  <!-- Agent Response - Text -->
+  <rect x="610" y="70" width="550" height="150" fill="#e8f5e9" stroke="#27ae60" stroke-width="2" rx="8"/>
+  <text x="630" y="95" font-size="12" font-weight="bold" fill="#229954">✓ Text Response</text>
+  <line x1="630" y1="105" x2="1150" y2="105" stroke="#27ae60" stroke-width="1"/>
+
+  <rect x="630" y="125" width="510" height="80" fill="#fff" stroke="#bdc3c7" stroke-width="1" rx="4"/>
+  <text x="645" y="145" font-size="12" fill="#333">ALEX 🔧 (2:35 PM)</text>
+  <text x="645" y="168" font-size="11" fill="#555">The issue is likely in your return statement. You might be</text>
+  <text x="645" y="185" font-size="11" fill="#555">returning outside the loop or forgetting to initialize the list.</text>
+
+  <!-- Agent Response - Code Block -->
+  <rect x="50" y="240" width="550" height="220" fill="#f5f5f5" stroke="#2c3e50" stroke-width="2" rx="8"/>
+  <text x="70" y="265" font-size="12" font-weight="bold" fill="#333">💻 Code Response</text>
+  <line x1="70" y1="275" x2="570" y2="275" stroke="#2c3e50" stroke-width="1"/>
+
+  <rect x="70" y="295" width="510" height="150" fill="#282c34" stroke="#1a1d25" stroke-width="1" rx="3"/>
+  <text x="85" y="315" font-size="10" fill="#61dafb" font-family="monospace" font-weight="bold">def get_data():</text>
+  <text x="85" y="330" font-size="10" fill="#d4d4d4" font-family="monospace">    results = []</text>
+  <text x="85" y="345" font-size="10" fill="#d4d4d4" font-family="monospace">    <tspan fill="#c586c0">for</tspan> item <tspan fill="#c586c0">in</tspan> items:</text>
+  <text x="85" y="360" font-size="10" fill="#d4d4d4" font-family="monospace">        results.append(item)</text>
+  <text x="85" y="375" font-size="10" fill="#d4d4d4" font-family="monospace">    <tspan fill="#c586c0">return</tspan> results  <tspan fill="#6a9955"># ✓ Correct placement</tspan></text>
+  <text x="85" y="425" font-size="9" fill="#999" font-family="monospace">Output:</text>
+  <text x="85" y="440" font-size="9" fill="#61dafb" font-family="monospace">[{'id': 1}, {'id': 2}, ...]</text>
+
+  <!-- Agent Response - Code Block with Highlighting -->
+  <rect x="610" y="240" width="550" height="220" fill="#f5f5f5" stroke="#2c3e50" stroke-width="2" rx="8"/>
+  <text x="630" y="265" font-size="12" font-weight="bold" fill="#333">⚠️ Error Code (Highlighted)</text>
+  <line x1="630" y1="275" x2="1150" y2="275" stroke="#2c3e50" stroke-width="1"/>
+
+  <rect x="630" y="295" width="510" height="150" fill="#282c34" stroke="#e74c3c" stroke-width="2" rx="3"/>
+  <text x="645" y="315" font-size="10" fill="#d4d4d4" font-family="monospace"><tspan fill="#c586c0">def</tspan> get_data():</text>
+  <text x="645" y="330" font-size="10" fill="#d4d4d4" font-family="monospace">    <tspan fill="#c586c0">for</tspan> item <tspan fill="#c586c0">in</tspan> items:</text>
+  <rect x="635" y="340" width="485" height="18" fill="#ffebee" stroke="#e74c3c" stroke-width="1"/>
+  <text x="645" y="355" font-size="10" fill="#d4d4d4" font-family="monospace">        <tspan fill="#c586c0">return</tspan> [item]  <tspan fill="#ff6b6b"># ✗ Wrong! Returns after 1st item</tspan></text>
+  <text x="645" y="425" font-size="9" fill="#999" font-family="monospace">Output:</text>
+  <text x="645" y="440" font-size="9" fill="#ff6b6b" font-family="monospace">[{'id': 1}]  # Missing other items!</text>
+
+  <!-- Structured Response - Data -->
+  <rect x="50" y="480" width="550" height="200" fill="#f9f9f9" stroke="#bdc3c7" stroke-width="2" rx="8"/>
+  <text x="70" y="505" font-size="12" font-weight="bold" fill="#333">📊 Structured Data Response</text>
+  <line x1="70" y1="515" x2="570" y2="515" stroke="#bdc3c7" stroke-width="1"/>
+
+  <rect x="70" y="535" width="510" height="130" fill="#fff" stroke="#ecf0f1" stroke-width="1" rx="3"/>
+  <text x="85" y="552" font-size="10" fill="#333" font-family="monospace" font-weight="bold">{</text>
+  <text x="100" y="568" font-size="10" fill="#333" font-family="monospace">"status": <tspan fill="#27ae60">"success"</tspan>,</text>
+  <text x="100" y="583" font-size="10" fill="#333" font-family="monospace">"data": [</text>
+  <text x="130" y="598" font-size="9" fill="#333" font-family="monospace">{"id": 1, "name": "item1"},</text>
+  <text x="130" y="612" font-size="9" fill="#333" font-family="monospace">{"id": 2, "name": "item2"}</text>
+  <text x="100" y="627" font-size="10" fill="#333" font-family="monospace">],</text>
+  <text x="100" y="642" font-size="10" fill="#333" font-family="monospace">"timestamp": <tspan fill="#666">"2024-01-15T14:35:00Z"</tspan></text>
+
+  <!-- Typing Indicator -->
+  <rect x="610" y="480" width="550" height="200" fill="#f9f9f9" stroke="#bdc3c7" stroke-width="2" rx="8"/>
+  <text x="630" y="505" font-size="12" font-weight="bold" fill="#333">⏳ Typing Indicator</text>
+  <line x1="630" y1="515" x2="1150" y2="515" stroke="#bdc3c7" stroke-width="1"/>
+
+  <rect x="630" y="535" width="510" height="130" fill="#fff3e0" stroke="#ff9800" stroke-width="1" rx="3"/>
+  <text x="650" y="555" font-size="11" fill="#333" font-weight="bold">VORTEX 📊 is thinking...</text>
+  <text x="650" y="575" font-size="11" fill="#666">Processing your data analysis request</text>
+
+  <!-- Animated dots -->
+  <circle cx="650" cy="610" r="4" fill="#ff9800" opacity="1"/>
+  <circle cx="665" cy="610" r="4" fill="#ff9800" opacity="0.7"/>
+  <circle cx="680" cy="610" r="4" fill="#ff9800" opacity="0.4"/>
+
+  <text x="650" y="645" font-size="9" fill="#999">Average response time: 8-12 seconds</text>
+
+  <!-- Error Message -->
+  <rect x="50" y="700" width="550" height="200" fill="#f9f9f9" stroke="#bdc3c7" stroke-width="2" rx="8"/>
+  <text x="70" y="725" font-size="12" font-weight="bold" fill="#333">❌ Error Message</text>
+  <line x1="70" y1="735" x2="570" y2="735" stroke="#bdc3c7" stroke-width="1"/>
+
+  <rect x="70" y="755" width="510" height="130" fill="#ffebee" stroke="#e74c3c" stroke-width="1" rx="3"/>
+  <text x="85" y="775" font-size="11" fill="#c0392b" font-weight="bold">Error: File Upload Failed</text>
+  <text x="85" y="795" font-size="10" fill="#555">The file size exceeds the 50MB limit.</text>
+  <text x="85" y="813" font-size="10" fill="#555">Please upload a smaller file or split your data.</text>
+
+  <rect x="85" y="825" width="120" height="28" fill="#e74c3c" stroke="#c0392b" stroke-width="1" rx="3"/>
+  <text x="145" y="845" font-size="10" text-anchor="middle" fill="#fff" font-weight="bold">Retry</text>
+
+  <!-- Status/System Message -->
+  <rect x="610" y="700" width="550" height="200" fill="#f9f9f9" stroke="#bdc3c7" stroke-width="2" rx="8"/>
+  <text x="630" y="725" font-size="12" font-weight="bold" fill="#333">ℹ️ System Message</text>
+  <line x1="630" y1="735" x2="1150" y2="735" stroke="#bdc3c7" stroke-width="1"/>
+
+  <rect x="630" y="755" width="510" height="130" fill="#e3f2fd" stroke="#2196f3" stroke-width="1" rx="3"/>
+  <text x="645" y="775" font-size="11" fill="#1976d2" font-weight="bold">✓ Session Archived</text>
+  <text x="645" y="795" font-size="10" fill="#555">Your conversation "Debug Python" has been saved.</text>
+  <text x="645" y="813" font-size="10" fill="#555">You can resume it later from Session History.</text>
+
+  <!-- Bottom Legend -->
+  <rect x="50" y="920" width="1100" height="0" fill="none"/>
+  <text x="60" y="930" font-size="11" fill="#999">💡 Tip: Right-click on messages to copy, share, or regenerate responses. Each message type provides different information and interaction options.</text>
+</svg>
