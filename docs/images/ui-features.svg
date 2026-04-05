@@ -1,0 +1,160 @@
+<svg viewBox="0 0 1440 1000" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1440" height="1000" fill="#0a0e27"/>
+
+  <!-- Title -->
+  <text x="720" y="40" font-family="monospace" font-size="20" font-weight="bold" fill="#55ffff" text-anchor="middle">CraftAgent Frontend Features</text>
+
+  <!-- Feature 1: Multi-Session Tabs -->
+  <g>
+    <text x="50" y="100" font-family="monospace" font-size="12" font-weight="bold" fill="#aaffaa">📑 Multi-Session Tabs</text>
+    <rect x="50" y="110" width="400" height="150" fill="rgba(170, 255, 170, 0.1)" stroke="#aaffaa" stroke-width="1" rx="4"/>
+
+    <text x="65" y="135" font-family="monospace" font-size="9" fill="#ffffff">[Session 1 ✕] [Session 2 ✕] [+]</text>
+    <text x="65" y="155" font-family="monospace" font-size="8" fill="#aaaaaa">• Open multiple sessions</text>
+    <text x="65" y="170" font-family="monospace" font-size="8" fill="#aaaaaa">• Switch instantly between tabs</text>
+    <text x="65" y="185" font-family="monospace" font-size="8" fill="#aaaaaa">• Each maintains own agent + messages</text>
+    <text x="65" y="200" font-family="monospace" font-size="8" fill="#aaaaaa">• Close with ✕ button</text>
+    <text x="65" y="215" font-family="monospace" font-size="8" fill="#aaaaaa">• Responsive horizontal scrolling</text>
+    <text x="65" y="230" font-family="monospace" font-size="8" fill="#aaaaaa">• Persist session state in browser</text>
+  </g>
+
+  <!-- Feature 2: Prompt Templates -->
+  <g>
+    <text x="500" y="100" font-family="monospace" font-size="12" font-weight="bold" fill="#cc88ff">📚 Prompt Templates</text>
+    <rect x="500" y="110" width="400" height="150" fill="rgba(204, 136, 255, 0.1)" stroke="#cc88ff" stroke-width="1" rx="4"/>
+
+    <text x="515" y="135" font-family="monospace" font-size="9" fill="#ffffff">▼ TEMPLATES [Search...]</text>
+    <text x="515" y="155" font-family="monospace" font-size="8" fill="#cc88ff">• Write Unit Test (ALEX)</text>
+    <text x="515" y="170" font-family="monospace" font-size="8" fill="#cc88ff">• Code Review (ALEX)</text>
+    <text x="515" y="185" font-family="monospace" font-size="8" fill="#aaaaaa">• Analyze Dataset (VORTEX)</text>
+    <text x="515" y="200" font-family="monospace" font-size="8" fill="#aaaaaa">• Research Topic (NEXUS)</text>
+    <text x="515" y="215" font-family="monospace" font-size="8" fill="#aaaaaa">✓ Save custom templates</text>
+    <text x="515" y="230" font-family="monospace" font-size="8" fill="#aaaaaa">✓ Click to insert, search to find</text>
+  </g>
+
+  <!-- Feature 3: File Upload -->
+  <g>
+    <text x="950" y="100" font-family="monospace" font-size="12" font-weight="bold" fill="#d4a574">📎 File Upload</text>
+    <rect x="950" y="110" width="440" height="150" fill="rgba(212, 165, 116, 0.1)" stroke="#d4a574" stroke-width="1" rx="4"/>
+
+    <text x="965" y="135" font-family="monospace" font-size="9" fill="#ffffff">[📎] Drag files or click</text>
+    <text x="965" y="155" font-family="monospace" font-size="8" fill="#aaaaaa">• Drag-drop files into chat</text>
+    <text x="965" y="170" font-family="monospace" font-size="8" fill="#aaaaaa">• Types: CSV, JSON, PDF, Code</text>
+    <text x="965" y="185" font-family="monospace" font-size="8" fill="#aaaaaa">• Max 10MB per file, 5 files</text>
+    <text x="965" y="200" font-family="monospace" font-size="8" fill="#aaaaaa">• File preview before sending</text>
+    <text x="965" y="215" font-family="monospace" font-size="8" fill="#aaaaaa">• Remove with ✕ button</text>
+    <text x="965" y="230" font-family="monospace" font-size="8" fill="#aaaaaa">• Included in message as reference</text>
+  </g>
+
+  <!-- Feature 4: Response Customization -->
+  <g>
+    <text x="50" y="310" font-family="monospace" font-size="12" font-weight="bold" fill="#55ffff">⚙️ Response Customization</text>
+    <rect x="50" y="320" width="400" height="200" fill="rgba(85, 255, 255, 0.1)" stroke="#55ffff" stroke-width="1" rx="4"/>
+
+    <text x="65" y="345" font-family="monospace" font-size="8" fill="#ffffff">Format Options:</text>
+    <text x="65" y="360" font-family="monospace" font-size="8" fill="#aaaaaa">  • Detailed (thorough)</text>
+    <text x="65" y="375" font-family="monospace" font-size="8" fill="#aaaaaa">  • Brief (concise)</text>
+    <text x="65" y="390" font-family="monospace" font-size="8" fill="#aaaaaa">  • Code Only (no explanation)</text>
+
+    <text x="65" y="410" font-family="monospace" font-size="8" fill="#ffffff">Tone Options:</text>
+    <text x="65" y="425" font-family="monospace" font-size="8" fill="#aaaaaa">  • Professional</text>
+    <text x="65" y="440" font-family="monospace" font-size="8" fill="#aaaaaa">  • Casual</text>
+    <text x="65" y="455" font-family="monospace" font-size="8" fill="#aaaaaa">  • ELI5 (Simple)</text>
+
+    <text x="65" y="475" font-family="monospace" font-size="8" fill="#ffffff">✓ Saved to localStorage</text>
+    <text x="65" y="490" font-family="monospace" font-size="8" fill="#ffffff">✓ Applied to all future messages</text>
+    <text x="65" y="505" font-family="monospace" font-size="8" fill="#ffffff">✓ Change anytime in ⚙️ settings</text>
+  </g>
+
+  <!-- Feature 5: Message Virtualization -->
+  <g>
+    <text x="500" y="310" font-family="monospace" font-size="12" font-weight="bold" fill="#aaffaa">⚡ Performance Optimizations</text>
+    <rect x="500" y="320" width="400" height="200" fill="rgba(170, 255, 170, 0.1)" stroke="#aaffaa" stroke-width="1" rx="4"/>
+
+    <text x="515" y="345" font-family="monospace" font-size="8" fill="#ffffff">Message Virtualization:</text>
+    <text x="515" y="360" font-family="monospace" font-size="8" fill="#aaaaaa">  • Renders only visible messages</text>
+    <text x="515" y="375" font-family="monospace" font-size="8" fill="#aaaaaa">  • Handles 1000+ messages smoothly</text>
+    <text x="515" y="390" font-family="monospace" font-size="8" fill="#aaaaaa">  • 60 FPS performance</text>
+
+    <text x="515" y="410" font-family="monospace" font-size="8" fill="#ffffff">Code Splitting:</text>
+    <text x="515" y="425" font-family="monospace" font-size="8" fill="#aaaaaa">  • Main bundle: 258KB</text>
+    <text x="515" y="440" font-family="monospace" font-size="8" fill="#aaaaaa">  • ChatPanel: 280KB lazy chunk</text>
+    <text x="515" y="455" font-family="monospace" font-size="8" fill="#aaaaaa">  • Skeleton loaders for UX</text>
+
+    <text x="515" y="475" font-family="monospace" font-size="8" fill="#ffffff">✓ Fast page load time</text>
+    <text x="515" y="490" font-family="monospace" font-size="8" fill="#ffffff">✓ Progressive loading</text>
+    <text x="515" y="505" font-family="monospace" font-size="8" fill="#ffffff">✓ Smooth scrolling at scale</text>
+  </g>
+
+  <!-- Feature 6: Agent Selection -->
+  <g>
+    <text x="950" y="310" font-family="monospace" font-size="12" font-weight="bold" fill="#cc88ff">🤖 Agent Selection</text>
+    <rect x="950" y="320" width="440" height="200" fill="rgba(204, 136, 255, 0.1)" stroke="#cc88ff" stroke-width="1" rx="4"/>
+
+    <text x="965" y="345" font-family="monospace" font-size="8" fill="#ffffff">4 Specialized Agents:</text>
+    <text x="965" y="360" font-family="monospace" font-size="8" fill="#55ffff">  ◀ NEXUS (Research Mage)</text>
+    <text x="965" y="375" font-family="monospace" font-size="8" fill="#aaffaa">  ○ ALEX (Code Warrior)</text>
+    <text x="965" y="390" font-family="monospace" font-size="8" fill="#cc88ff">  ○ VORTEX (Data Creeper)</text>
+    <text x="965" y="405" font-family="monospace" font-size="8" fill="#d4a574">  ○ RESEARCHER (Archaeologist)</text>
+
+    <text x="965" y="425" font-family="monospace" font-size="8" fill="#ffffff">Each agent displays:</text>
+    <text x="965" y="440" font-family="monospace" font-size="8" fill="#aaaaaa">  • Real-time HP/MP bars</text>
+    <text x="965" y="455" font-family="monospace" font-size="8" fill="#aaaaaa">  • Level &amp; XP percentage</text>
+    <text x="965" y="470" font-family="monospace" font-size="8" fill="#aaaaaa">  • Pixel art avatar</text>
+
+    <text x="965" y="490" font-family="monospace" font-size="8" fill="#ffffff">✓ Click to select agent</text>
+    <text x="965" y="505" font-family="monospace" font-size="8" fill="#ffffff">✓ Pulses while streaming</text>
+  </g>
+
+  <!-- Feature 7: Session History -->
+  <g>
+    <text x="50" y="580" font-family="monospace" font-size="12" font-weight="bold" fill="#d4a574">📂 Session History</text>
+    <rect x="50" y="590" width="400" height="170" fill="rgba(212, 165, 116, 0.1)" stroke="#d4a574" stroke-width="1" rx="4"/>
+
+    <text x="65" y="615" font-family="monospace" font-size="8" fill="#ffffff">▼ SESSION HISTORY</text>
+    <text x="65" y="635" font-family="monospace" font-size="8" fill="#aaaaaa">  📅 Today (3)</text>
+    <text x="65" y="650" font-family="monospace" font-size="8" fill="#aaaaaa">    └ Machine Learning Research</text>
+    <text x="65" y="665" font-family="monospace" font-size="8" fill="#aaaaaa">    └ Python Code Review</text>
+
+    <text x="65" y="685" font-family="monospace" font-size="8" fill="#ffffff">✓ Search past sessions</text>
+    <text x="65" y="700" font-family="monospace" font-size="8" fill="#ffffff">✓ Load into new tab</text>
+    <text x="65" y="715" font-family="monospace" font-size="8" fill="#ffffff">✓ Shows agent &amp; message count</text>
+    <text x="65" y="730" font-family="monospace" font-size="8" fill="#ffffff">✓ Dated organization</text>
+  </g>
+
+  <!-- Feature 8: Keyboard Shortcuts -->
+  <g>
+    <text x="500" y="580" font-family="monospace" font-size="12" font-weight="bold" fill="#55ffff">⌨️ Keyboard Shortcuts</text>
+    <rect x="500" y="590" width="400" height="170" fill="rgba(85, 255, 255, 0.1)" stroke="#55ffff" stroke-width="1" rx="4"/>
+
+    <text x="515" y="615" font-family="monospace" font-size="8" fill="#ffffff">Input Shortcuts:</text>
+    <text x="515" y="630" font-family="monospace" font-size="8" fill="#aaaaaa">  • Enter: Send message</text>
+    <text x="515" y="645" font-family="monospace" font-size="8" fill="#aaaaaa">  • Shift+Enter: New line</text>
+    <text x="515" y="660" font-family="monospace" font-size="8" fill="#aaaaaa">  • Esc: Clear input</text>
+
+    <text x="515" y="680" font-family="monospace" font-size="8" fill="#ffffff">Chat Commands:</text>
+    <text x="515" y="695" font-family="monospace" font-size="8" fill="#aaaaaa">  • /clear: Clear history</text>
+    <text x="515" y="710" font-family="monospace" font-size="8" fill="#aaaaaa">  • /help: Show commands</text>
+    <text x="515" y="725" font-family="monospace" font-size="8" fill="#aaaaaa">  • /agents: List agents</text>
+  </g>
+
+  <!-- Feature 9: Connection Status -->
+  <g>
+    <text x="950" y="580" font-family="monospace" font-size="12" font-weight="bold" fill="#aaffaa">🟢 Real-time Connection</text>
+    <rect x="950" y="590" width="440" height="170" fill="rgba(170, 255, 170, 0.1)" stroke="#aaffaa" stroke-width="1" rx="4"/>
+
+    <text x="965" y="615" font-family="monospace" font-size="8" fill="#ffffff">Status Indicators:</text>
+    <text x="965" y="630" font-family="monospace" font-size="8" fill="#5aff5a">  🟢 ONLINE: Connected</text>
+    <text x="965" y="645" font-family="monospace" font-size="8" fill="#f5c842">  🟡 CONNECTING: Retrying...</text>
+    <text x="965" y="660" font-family="monospace" font-size="8" fill="#888">  ⚫ OFFLINE: Disconnected</text>
+
+    <text x="965" y="680" font-family="monospace" font-size="8" fill="#ffffff">WebSocket Features:</text>
+    <text x="965" y="695" font-family="monospace" font-size="8" fill="#aaaaaa">  • Auto-reconnect with backoff</text>
+    <text x="965" y="710" font-family="monospace" font-size="8" fill="#aaaaaa">  • Real-time token streaming</text>
+    <text x="965" y="725" font-family="monospace" font-size="8" fill="#aaaaaa">  • Message queuing offline</text>
+  </g>
+
+  <!-- Footer -->
+  <text x="720" y="980" font-family="monospace" font-size="9" fill="#666" text-anchor="middle">All Features • Production-Grade • Responsive Mobile Design • Minecraft-Themed UI</text>
+</svg>
