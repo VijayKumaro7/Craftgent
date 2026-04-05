@@ -81,9 +81,12 @@ def _award_xp(user_id: str, agent_name: str, xp: int) -> None:
     """
     Award XP by calling the stats endpoint internally.
     Fire-and-forget — never blocks or raises.
+
+    FIXED: Now tracks XP for all sessions including anonymous ones,
+    since each session now has a unique user_id (no more hardcoded fake UUIDs).
     """
-    if not user_id or user_id == "00000000-0000-0000-0000-000000000001":
-        return  # skip anonymous sessions
+    if not user_id:
+        return  # skip if user_id is missing
     try:
         from app.db.base import AsyncSessionLocal
         from app.models.models import AgentName

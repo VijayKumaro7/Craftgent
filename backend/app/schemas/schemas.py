@@ -55,3 +55,14 @@ class HealthResponse(BaseModel):
 class ErrorResponse(BaseModel):
     error: str
     detail: str | None = None
+
+
+# ── Files ──────────────────────────────────────────────────────────────────
+
+class FileUploadResponse(BaseModel):
+    file_id: str
+    filename: str
+    file_type: str
+    file_size: int
+    session_id: str | None = None
+    upload_time: str

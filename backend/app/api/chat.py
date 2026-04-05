@@ -51,13 +51,17 @@ async def _get_or_create_session(
         # Session not found — create fresh rather than 404 (graceful degradation)
         logger.warning("session_not_found_creating_new", session_id=str(session_id))
 
+    # FIXED: Generate unique UUID for each anonymous session instead of sharing one fake UUID
+    # This allows proper stats/XP tracking per session
     session = ChatSession(
-        # Phase 1: anonymous user UUID placeholder — replaced with real user in Phase 2
-        user_id=uuid.UUID("00000000-0000-0000-0000-000000000001"),
+        # Anonymous user: generate a unique UUID for this session
+        # Phase 2 will replace this with real authenticated user_id
+        user_id=uuid.uuid4(),
         active_agent=agent,
     )
     db.add(session)
     await db.flush()  # get the generated ID without committing
+    logger.info("created_anonymous_session", session_id=str(session.id), user_id=str(session.user_id))
     return session
 
 
