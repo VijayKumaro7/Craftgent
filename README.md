@@ -426,17 +426,17 @@ Access detailed visual documentation with annotated screenshots:
 
 | Guide | Description | Image |
 |-------|-------------|-------|
-| **Website Overview** | All main interface sections | [user-guide-sections.svg](./docs/images/user-guide-sections.svg) |
-| **Login & Registration** | Authentication flow step-by-step | [login-flow.svg](./docs/images/login-flow.svg) |
-| **Chat Interface** | Annotated main chat area | [chat-interface-annotated.svg](./docs/images/chat-interface-annotated.svg) |
-| **Agent Selection** | How to choose and switch agents | [agent-selection-guide.svg](./docs/images/agent-selection-guide.svg) |
-| **Message Types** | Different response formats with examples | [message-types-examples.svg](./docs/images/message-types-examples.svg) |
-| **Templates Library** | Browse and use prompt templates | [templates-library.svg](./docs/images/templates-library.svg) |
-| **File Upload** | Upload & process documents step-by-step | [file-upload-workflow.svg](./docs/images/file-upload-workflow.svg) |
-| **Session Management** | Create, switch, and organize sessions | [session-management.svg](./docs/images/session-management.svg) |
-| **Customization** | Personalize response format & tone | [customization-panel.svg](./docs/images/customization-panel.svg) |
-| **Hotbar Controls** | Quick actions and keyboard shortcuts | [hotbar-controls.svg](./docs/images/hotbar-controls.svg) |
-| **Status Indicators** | Understanding connection and agent status | [status-indicators.svg](./docs/images/status-indicators.svg) |
+| **Website Overview** | All main interface sections | ![user-guide-sections](./docs/images/user-guide-sections.png) |
+| **Login & Registration** | Authentication flow step-by-step | ![login-flow](./docs/images/login-flow.png) |
+| **Chat Interface** | Annotated main chat area | ![chat-interface](./docs/images/chat-interface-annotated.png) |
+| **Agent Selection** | How to choose and switch agents | ![agent-selection](./docs/images/agent-selection-guide.png) |
+| **Message Types** | Different response formats with examples | ![message-types](./docs/images/message-types-examples.png) |
+| **Templates Library** | Browse and use prompt templates | ![templates](./docs/images/templates-library.png) |
+| **File Upload** | Upload & process documents step-by-step | ![file-upload](./docs/images/file-upload-workflow.png) |
+| **Session Management** | Create, switch, and organize sessions | ![sessions](./docs/images/session-management.png) |
+| **Customization** | Personalize response format & tone | ![customization](./docs/images/customization-panel.png) |
+| **Hotbar Controls** | Quick actions and keyboard shortcuts | ![hotbar](./docs/images/hotbar-controls.png) |
+| **Status Indicators** | Understanding connection and agent status | ![status](./docs/images/status-indicators.png) |
 
 ### Agent Capabilities
 Each agent has unique strengths. Learn when to use each:
