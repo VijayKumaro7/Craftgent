@@ -80,7 +80,7 @@ def create_app() -> FastAPI:
         CORSMiddleware,
         allow_origins=settings.cors_origin_list,
         allow_credentials=True,
-        allow_methods=["GET", "POST", "OPTIONS"],  # Restrict to necessary methods only
+        allow_methods=["GET", "POST", "DELETE", "OPTIONS"],  # Restrict to necessary methods only
         allow_headers=["Content-Type", "Authorization"],  # Only necessary headers
     )
 
