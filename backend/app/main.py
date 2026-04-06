@@ -22,7 +22,7 @@ from sqlalchemy import text
 from app.core.config import get_settings
 from app.core.logging import setup_logging
 from app.db.base import engine, AsyncSessionLocal
-from app.api import health, chat, auth_router, ws_router, stats_router, sessions_router
+from app.api import health, chat, auth_router, ws_router, stats_router, sessions_router, files_router
 
 setup_logging()
 logger = structlog.get_logger()
@@ -106,6 +106,7 @@ def create_app() -> FastAPI:
     app.include_router(ws_router.router,        prefix="/api")
     app.include_router(stats_router.router,     prefix="/api")
     app.include_router(sessions_router.router,  prefix="/api")
+    app.include_router(files_router.router,     prefix="/api")
 
     return app
 
