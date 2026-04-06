@@ -4,8 +4,9 @@
 import { useState, useCallback } from 'react'
 import { apiClient } from '@/api/client'
 
-const ALLOWED_TYPES = ['.csv', '.json', '.pdf', '.py', '.js', '.go', '.txt', '.md', '.tsx', '.ts', '.jsx']
-const MAX_SIZE = 10 * 1024 * 1024 // 10MB
+// Must match backend ALLOWED_TYPES in files_router.py
+const ALLOWED_TYPES = ['.pdf', '.csv', '.json', '.txt', '.doc', '.docx', '.xls', '.xlsx', '.py', '.js', '.ts']
+const MAX_SIZE = 50 * 1024 * 1024 // 50MB (matches backend limit)
 
 export interface UploadedFile {
   id: string
@@ -66,12 +67,11 @@ export function useFileUpload() {
       })
 
       const uploadedFile: UploadedFile = {
-        id: Math.random().toString(36).slice(2, 11),
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        token: response.data.token || response.data.url,
-        url: response.data.url,
+        id: response.data.file_id,
+        name: response.data.filename,
+        size: response.data.file_size,
+        type: response.data.file_type,
+        token: response.data.file_id,
       }
 
       setState({ isUploading: false, progress: 100, error: null })
