@@ -3,6 +3,7 @@
  */
 import { useRef, useState } from 'react'
 import { useFileUpload, type UploadedFile } from '@/hooks/useFileUpload'
+import { UI_ICONS } from '@/constants/assets'
 
 interface FileUploadProps {
   onFilesSelected?: (files: UploadedFile[]) => void
@@ -60,21 +61,8 @@ export function FileUpload({ onFilesSelected, maxFiles = 5 }: FileUploadProps) {
   }
 
   const getFileIcon = (name: string): string => {
-    const ext = name.split('.').pop()?.toLowerCase() || ''
-    const icons: Record<string, string> = {
-      csv: '📊',
-      json: '{ }',
-      pdf: '📄',
-      py: '🐍',
-      js: '⚡',
-      go: '🐹',
-      txt: '📝',
-      md: '📖',
-      tsx: '⚛️',
-      ts: '📘',
-      jsx: '⚛️',
-    }
-    return icons[ext] || '📎'
+    // Use FILE icon for all file types (more consistent than emoji)
+    return UI_ICONS.FILE
   }
 
   return (
@@ -102,16 +90,23 @@ export function FileUpload({ onFilesSelected, maxFiles = 5 }: FileUploadProps) {
         <button
           onClick={() => inputRef.current?.click()}
           disabled={isUploading}
-          className="w-full text-center py-1.5 font-terminal text-[11px] text-white/70 hover:text-white/90 disabled:opacity-40"
+          className="w-full text-center py-1.5 font-terminal text-[11px] text-white/70 hover:text-white/90 disabled:opacity-40 flex items-center justify-center gap-1"
         >
           {isUploading ? (
             <>
-              📤 UPLOADING... {Math.round(100)}%
+              <img src={UI_ICONS.UPLOAD} alt="uploading" width={14} height={14} style={{ imageRendering: 'pixelated' }} />
+              UPLOADING... {Math.round(100)}%
             </>
           ) : selectedFiles.length > 0 ? (
-            <>📎 ATTACH MORE FILES</>
+            <>
+              <img src={UI_ICONS.UPLOAD} alt="attach" width={14} height={14} style={{ imageRendering: 'pixelated' }} />
+              ATTACH MORE FILES
+            </>
           ) : (
-            <>📎 DROP FILES OR CLICK</>
+            <>
+              <img src={UI_ICONS.UPLOAD} alt="drop" width={14} height={14} style={{ imageRendering: 'pixelated' }} />
+              DROP FILES OR CLICK
+            </>
           )}
         </button>
       </div>
@@ -137,7 +132,13 @@ export function FileUpload({ onFilesSelected, maxFiles = 5 }: FileUploadProps) {
               key={file.id}
               className="flex items-center gap-1 p-1.5 bg-white/5 border border-white/10 rounded group hover:bg-white/8"
             >
-              <span className="text-[12px]">{getFileIcon(file.name)}</span>
+              <img
+                src={getFileIcon(file.name)}
+                alt="file type"
+                width={16}
+                height={16}
+                style={{ imageRendering: 'pixelated' }}
+              />
               <div className="flex-1 min-w-0">
                 <div className="font-terminal text-[10px] text-white/80 truncate">
                   {file.name}

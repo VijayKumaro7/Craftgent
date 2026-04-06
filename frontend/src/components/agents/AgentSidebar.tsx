@@ -7,6 +7,7 @@ import type { AgentName } from '@/types'
 import { useAppStore } from '@/store/useAppStore'
 import { PixelHead }   from '@/components/ui/PixelHead'
 import { McBar }         from '@/components/ui/McBar'
+import { getStatusIndicator } from '@/constants/assets'
 import { SessionHistory } from '@/components/chat/SessionHistory'
 import { TemplatesPanel } from '@/components/chat/TemplatesPanel'
 
@@ -58,7 +59,17 @@ export function AgentSidebar() {
             ].join(' ')}
             aria-pressed={isActive}>
             <div className="flex gap-2 items-start">
-              <PixelHead agent={name} size={32} />
+              <div className="relative flex-shrink-0">
+                <PixelHead agent={name} size={32} />
+                <img
+                  src={getStatusIndicator('online')}
+                  alt="online"
+                  width={12}
+                  height={12}
+                  className="absolute bottom-0 right-0"
+                  style={{ imageRendering: 'pixelated' }}
+                />
+              </div>
               <div className="flex-1 min-w-0">
                 <div className="font-pixel text-[6px] text-white drop-shadow-[1px_1px_0_#000] mb-1">
                   {name}
