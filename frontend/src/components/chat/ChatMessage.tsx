@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import type { ChatMessage as ChatMessageType } from '@/types'
 import { CodeBlock } from './CodeBlock'
+import { AgentAvatar } from '@/components/ui/AgentAvatar'
 import { formatRelativeTime } from '@/utils/dateFormat'
 
 interface ChatMessageProps {
@@ -39,9 +40,14 @@ export function ChatMessage({ msg, isStreaming = false }: ChatMessageProps) {
     <div className="group mb-3 animate-[fadeIn_0.1s_steps(2,end)]">
       {/* Header with sender + timestamp */}
       <div className="flex items-center justify-between mb-1">
-        <div className="font-terminal text-[19px] leading-tight">
-          <span className={`font-bold ${senderColor}`}>{sender}</span>
-          {timestamp && <span className="text-white/50 text-[12px] ml-2">{timestamp}</span>}
+        <div className="flex items-center gap-2">
+          {!isSystem && !isUser && msg.agent && (
+            <AgentAvatar agent={msg.agent as any} size={28} className="flex-shrink-0" />
+          )}
+          <div className="font-terminal text-[19px] leading-tight">
+            <span className={`font-bold ${senderColor}`}>{sender}</span>
+            {timestamp && <span className="text-white/50 text-[12px] ml-2">{timestamp}</span>}
+          </div>
         </div>
         {/* Copy button - visible on mobile, hover on desktop */}
         <button

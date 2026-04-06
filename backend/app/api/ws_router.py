@@ -84,21 +84,31 @@ async def _save_messages(
     assistant_content: str,
     agent: str,
 ) -> None:
-    """Persist both sides of the exchange to the DB after the task completes."""
+    """Persist both sides of the exchange to the DB after the task completes.
+
+    FIXED: Explicit error handling and guaranteed commit to prevent message loss.
+    """
     async with AsyncSessionLocal() as db:
-        db.add(Message(
-            session_id=session_id,
-            role=MessageRole.USER,
-            content=user_content,
-        ))
-        db.add(Message(
-            session_id=session_id,
-            role=MessageRole.ASSISTANT,
-            content=assistant_content,
-            agent=AgentName(agent),
-            token_count=len(assistant_content.split()),
-        ))
-        await db.commit()
+        try:
+            db.add(Message(
+                session_id=session_id,
+                role=MessageRole.USER,
+                content=user_content,
+            ))
+            db.add(Message(
+                session_id=session_id,
+                role=MessageRole.ASSISTANT,
+                content=assistant_content,
+                agent=AgentName(agent),
+                token_count=len(assistant_content.split()),
+            ))
+            # Explicitly commit messages to database
+            await db.commit()
+            logger.info("messages_persisted", session_id=str(session_id), user_len=len(user_content))
+        except Exception as e:
+            await db.rollback()
+            logger.error("message_persistence_failed", session_id=str(session_id), error=str(e))
+            raise
 
 
 @router.websocket("/ws/{session_id}")
@@ -220,16 +230,20 @@ async def websocket_endpoint(
                         await manager.send_error(str(chat_session.id), event["data"])
                         break
 
-                # Persist messages in background (don't block the WS)
+                # Persist messages after response completes
+                # FIXED: Use await instead of asyncio.create_task() to ensure correct ordering
                 if full_text:
-                    asyncio.create_task(
-                        _save_messages(
+                    try:
+                        await _save_messages(
                             chat_session.id,
                             user_message,
                             full_text,
                             final_agent,
                         )
-                    )
+                        log.info("message_saved_to_db", session_id=str(chat_session.id))
+                    except Exception as e:
+                        log.error("failed_to_save_message", error=str(e))
+                        await manager.send_error(str(chat_session.id), f"Failed to save message: {e}")
 
     except WebSocketDisconnect:
         log.info("ws_client_disconnected")

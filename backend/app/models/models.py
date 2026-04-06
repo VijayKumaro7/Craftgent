@@ -91,3 +91,28 @@ class Message(Base):
     )
 
     session: Mapped["ChatSession"] = relationship(back_populates="messages")
+
+
+class FileUpload(Base):
+    """Tracks uploaded files associated with sessions."""
+    __tablename__ = "file_uploads"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    session_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("chat_sessions.id", ondelete="CASCADE"), nullable=False
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    filename: Mapped[str] = mapped_column(String(256), nullable=False)
+    file_type: Mapped[str] = mapped_column(String(32), nullable=False)  # e.g., 'pdf', 'csv', 'json'
+    file_size: Mapped[int] = mapped_column(Integer, nullable=False)  # bytes
+    file_path: Mapped[str] = mapped_column(String(512), nullable=False)  # local storage path
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, nullable=False
+    )
+
+    session: Mapped["ChatSession"] = relationship()
+    user: Mapped["User"] = relationship()

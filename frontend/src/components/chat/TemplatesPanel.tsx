@@ -4,6 +4,7 @@
  */
 import { useState } from 'react'
 import { useTemplatesStore, type Template } from '@/store/useTemplatesStore'
+import { getCategoryBadge } from '@/constants/assets'
 
 const CATEGORIES = ['general', 'code', 'data', 'research'] as const
 const AGENT_COLORS: Record<string, string> = {
@@ -109,9 +110,18 @@ export function TemplatesPanel({ onSelectTemplate }: TemplatesPanelProps) {
                   >
                     {template.agent ?? 'GENERAL'}
                   </span>
-                  <span className="font-pixel text-[4px] text-white/30 capitalize">
-                    {template.category}
-                  </span>
+                  <div className="flex items-center gap-1">
+                    <img
+                      src={getCategoryBadge(template.category)}
+                      alt={template.category}
+                      width={14}
+                      height={14}
+                      style={{ imageRendering: 'pixelated' }}
+                    />
+                    <span className="font-pixel text-[4px] text-white/30 capitalize">
+                      {template.category}
+                    </span>
+                  </div>
                 </div>
 
                 <div className="font-terminal text-[13px] text-white/70 leading-tight group-hover:text-white/90 line-clamp-1 mb-0.5">
