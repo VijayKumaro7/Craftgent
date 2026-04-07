@@ -512,23 +512,6 @@ The UI uses a Minecraft-inspired color scheme:
 
 ---
 
-## Environment Variables
-
-| Variable            | Required | Default     | Description                     |
-|---------------------|----------|-------------|---------------------------------|
-| ANTHROPIC_API_KEY   | ✅       | —           | Anthropic API key               |
-| SECRET_KEY          | ✅       | —           | JWT signing secret (32+ chars)  |
-| DATABASE_URL        | ✅       | local pg    | PostgreSQL async URL            |
-| REDIS_URL           | ✅       | local redis | Redis connection URL            |
-| CHROMA_HOST         | —        | localhost   | ChromaDB host                   |
-| CHROMA_PORT         | —        | 8001        | ChromaDB port                   |
-| TAVILY_API_KEY      | —        | ""          | Tavily web search (optional)    |
-| CORS_ORIGINS        | —        | :5173       | Allowed CORS origins            |
-| APP_ENV             | —        | development | production disables /docs       |
-| RATE_LIMIT_PER_MIN  | —        | 20          | API rate limit per user         |
-
----
-
 ## Tests
 
 ```bash
