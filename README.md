@@ -4,7 +4,7 @@
 
 Multi-agent chat system powered by Claude Sonnet, FastAPI, LangGraph, WebSockets, ChromaDB, and Celery.
 
-**📍 Project Status:** Currently in **Phase 1-2 (Backend Development)**. The backend infrastructure is scaffolded and functional. Frontend, deployment infrastructure, and agent refinement coming in Phase 3-4. See [ROADMAP.md](./ROADMAP.md) for details.
+**📍 Project Status:** Currently in **Phase 1-2 (Backend Development)**. The backend infrastructure is scaffolded and functional. Frontend, deployment infrastructure, and agent refinement.
 
 ---
 
@@ -562,6 +562,4 @@ craftgent/
 
 - **Interactive API Docs:** `http://localhost:8000/docs` (when backend is running locally)
 - **API Documentation Guide:** [docs/API-SCREENSHOTS.md](./docs/API-SCREENSHOTS.md) — How to capture and view Swagger UI
-- **Contributing:** See [CONTRIBUTING.md](./CONTRIBUTING.md)
-- **Project Plan:** See [ROADMAP.md](./ROADMAP.md)
 - **Anthropic Claude API:** https://console.anthropic.com
