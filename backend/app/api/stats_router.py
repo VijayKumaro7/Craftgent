@@ -6,7 +6,7 @@ POST /api/stats/{agent}/award → award XP after a task (called by Celery worker
 """
 import uuid
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import select, func, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import BaseModel
 
@@ -95,3 +95,35 @@ async def award_xp(
 
     stat = await _get_or_create_stat(uid, agent, db)
     stat.add_xp(xp_amount)
+    await db.commit()
+
+
+@router.get("/leaderboard", tags=["stats"])
+async def get_leaderboard(db: AsyncSession = Depends(get_db)):
+    """
+    Get global leaderboard — top agents by level and XP.
+    Shows aggregate stats across all users.
+    """
+    # Query: Get all agent stats, group by agent, order by avg level then total XP
+    result = await db.execute(
+        select(
+            AgentStats.agent_name,
+            func.count(AgentStats.id).label("users_count"),
+            func.avg(AgentStats.level).label("avg_level"),
+            func.sum(AgentStats.xp).label("total_xp"),
+        )
+        .group_by(AgentStats.agent_name)
+        .order_by(desc(func.avg(AgentStats.level)), desc(func.sum(AgentStats.xp)))
+    )
+
+    leaderboard = []
+    for idx, (agent_name, users_count, avg_level, total_xp) in enumerate(result.all(), 1):
+        leaderboard.append({
+            "rank": idx,
+            "agent": agent_name,
+            "level": int(avg_level or 1),
+            "total_xp": int(total_xp or 0),
+            "users_count": int(users_count or 0),
+        })
+
+    return {"leaderboard": leaderboard}
