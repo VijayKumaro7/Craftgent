@@ -52,7 +52,7 @@ Nginx (prod) → FastAPI (8000)   [✅ In Progress]
 - Python 3.12+
 - PostgreSQL 14+
 - Redis 7+
-- ANTHROPIC_API_KEY (get from [console.anthropic.com](https://console.anthropic.com))
+
 
 ### 1. Setup
 
@@ -100,7 +100,6 @@ curl http://localhost:8000/api/health
 
 The backend includes interactive **Swagger/OpenAPI** documentation. Once the backend is running, open your browser:
 
-**👉 http://localhost:8000/docs**
 
 The Swagger UI provides:
 - ✅ Full endpoint listing with descriptions
