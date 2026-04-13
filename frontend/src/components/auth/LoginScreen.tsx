@@ -1,10 +1,12 @@
 /**
- * LoginScreen — Minecraft-styled auth gate.
+ * LoginScreen — Minecraft-styled auth gate with routing.
  *
  * Shows login form by default, toggles to register.
+ * Redirects to /chat on successful login.
  * Uses the same grass/stone/dirt palette as the main UI.
  */
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/useAuthStore'
 import { SkyBackground } from '@/components/layout/SkyBackground'
 
@@ -85,20 +87,34 @@ function McButton({
 }
 
 export function LoginScreen() {
+  const navigate = useNavigate()
   const [mode, setMode]         = useState<'login' | 'register'>('login')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [confirm,  setConfirm]  = useState('')
-  const { login, register, isLoading, error, clearError } = useAuthStore()
+  const { login, register, isLoading, error, clearError, isAuthenticated } = useAuthStore()
+
+  // Redirect to /chat if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/chat', { replace: true })
+    }
+  }, [isAuthenticated, navigate])
 
   const handleSubmit = async () => {
     if (!username.trim() || !password.trim()) return
 
+    let success = false
     if (mode === 'register') {
       if (password !== confirm) return
-      await register(username.trim(), password)
+      success = await register(username.trim(), password)
     } else {
-      await login(username.trim(), password)
+      success = await login(username.trim(), password)
+    }
+
+    // Redirect to /chat on successful login/register
+    if (success) {
+      navigate('/chat', { replace: true })
     }
   }
 
