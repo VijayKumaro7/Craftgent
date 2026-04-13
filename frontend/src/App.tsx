@@ -1,14 +1,18 @@
 /**
- * App — root component with auth gate (Phase 2).
+ * App — root component with auth gate and routing (Phase 2+).
  *
  * On mount: tries to restore session via refresh token cookie.
- * If not authenticated: shows LoginScreen.
- * If authenticated: shows the full Minecraft UI shell.
+ * Routes:
+ *   / → LandingPage (public)
+ *   /login → LoginScreen (public)
+ *   /chat → Shell (protected, redirects to / if not authenticated)
  */
 import { useEffect, useState, lazy, Suspense } from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuthStore }       from '@/store/useAuthStore'
 import { useAppStore }        from '@/store/useAppStore'
 import { LoginScreen }        from '@/components/auth/LoginScreen'
+import { LandingPage }        from '@/pages/LandingPage'
 import { SkyBackground }      from '@/components/layout/SkyBackground'
 import { TopBar }             from '@/components/layout/TopBar'
 import { Hotbar }             from '@/components/layout/Hotbar'
@@ -18,6 +22,14 @@ import { SkeletonMessages }   from '@/components/ui/SkeletonMessage'
 
 const ChatPanel = lazy(() => import('@/components/chat/ChatPanel').then(m => ({ default: m.ChatPanel })))
 const TaskPanel = lazy(() => import('@/components/tasks/TaskPanel').then(m => ({ default: m.TaskPanel })))
+
+/**
+ * ProtectedRoute — guards /chat from unauthenticated access
+ */
+function ProtectedRoute({ element }: { element: React.ReactNode }) {
+  const { isAuthenticated } = useAuthStore()
+  return isAuthenticated ? element : <Navigate to="/" replace />
+}
 
 function Shell() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 900)
@@ -91,8 +103,21 @@ function Shell() {
   )
 }
 
-export default function App() {
-  const { isAuthenticated, tryRefresh } = useAuthStore()
+function BootScreen() {
+  return (
+    <>
+      <SkyBackground />
+      <div className="fixed inset-0 flex items-center justify-center" style={{ zIndex: 20 }}>
+        <div className="font-pixel text-[10px] text-white drop-shadow-[2px_2px_0_rgba(0,0,0,0.8)] animate-pulse">
+          ⛏ LOADING...
+        </div>
+      </div>
+    </>
+  )
+}
+
+function AppRoutes() {
+  const { tryRefresh } = useAuthStore()
   const [booting, setBooting] = useState(true)
 
   // On hard refresh: try to restore session from httpOnly refresh cookie
@@ -100,18 +125,22 @@ export default function App() {
     tryRefresh().finally(() => setBooting(false))
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (booting) {
-    return (
-      <>
-        <SkyBackground />
-        <div className="fixed inset-0 flex items-center justify-center" style={{ zIndex: 20 }}>
-          <div className="font-pixel text-[10px] text-white drop-shadow-[2px_2px_0_rgba(0,0,0,0.8)] animate-pulse">
-            ⛏ LOADING...
-          </div>
-        </div>
-      </>
-    )
-  }
+  if (booting) return <BootScreen />
 
-  return isAuthenticated ? <Shell /> : <LoginScreen />
+  return (
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/login" element={<LoginScreen />} />
+      <Route path="/chat" element={<ProtectedRoute element={<Shell />} />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  )
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
+  )
 }

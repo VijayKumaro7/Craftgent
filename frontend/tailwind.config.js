@@ -53,6 +53,30 @@ export default {
         'slot': '40px',   // standard hotbar slot size
         'head': '32px',   // agent pixel head
       },
+      keyframes: {
+        fadeIn: {
+          'from': { opacity: '0', transform: 'translateY(4px)' },
+          'to': { opacity: '1', transform: 'none' },
+        },
+        slideUp: {
+          'from': { opacity: '0', transform: 'translateY(20px)' },
+          'to': { opacity: '1', transform: 'translateY(0)' },
+        },
+        glow: {
+          '0%, 100%': { boxShadow: '0 0 5px rgba(93, 158, 50, 0.5)' },
+          '50%': { boxShadow: '0 0 20px rgba(93, 158, 50, 0.8)' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+      },
+      animation: {
+        'fade-in': 'fadeIn 0.5s ease-out both',
+        'slide-up': 'slideUp 0.5s ease-out both',
+        'glow': 'glow 2s ease-in-out infinite',
+        'float': 'float 3s ease-in-out infinite',
+      },
     },
   },
   plugins: [],
