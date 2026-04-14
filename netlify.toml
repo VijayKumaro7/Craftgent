@@ -1,4 +1,5 @@
 # Netlify configuration for CraftAgent
+# https://docs.netlify.com/configure-builds/file-conventions/
 
 [build]
   command = "cd frontend && npm run build"
@@ -6,16 +7,15 @@
   base = "/"
 
 [build.environment]
-  # Node version for build
   NODE_VERSION = "18"
 
-# Redirect all routes to index.html for React Router SPA
+# Rewrite all non-file requests to index.html for React Router (SPA)
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
-# Security headers
+# Security headers for all requests
 [[headers]]
   for = "/*"
   [headers.values]
@@ -24,20 +24,28 @@
     X-XSS-Protection = "1; mode=block"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+    Access-Control-Allow-Origin = "*"
 
-# Cache static assets
+# Cache static assets (immutable)
 [[headers]]
   for = "/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
+# Cache versioned JS/CSS files
 [[headers]]
-  for = "/*.{js,css}"
+  for = "/index*.js"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-# Don't cache HTML
+[[headers]]
+  for = "/index*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Don't cache HTML (always fetch fresh)
 [[headers]]
   for = "/*.html"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
+
