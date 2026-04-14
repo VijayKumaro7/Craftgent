@@ -76,7 +76,6 @@ export function StatsDisplay() {
         const stat = stats.stats[agentName]
         if (!stat) return null
 
-        const agent = AGENTS[agentName]
         const color = getAgentColor(agentName)
 
         return (

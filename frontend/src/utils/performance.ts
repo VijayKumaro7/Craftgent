@@ -1,6 +1,7 @@
 /**
  * Performance monitoring and optimization utilities
  */
+import { useEffect } from 'react'
 
 interface PerformanceMetric {
   name: string
@@ -138,19 +139,19 @@ export function measureRender(componentName: string) {
  * Track component lifecycle performance
  */
 export function usePerformanceTracking(componentName: string) {
-  React.useEffect(() => {
+  useEffect(() => {
     monitor.start(`render-${componentName}`)
     return () => {
       const duration = monitor.end(`render-${componentName}`)
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.MODE === 'development') {
         console.log(`✅ ${componentName} mounted in ${duration.toFixed(2)}ms`)
       }
     }
   }, [componentName])
 
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta.env.MODE === 'development') {
         console.log(`🗑️ ${componentName} unmounted`)
       }
     }
@@ -179,7 +180,7 @@ export function reportWebVitals(metric: any) {
   const { name, value } = metric
 
   // Log to console in development
-  if (process.env.NODE_ENV === 'development') {
+  if (import.meta.env.MODE === 'development') {
     console.log(`📊 Web Vital: ${name} = ${value.toFixed(2)}`)
   }
 
@@ -204,5 +205,3 @@ export function getPerformanceMetrics() {
     customMetrics: monitor.getSummary(),
   }
 }
-
-import React from 'react'

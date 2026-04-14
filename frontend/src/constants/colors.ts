@@ -55,9 +55,10 @@ export const CATEGORY_COLORS = {
 /**
  * Get agent color by agent name
  */
-export function getAgentColor(agentName: string): typeof AGENT_COLORS.NEXUS {
+export function getAgentColor(agentName: string) {
   const normalized = agentName.toUpperCase();
-  return AGENT_COLORS[normalized as keyof typeof AGENT_COLORS] || AGENT_COLORS.NEXUS;
+  const agentColor = AGENT_COLORS[normalized as keyof typeof AGENT_COLORS];
+  return agentColor || AGENT_COLORS.NEXUS;
 }
 
 /**
