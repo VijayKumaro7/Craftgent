@@ -63,7 +63,9 @@ export function ToastContainer() {
     }
 
     listeners.add(handleToast)
-    return () => listeners.delete(handleToast)
+    return () => {
+      listeners.delete(handleToast)
+    }
   }, [])
 
   const typeStyles = {

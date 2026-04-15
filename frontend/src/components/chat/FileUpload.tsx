@@ -60,7 +60,7 @@ export function FileUpload({ onFilesSelected, maxFiles = 5 }: FileUploadProps) {
     onFilesSelected?.(updated)
   }
 
-  const getFileIcon = (name: string): string => {
+  const getFileIcon = (_name: string): string => {
     // Use FILE icon for all file types (more consistent than emoji)
     return UI_ICONS.FILE
   }

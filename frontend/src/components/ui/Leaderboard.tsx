@@ -4,9 +4,6 @@
  */
 import { useEffect, useState } from 'react'
 import { apiClient } from '@/api/client'
-import { AGENTS } from '@/types'
-import type { AgentName } from '@/types'
-import { AgentAvatar } from './AgentAvatar'
 
 interface LeaderboardEntry {
   rank: number

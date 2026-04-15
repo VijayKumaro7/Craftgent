@@ -12,10 +12,11 @@ export function lazyLoadComponent<P extends object>(
   fallbackComponent?: React.ComponentType
 ) {
   const Component = React.lazy(importFn)
+  const Fallback = fallbackComponent || LoadingFallback
 
   return (props: P) => (
-    <React.Suspense fallback={fallbackComponent ? <fallbackComponent /> : <LoadingFallback />}>
-      <Component {...props} />
+    <React.Suspense fallback={<Fallback />}>
+      <Component {...(props as any)} />
     </React.Suspense>
   )
 }
@@ -131,13 +132,6 @@ export const CodeSplittingConfig = {
     'Leaderboard',
     'TemplatesPanel',
   ] as const,
-
-  // Routes to code split
-  ROUTE_CHUNKS: {
-    dashboard: () => import('@/pages/Dashboard'),
-    settings: () => import('@/pages/Settings'),
-    profile: () => import('@/pages/Profile'),
-  },
 }
 
 /**
