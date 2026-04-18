@@ -7,7 +7,9 @@ POST /api/auth/refresh   — exchange refresh token for new access token
 GET  /api/auth/me        — get current user info (protected)
 """
 import structlog
-from fastapi import APIRouter, Depends, HTTPException, status, Response, Cookie
+from fastapi import APIRouter, Depends, HTTPException, status, Response, Cookie, Request
+from slowapi import Limiter
+from slowapi.util import get_remote_address
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import BaseModel, Field
@@ -22,6 +24,7 @@ from app.models.models import User
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 logger = structlog.get_logger()
+limiter = Limiter(key_func=get_remote_address)
 
 
 # ── Schemas (local to auth — keep it self-contained) ──────────────────────
@@ -51,7 +54,8 @@ class UserOut(BaseModel):
 # ── Endpoints ─────────────────────────────────────────────────────────────
 
 @router.post("/register", response_model=UserOut, status_code=status.HTTP_201_CREATED)
-async def register(req: RegisterRequest, db: AsyncSession = Depends(get_db)) -> UserOut:
+@limiter.limit("5/minute")
+async def register(request: Request, req: RegisterRequest, db: AsyncSession = Depends(get_db)) -> UserOut:
     """Create a new user account."""
     # Check username not taken
     existing = await db.execute(select(User).where(User.username == req.username))
@@ -72,7 +76,9 @@ async def register(req: RegisterRequest, db: AsyncSession = Depends(get_db)) -> 
 
 
 @router.post("/login", response_model=TokenResponse)
+@limiter.limit("10/minute")
 async def login(
+    request: Request,
     req: LoginRequest,
     response: Response,
     db: AsyncSession = Depends(get_db),
@@ -82,7 +88,7 @@ async def login(
     user = result.scalar_one_or_none()
 
     if not user or not verify_password(req.password, user.hashed_password):
-        # Use identical error for both cases — don't leak whether username exists
+        logger.warning("login_failed", username=req.username)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid username or password",

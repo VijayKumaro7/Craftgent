@@ -19,18 +19,27 @@ from app.core.config import get_settings
 
 logger = structlog.get_logger()
 
-# Dangerous imports that should never run in the sandbox
-BLOCKED_IMPORTS = [
+BLOCKED_PATTERNS = [
     "os.system", "subprocess", "socket", "requests",
     "urllib", "ftplib", "telnetlib", "shutil.rmtree",
     "__import__", "eval(", "exec(",
+    "importlib", "ctypes", "pathlib",
+    "open(", "compile(", "globals(", "locals(",
+    "getattr(", "setattr(", "delattr(",
+    "__builtins__", "__subclasses__",
+    "sys.modules", "os.popen", "os.exec",
+    "os.spawn", "os.fork", "signal.",
+    "multiprocessing", "threading",
+    "webbrowser", "antigravity",
+    "code.interact", "pty.",
+    "commands.", "pdb.",
 ]
 
 
 def _is_safe(code: str) -> tuple[bool, str]:
-    """Basic static check — not a replacement for proper sandboxing."""
+    """Static check for dangerous patterns — defense in depth alongside subprocess isolation."""
     lowered = code.lower()
-    for blocked in BLOCKED_IMPORTS:
+    for blocked in BLOCKED_PATTERNS:
         if blocked.lower() in lowered:
             return False, f"Blocked: '{blocked}' is not allowed in the sandbox."
     return True, ""

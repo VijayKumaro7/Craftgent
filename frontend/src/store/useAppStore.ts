@@ -95,8 +95,10 @@ const INITIAL_INVENTORY: InventorySlot[] = [
 
 // ── Store ─────────────────────────────────────────────────────────────────
 
+const withDevtools = import.meta.env.DEV ? devtools : <T>(fn: T) => fn
+
 export const useAppStore = create<AppState>()(
-  devtools(
+  withDevtools(
     (set) => ({
       // Agent
       activeAgent: 'NEXUS',

@@ -23,8 +23,10 @@ interface AuthState {
   clearError: () => void
 }
 
+const withDevtools = import.meta.env.DEV ? devtools : <T>(fn: T) => fn
+
 export const useAuthStore = create<AuthState>()(
-  devtools(
+  withDevtools(
     (set, get) => ({
       accessToken: null,
       username: null,

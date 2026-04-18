@@ -80,20 +80,22 @@ async def get_stats(
 async def award_xp(
     agent_name: str,
     xp_amount:  int  = 50,
-    user_id:    str  = "",   # passed by Celery worker (not authenticated)
     db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ) -> None:
     """
     Award XP to an agent after task completion.
-    Called internally by the Celery worker — not user-facing.
+    Requires authentication — XP is awarded to the requesting user.
     """
+    if xp_amount < 0 or xp_amount > 500:
+        raise HTTPException(status_code=400, detail="xp_amount must be between 0 and 500")
+
     try:
         agent = AgentName(agent_name.upper())
-        uid   = uuid.UUID(user_id)
     except (ValueError, KeyError):
-        raise HTTPException(status_code=400, detail="Invalid agent or user_id")
+        raise HTTPException(status_code=400, detail="Invalid agent name")
 
-    stat = await _get_or_create_stat(uid, agent, db)
+    stat = await _get_or_create_stat(current_user.id, agent, db)
     stat.add_xp(xp_amount)
     await db.commit()
 

@@ -8,6 +8,8 @@ VORTEX can query the CraftAgent DB to answer questions like:
 
 Safety:
   - Only SELECT statements allowed
+  - Table whitelist enforced — only analytics-safe tables accessible
+  - Sensitive columns (hashed_password) excluded
   - Runs against a read-only connection pool
   - Result rows capped at 50
   - Query timeout: 5 seconds
@@ -23,12 +25,17 @@ logger = structlog.get_logger()
 MAX_ROWS    = 50
 QUERY_TIMEOUT = 5  # seconds
 
-# Tables VORTEX is allowed to query (whitelist)
-ALLOWED_TABLES = {"messages", "chat_sessions", "users", "agent_stats"}
+ALLOWED_TABLES = {"messages", "chat_sessions", "agent_stats"}
 
-# Pattern to detect non-SELECT statements
+BLOCKED_COLUMNS = {"hashed_password", "password", "secret", "token"}
+
 WRITE_PATTERN = re.compile(
     r"\b(INSERT|UPDATE|DELETE|DROP|ALTER|CREATE|TRUNCATE|GRANT|REVOKE)\b",
+    re.IGNORECASE,
+)
+
+TABLE_REF_PATTERN = re.compile(
+    r"\b(?:FROM|JOIN|INTO|UPDATE)\s+([a-zA-Z_][a-zA-Z0-9_]*)",
     re.IGNORECASE,
 )
 
@@ -36,6 +43,23 @@ WRITE_PATTERN = re.compile(
 def _is_read_only(sql: str) -> bool:
     """Reject any statement containing write keywords."""
     return not bool(WRITE_PATTERN.search(sql))
+
+
+def _references_only_allowed_tables(sql: str) -> tuple[bool, str]:
+    """Ensure the query only accesses whitelisted tables."""
+    referenced = {m.group(1).lower() for m in TABLE_REF_PATTERN.finditer(sql)}
+    disallowed = referenced - ALLOWED_TABLES
+    if disallowed:
+        return False, f"Access denied for table(s): {', '.join(sorted(disallowed))}. Allowed: {', '.join(sorted(ALLOWED_TABLES))}"
+    if not referenced:
+        return False, "Could not determine target table. Use explicit FROM clauses."
+    return True, ""
+
+
+def _references_blocked_columns(sql: str) -> bool:
+    """Check if the query tries to access sensitive columns."""
+    lowered = sql.lower()
+    return any(col in lowered for col in BLOCKED_COLUMNS)
 
 
 def _make_readonly_engine():
@@ -65,6 +89,13 @@ def query_analytics(sql: str) -> str:
     if not _is_read_only(sql):
         return "[SQL BLOCKED] Only SELECT statements are allowed."
 
+    allowed, reason = _references_only_allowed_tables(sql)
+    if not allowed:
+        return f"[SQL BLOCKED] {reason}"
+
+    if _references_blocked_columns(sql):
+        return "[SQL BLOCKED] Query references restricted columns."
+
     try:
         engine = _make_readonly_engine()
         with engine.connect() as conn:
@@ -91,4 +122,4 @@ def query_analytics(sql: str) -> str:
 
     except Exception as e:
         logger.error("sql_tool_failed", error=str(e))
-        return f"[SQL ERROR] {e}"
+        return "[SQL ERROR] Query failed. Check syntax and try again."

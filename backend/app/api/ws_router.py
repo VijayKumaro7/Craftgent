@@ -171,6 +171,10 @@ async def websocket_endpoint(
                     await websocket.send_text(json.dumps({"type": "error", "data": "Empty message"}))
                     continue
 
+                if len(user_message) > 8000:
+                    await websocket.send_text(json.dumps({"type": "error", "data": "Message too long (max 8000 chars)"}))
+                    continue
+
                 # Auth — validate JWT
                 user = await get_ws_user(token, db)
                 if not user:
