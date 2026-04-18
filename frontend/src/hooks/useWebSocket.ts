@@ -154,6 +154,11 @@ export function useWebSocket(): UseWebSocketReturn {
       return
     }
 
+    if (!accessToken) {
+      addSystemMessage('[ERROR] Not authenticated. Please log in.')
+      return
+    }
+
     setIsStreaming(true)
     const msgId = addStreamingMessage(activeAgent)
     pendingMsgIdRef.current = msgId
@@ -162,7 +167,7 @@ export function useWebSocket(): UseWebSocketReturn {
       type: 'chat',
       message,
       agent: activeAgent,
-      token: accessToken ?? '',
+      token: accessToken,
     }))
   }, [activeAgent, accessToken, addStreamingMessage, setIsStreaming, addSystemMessage, connect])
 

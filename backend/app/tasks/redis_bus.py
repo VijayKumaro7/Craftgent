@@ -29,40 +29,38 @@ async def _async_redis():
 
 # ── Publisher (called from Celery worker — sync) ──────────────────────────
 
+def _publish(session_id: str, payload: dict) -> None:
+    """Publish a message to the session channel with guaranteed cleanup."""
+    channel = TOKEN_CHANNEL.format(session_id=session_id)
+    r = _sync_redis()
+    try:
+        r.publish(channel, json.dumps(payload))
+    finally:
+        r.close()
+
+
 def publish_token(session_id: str, token: str) -> None:
     """Publish a single token to the session channel."""
-    r = _sync_redis()
-    channel = TOKEN_CHANNEL.format(session_id=session_id)
-    r.publish(channel, json.dumps({"type": "token", "data": token}))
-    r.close()
+    _publish(session_id, {"type": "token", "data": token})
 
 
 def publish_done(session_id: str, full_text: str, agent: str) -> None:
     """Signal that the agent has finished responding."""
-    r = _sync_redis()
-    channel = TOKEN_CHANNEL.format(session_id=session_id)
-    r.publish(channel, json.dumps({"type": "done", "data": full_text, "agent": agent}))
-    r.close()
+    _publish(session_id, {"type": "done", "data": full_text, "agent": agent})
 
 
 def publish_error(session_id: str, error: str) -> None:
     """Signal an error to the WebSocket hub."""
-    r = _sync_redis()
-    channel = TOKEN_CHANNEL.format(session_id=session_id)
-    r.publish(channel, json.dumps({"type": "error", "data": error}))
-    r.close()
+    _publish(session_id, {"type": "error", "data": error})
 
 
 def publish_handoff(session_id: str, from_agent: str, to_agent: str) -> None:
     """Signal an agent delegation event."""
-    r = _sync_redis()
-    channel = TOKEN_CHANNEL.format(session_id=session_id)
-    r.publish(channel, json.dumps({
+    _publish(session_id, {
         "type": "handoff",
         "from_agent": from_agent,
         "to_agent": to_agent,
-    }))
-    r.close()
+    })
 
 
 # ── Subscriber (called from FastAPI — async) ──────────────────────────────
