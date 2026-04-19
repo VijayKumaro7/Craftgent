@@ -8,8 +8,9 @@ import { useAppStore } from '@/store/useAppStore'
 import { PixelHead }   from '@/components/ui/PixelHead'
 import { McBar }         from '@/components/ui/McBar'
 import { getStatusIndicator } from '@/constants/assets'
-import { SessionHistory } from '@/components/chat/SessionHistory'
-import { TemplatesPanel } from '@/components/chat/TemplatesPanel'
+import { SessionHistory }    from '@/components/chat/SessionHistory'
+import { TemplatesPanel }    from '@/components/chat/TemplatesPanel'
+import { AgentHistoryPanel } from '@/components/agents/AgentHistoryPanel'
 
 const ABILITIES = [
   { label: 'WEB SEARCH', on: true  },
@@ -116,6 +117,7 @@ export function AgentSidebar() {
 
       {/* Panels at the bottom of the sidebar */}
       <div className="mt-auto">
+        <AgentHistoryPanel />
         <TemplatesPanel onSelectTemplate={insertIntoInput} />
         <SessionHistory />
       </div>

@@ -103,3 +103,21 @@ export interface HealthResponse {
   environment: string
   db: string
 }
+
+// ── Agent history ─────────────────────────────────────────────────────────
+
+export interface AgentOutput {
+  id: string
+  content: string
+  session_id: string
+  token_count: number
+  created_at: string
+}
+
+export interface AgentHistoryResponse {
+  agent: AgentName
+  outputs: AgentOutput[]
+  total: number
+  page: number
+  per_page: number
+}
