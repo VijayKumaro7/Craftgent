@@ -34,7 +34,9 @@ from app.models.models import ChatSession, Message, MessageRole, AgentName
 router = APIRouter(tags=["websocket"])
 logger = structlog.get_logger()
 
-MAX_CONTEXT = 20   # messages to include as history
+# Fetch enough history to cover the widest per-agent window (RESEARCHER = 30).
+# Each agent node further trims this to its own AGENT_HISTORY_WINDOW value.
+MAX_CONTEXT = 40
 
 
 async def _get_or_create_session(session_id: str, user_id: str, db: AsyncSession) -> ChatSession:
