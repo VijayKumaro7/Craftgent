@@ -35,21 +35,27 @@ def get_chroma_client() -> chromadb.HttpClient:
         return chromadb.EphemeralClient()  # type: ignore[return-value]
 
 
+@lru_cache(maxsize=1)
 def get_embedding_fn() -> embedding_functions.SentenceTransformerEmbeddingFunction:
     """
     Local sentence-transformers embedding — no external API needed.
     Model: all-MiniLM-L6-v2 (22MB, fast, good quality for RAG).
+    Cached so the model is only loaded once per process.
     """
     return embedding_functions.SentenceTransformerEmbeddingFunction(
         model_name="all-MiniLM-L6-v2"
     )
 
 
+@lru_cache(maxsize=1)
 def get_memory_collection() -> chromadb.Collection:
-    """Returns the shared memory collection, creating it if absent."""
+    """
+    Returns the shared memory collection, creating it if absent.
+    Cached — avoids repeated collection lookups on every request.
+    """
     client = get_chroma_client()
     return client.get_or_create_collection(
         name=get_settings().chroma_collection,
         embedding_function=get_embedding_fn(),
-        metadata={"hnsw:space": "cosine"},   # cosine similarity for semantic search
+        metadata={"hnsw:space": "cosine"},
     )
