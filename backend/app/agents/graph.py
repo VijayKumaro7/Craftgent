@@ -39,7 +39,6 @@ class AgentState(TypedDict):
     active_agent:   str
     route_decision: str
     final_response: str
-    memory_context: str
 
 def _llm(tools=None, streaming=True):
     llm = ChatAnthropic(model=MODEL, max_tokens=MAX_TOKENS,
@@ -70,22 +69,32 @@ def route(state: AgentState) -> Literal["nexus_answer", "alex_code", "vortex_dat
         "research": "researcher_answer",
     }.get(state.get("route_decision", "answer"), "nexus_answer")
 
-# ── Memory injection ──────────────────────────────────────────────────────
-async def inject_memory(state: AgentState) -> dict:
-    if not state.get("user_id"):
-        return {"memory_context": ""}
+# ── Memory injection (agent-aware) ───────────────────────────────────────
+async def _inject_memory_for_agent(state: AgentState, agent_name: AgentName) -> str:
+    """
+    Retrieve memory context tuned for the specific agent about to respond.
+    Returns the formatted context string (empty string if nothing found).
+    """
+    uid = state.get("user_id", "")
+    if not uid:
+        return ""
     try:
-        msg = next((m.content for m in reversed(state["messages"])
-                    if isinstance(m, HumanMessage)), "")
+        msg = next(
+            (m.content for m in reversed(state["messages"]) if isinstance(m, HumanMessage)),
+            "",
+        )
         if not msg:
-            return {"memory_context": ""}
-        svc = MemoryService(user_id=state["user_id"])
-        entries = svc.retrieve_context(msg, exclude_session=state.get("session_id"))
-        ctx = MemoryService.format_context(entries)
-        return {"memory_context": ctx}
+            return ""
+        svc     = MemoryService(user_id=uid)
+        entries = svc.retrieve_context(
+            msg,
+            exclude_session=state.get("session_id"),
+            agent_name=agent_name.value,
+        )
+        return MemoryService.format_context(entries, agent_name=agent_name.value)
     except Exception as e:
         logger.warning("memory_inject_failed", error=str(e))
-        return {"memory_context": ""}
+        return ""
 
 # ── Memory store (fire-and-forget) ───────────────────────────────────────
 def _store(user_id: str, session_id: str, content: str, role: str, agent=None):
@@ -105,7 +114,7 @@ def _make_agent_node(agent_name: AgentName):
     async def node(state: AgentState) -> dict:
         sid  = state["session_id"]
         uid  = state.get("user_id", "")
-        ctx  = state.get("memory_context", "")
+        ctx  = await _inject_memory_for_agent(state, agent_name)
         sys  = get_system_prompt(agent_name)
         if ctx:
             sys = f"{sys}\n\n{ctx}"
@@ -175,14 +184,12 @@ def _make_agent_node(agent_name: AgentName):
 # ── Build ─────────────────────────────────────────────────────────────────
 def build_agent_graph():
     g = StateGraph(AgentState)
-    g.add_node("inject_memory", inject_memory)
     g.add_node("router",        router_node)
     g.add_node("nexus_answer",  _make_agent_node(AgentName.NEXUS))
     g.add_node("alex_code",     _make_agent_node(AgentName.ALEX))
     g.add_node("vortex_data",   _make_agent_node(AgentName.VORTEX))
     g.add_node("researcher_answer", _make_agent_node(AgentName.RESEARCHER))
-    g.set_entry_point("inject_memory")
-    g.add_edge("inject_memory", "router")
+    g.set_entry_point("router")
     g.add_conditional_edges("router", route)
     g.add_edge("nexus_answer", END)
     g.add_edge("alex_code",    END)
@@ -204,6 +211,5 @@ async def run_agent_graph(
         "active_agent":   AgentName.NEXUS.value,
         "route_decision": "",
         "final_response": "",
-        "memory_context": "",
     })
     return result.get("final_response", "")
