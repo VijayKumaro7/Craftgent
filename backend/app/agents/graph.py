@@ -10,7 +10,7 @@ Context-window optimizations:
   - Prompt caching: system prompt marked with cache_control so Anthropic caches
     the prefix and reduces both latency and token cost
 """
-import asyncio, uuid as uuid_mod, operator
+import asyncio, operator
 from typing import TypedDict, Annotated, Literal, Any
 import structlog
 from langchain_anthropic import ChatAnthropic
@@ -154,17 +154,6 @@ async def _inject_memory_for_agent(state: AgentState, agent_name: AgentName) -> 
         return ""
 
 
-# ── Memory store (fire-and-forget) ────────────────────────────────────────
-def _store(user_id: str, session_id: str, content: str, role: str, agent=None):
-    if not user_id or not content:
-        return
-    try:
-        MemoryService(user_id=user_id).store_message(
-            str(uuid_mod.uuid4()), content, role, session_id, agent)
-    except Exception as e:
-        logger.warning("mem_store_fail", error=str(e))
-
-
 # ── Agent node factory ────────────────────────────────────────────────────
 def _make_agent_node(agent_name: AgentName):
 
@@ -242,7 +231,6 @@ def _make_agent_node(agent_name: AgentName):
                 full = f"[Synthesis error] {e}"
 
         publish_done(sid, full, agent_name.value)
-        _store(uid, sid, full, "assistant", agent_name.value)
 
         return {
             "messages":       [AIMessage(content=full)] + extra,
@@ -277,7 +265,6 @@ async def run_agent_graph(
     session_id: str, user_message: str,
     history: list[BaseMessage], user_id: str = ""
 ) -> str:
-    _store(user_id, session_id, user_message, "user")
     result = await agent_graph.ainvoke({
         "messages":       history + [HumanMessage(content=user_message)],
         "session_id":     session_id,
