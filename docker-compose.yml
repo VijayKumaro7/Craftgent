@@ -1,7 +1,4 @@
-version: "3.9"
-
-# ── Phase 2: api + db + redis + celery-worker ────────────────────────────
-# Phase 3 will add: chromadb
+# ── Dev: api + db + redis + celery-worker + chromadb ─────────────────────
 
 services:
 
@@ -80,11 +77,12 @@ services:
     volumes:
       - ./backend:/app
     command: >
-      uvicorn app.main:app
-        --host 0.0.0.0
-        --port 8000
-        --reload
-        --reload-dir /app/app
+      sh -c "alembic upgrade head &&
+             uvicorn app.main:app
+               --host 0.0.0.0
+               --port 8000
+               --reload
+               --reload-dir /app/app"
 
   # ── Celery worker — runs agent tasks ─────────────────────────────────
   worker:
