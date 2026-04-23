@@ -141,6 +141,12 @@ class MemoryService:
             distances = results.get("distances",  [[]])[0]
 
             for doc, meta, dist in zip(docs, metas, distances):
+                # Defence in depth: the $ne where-clause should already exclude
+                # the active session, but double-check here so a stale index
+                # entry can never leak back into the same session's context.
+                if exclude_session and meta.get("session_id") == exclude_session:
+                    continue
+
                 # dist is cosine distance (0=identical, 2=opposite)
                 # → cosine similarity = 1 - dist
                 relevance = 1.0 - dist

@@ -21,6 +21,7 @@ import json
 import asyncio
 import structlog
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from langchain_core.messages import HumanMessage, AIMessage
 
@@ -29,6 +30,7 @@ from app.tasks.redis_bus import subscribe_session
 from app.tasks.agent_tasks import run_agent_task
 from app.auth.dependencies import get_ws_user
 from app.db.base import get_db, AsyncSessionLocal
+from app.memory.service import MemoryService
 from app.models.models import ChatSession, Message, MessageRole, AgentName
 
 router = APIRouter(tags=["websocket"])
@@ -39,10 +41,16 @@ logger = structlog.get_logger()
 MAX_CONTEXT = 40
 
 
-async def _get_or_create_session(session_id: str, user_id: str, db: AsyncSession) -> ChatSession:
+async def _get_or_create_session(
+    session_id: str, user_id: str, db: AsyncSession
+) -> tuple[ChatSession, bool]:
     """
     Fetch existing session or create a new one.
     SECURITY: Verify user owns the session if it exists.
+
+    Returns (session, created) where `created` is True when a brand-new
+    session was inserted in this call — callers can use it to skip the
+    history query, since a new session has no prior messages.
     """
     try:
         sid = uuid.UUID(session_id)
@@ -57,7 +65,7 @@ async def _get_or_create_session(session_id: str, user_id: str, db: AsyncSession
                     requester=user_id,
                 )
                 raise ValueError(f"Session {session_id} does not belong to user {user_id}")
-            return session
+            return session, False
     except ValueError:
         pass
 
@@ -67,17 +75,27 @@ async def _get_or_create_session(session_id: str, user_id: str, db: AsyncSession
     )
     db.add(session)
     await db.flush()
-    return session
+    return session, True
 
 
-def _build_history(messages: list[Message]) -> list[dict]:
-    """Convert DB messages to the serialisable format Celery expects."""
+async def _load_history(session_id: uuid.UUID, db: AsyncSession) -> list[dict]:
+    """Load the last MAX_CONTEXT messages for a session via an explicit query.
+
+    Accessing ``ChatSession.messages`` lazily on an ``AsyncSession`` raises
+    ``MissingGreenlet`` / returns no rows, so we must query the table
+    directly — same pattern as ``sessions_router.list_sessions``.
+    """
+    result = await db.execute(
+        select(Message)
+        .where(
+            Message.session_id == session_id,
+            Message.role.in_((MessageRole.USER, MessageRole.ASSISTANT)),
+        )
+        .order_by(Message.created_at)
+    )
+    messages = list(result.scalars().all())
     recent = messages[-MAX_CONTEXT:]
-    return [
-        {"role": msg.role.value, "content": msg.content}
-        for msg in recent
-        if msg.role in (MessageRole.USER, MessageRole.ASSISTANT)
-    ]
+    return [{"role": m.role.value, "content": m.content} for m in recent]
 
 
 async def _save_messages(
@@ -85,32 +103,70 @@ async def _save_messages(
     user_content: str,
     assistant_content: str,
     agent: str,
-) -> None:
+) -> tuple[uuid.UUID, uuid.UUID]:
     """Persist both sides of the exchange to the DB after the task completes.
 
-    FIXED: Explicit error handling and guaranteed commit to prevent message loss.
+    Returns the (user_message_id, assistant_message_id) of the rows inserted
+    so the caller can write them to the ChromaDB vector index with a stable
+    reference back to the source of truth.
     """
     async with AsyncSessionLocal() as db:
         try:
-            db.add(Message(
+            user_msg = Message(
                 session_id=session_id,
                 role=MessageRole.USER,
                 content=user_content,
-            ))
-            db.add(Message(
+            )
+            assistant_msg = Message(
                 session_id=session_id,
                 role=MessageRole.ASSISTANT,
                 content=assistant_content,
                 agent=AgentName(agent),
                 token_count=len(assistant_content.split()),
-            ))
-            # Explicitly commit messages to database
+            )
+            db.add(user_msg)
+            db.add(assistant_msg)
             await db.commit()
             logger.info("messages_persisted", session_id=str(session_id), user_len=len(user_content))
+            return user_msg.id, assistant_msg.id
         except Exception as e:
             await db.rollback()
             logger.error("message_persistence_failed", session_id=str(session_id), error=str(e))
             raise
+
+
+def _index_memory(
+    user_id: str,
+    session_id: uuid.UUID,
+    user_message_id: uuid.UUID,
+    user_content: str,
+    assistant_message_id: uuid.UUID,
+    assistant_content: str,
+    agent: str,
+) -> None:
+    """Write the freshly-committed exchange to the ChromaDB memory index.
+
+    DB is the source of truth; ChromaDB is a derived index that we only
+    write *after* a successful Postgres commit. A Chroma outage must not
+    surface to the user, so any failure is swallowed and logged.
+    """
+    try:
+        svc = MemoryService(user_id=user_id)
+        svc.store_message(
+            message_id=str(user_message_id),
+            content=user_content,
+            role=MessageRole.USER.value,
+            session_id=str(session_id),
+        )
+        svc.store_message(
+            message_id=str(assistant_message_id),
+            content=assistant_content,
+            role=MessageRole.ASSISTANT.value,
+            session_id=str(session_id),
+            agent=agent,
+        )
+    except Exception as e:
+        logger.warning("memory_index_failed", session_id=str(session_id), error=str(e))
 
 
 @router.websocket("/ws/{session_id}")
@@ -187,16 +243,22 @@ async def websocket_endpoint(
 
                 # Get/create session
                 try:
-                    chat_session = await _get_or_create_session(session_id, str(user.id), db)
+                    chat_session, created = await _get_or_create_session(session_id, str(user.id), db)
                 except ValueError as e:
                     await websocket.send_text(json.dumps({
                         "type": "error", "data": "Unauthorized — you do not have access to this session"
                     }))
                     continue
 
-                history = _build_history(chat_session.messages)
+                # Brand-new sessions have no history yet; skip the query.
+                history = [] if created else await _load_history(chat_session.id, db)
 
-                log.info("chat_message_received", user=user.username, msg_len=len(user_message))
+                log.info(
+                    "chat_message_received",
+                    user=user.username,
+                    msg_len=len(user_message),
+                    history_turns=len(history),
+                )
 
                 # Dispatch to Celery worker
                 run_agent_task.delay(
@@ -236,17 +298,28 @@ async def websocket_endpoint(
                         await manager.send_error(str(chat_session.id), event["data"])
                         break
 
-                # Persist messages after response completes
-                # FIXED: Use await instead of asyncio.create_task() to ensure correct ordering
+                # Persist messages after response completes, THEN mirror them
+                # into the ChromaDB memory index. Postgres is the source of
+                # truth; the vector store is only updated on a successful
+                # commit so retrieval can never surface ghost rows.
                 if full_text:
                     try:
-                        await _save_messages(
+                        user_msg_id, assistant_msg_id = await _save_messages(
                             chat_session.id,
                             user_message,
                             full_text,
                             final_agent,
                         )
                         log.info("message_saved_to_db", session_id=str(chat_session.id))
+                        _index_memory(
+                            str(user.id),
+                            chat_session.id,
+                            user_msg_id,
+                            user_message,
+                            assistant_msg_id,
+                            full_text,
+                            final_agent,
+                        )
                     except Exception as e:
                         log.error("failed_to_save_message", error=str(e))
                         await manager.send_error(str(chat_session.id), f"Failed to save message: {e}")
