@@ -2,6 +2,9 @@
 # Production uses Dockerfile.prod (multi-stage, non-root, no volume mount).
 FROM python:3.12-slim
 
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
 WORKDIR /app
 
 # Build-time system deps: gcc for native extensions, libpq-dev for asyncpg

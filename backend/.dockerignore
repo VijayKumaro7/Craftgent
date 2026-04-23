@@ -1,0 +1,37 @@
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Secrets — never bake into the image
+.env
+.env.*
+!.env.example
+
+# Test / dev artefacts
+tests/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+
+# Editor / OS
+.git/
+.gitignore
+.DS_Store
+*.log
+
+# Docs
+README.md
+docs/

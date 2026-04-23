@@ -1,0 +1,24 @@
+# Dependencies — npm ci inside the container installs these fresh.
+# Without this entry, COPY . . overwrites the container's node_modules
+# with the host's copy (possibly built for a different CPU architecture).
+node_modules/
+
+# Previous build output — the container builds from scratch
+dist/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Editor / OS
+.git/
+.gitignore
+.DS_Store
+*.log
+*.local
+
+# Docs / screenshots
+README.md
+*.png
+*.jpg

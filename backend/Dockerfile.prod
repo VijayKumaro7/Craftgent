@@ -16,6 +16,9 @@ RUN pip install --no-cache-dir --upgrade pip \
 # ── Stage 2: Runtime image ────────────────────────────────────────────────
 FROM python:3.12-slim AS runtime
 
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
 # Security: non-root user
 RUN groupadd --system craftgent \
     && useradd  --system --gid craftgent --home /app --shell /sbin/nologin craftgent
