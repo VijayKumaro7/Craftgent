@@ -75,6 +75,12 @@ async def _get_or_create_session(
     )
     db.add(session)
     await db.flush()
+    # Commit immediately so the row is visible to other connections.
+    # `_save_messages` opens its own AsyncSessionLocal — without this commit
+    # its INSERT into messages would FK-fail against the still-uncommitted
+    # parent in this dependency-scoped transaction (it stays open for the
+    # entire WebSocket lifetime, see app/db/base.py::get_db).
+    await db.commit()
     return session, True
 
 
@@ -91,10 +97,11 @@ async def _load_history(session_id: uuid.UUID, db: AsyncSession) -> list[dict]:
             Message.session_id == session_id,
             Message.role.in_((MessageRole.USER, MessageRole.ASSISTANT)),
         )
-        .order_by(Message.created_at)
+        .order_by(Message.created_at.desc())
+        .limit(MAX_CONTEXT)
     )
-    messages = list(result.scalars().all())
-    recent = messages[-MAX_CONTEXT:]
+    # Newest-first from the DB; reverse so callers receive chronological order.
+    recent = list(reversed(result.scalars().all()))
     return [{"role": m.role.value, "content": m.content} for m in recent]
 
 

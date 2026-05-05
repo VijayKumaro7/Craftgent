@@ -19,15 +19,15 @@ class TestMemoryService:
             MemoryEntry("RAG retrieves docs.", "assistant", "NEXUS", 0.85),
         ]
         ctx = MemoryService.format_context(entries)
-        assert "Relevant context" in ctx
+        assert "Memory context" in ctx
         assert "How does RAG work?" in ctx
         assert "NEXUS" in ctx
 
     def test_format_context_truncates_long_content(self):
         from app.memory.service import MemoryService, MemoryEntry
         entries = [MemoryEntry("x" * 400, "user", None, 0.8)]
-        ctx = MemoryService.format_context(entries)
-        assert "..." in ctx
+        ctx = MemoryService.format_context(entries, max_content_len=200)
+        assert "…" in ctx
 
     def test_store_message_handles_collection_error(self):
         from app.memory.service import MemoryService
