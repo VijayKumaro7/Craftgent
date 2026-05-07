@@ -3,7 +3,14 @@ Application configuration — loaded from environment / .env file.
 All settings are typed with Pydantic so bad config fails fast at startup.
 """
 from functools import lru_cache
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+# Minimum acceptable SECRET_KEY length. 32 ASCII chars ≈ 256 bits of entropy
+# when generated from secrets.token_urlsafe — well past the point where an
+# offline brute-force on an HS256 JWT signature is feasible.
+MIN_SECRET_KEY_LENGTH = 32
 
 
 class Settings(BaseSettings):
@@ -17,6 +24,16 @@ class Settings(BaseSettings):
     app_env: str = "development"
     secret_key: str  # CRITICAL: Must be set via environment variable (no default for security)
     debug: bool = False
+
+    @field_validator("secret_key")
+    @classmethod
+    def _secret_key_strong_enough(cls, v: str) -> str:
+        if len(v) < MIN_SECRET_KEY_LENGTH:
+            raise ValueError(
+                f"SECRET_KEY must be at least {MIN_SECRET_KEY_LENGTH} characters "
+                f"(generate one with `python -c 'import secrets; print(secrets.token_urlsafe(32))'`)."
+            )
+        return v
 
     # Anthropic
     anthropic_api_key: str

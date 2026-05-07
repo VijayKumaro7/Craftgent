@@ -7,6 +7,7 @@ Tokens:
 
 Never store raw passwords — bcrypt hashes only.
 """
+import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Any
 import bcrypt
@@ -29,6 +30,13 @@ def verify_password(plain: str, hashed: str) -> bool:
         return bcrypt.checkpw(plain.encode(), hashed.encode())
     except Exception:
         return False
+
+
+# Precomputed bcrypt of a random secret. Used by the login endpoint to run
+# verify_password on a non-existent user so the request takes the same time
+# as a wrong-password attempt against a real user — closes the timing-side
+# channel that would otherwise leak whether a username exists.
+DUMMY_BCRYPT_HASH: str = hash_password(secrets.token_hex(32))
 
 
 # ── Tokens ────────────────────────────────────────────────────────────────

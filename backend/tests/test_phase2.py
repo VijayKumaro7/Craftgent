@@ -131,6 +131,44 @@ class TestAuthAPI:
         resp = await client.post("/api/auth/login", json={})
         assert resp.status_code == 422
 
+    async def test_login_runs_bcrypt_for_unknown_user(self, client: AsyncClient):
+        """
+        Login against a non-existent username must still invoke
+        verify_password, otherwise an attacker can detect user existence
+        from response timing alone.
+        """
+        from app.api import auth_router as ar
+        with patch.object(ar, "verify_password", wraps=ar.verify_password) as spy:
+            resp = await client.post("/api/auth/login", json={
+                "username": "no-such-user-zzz",
+                "password": "doesnotmatter1",
+            })
+            assert resp.status_code == 401
+            assert spy.call_count == 1
+            # Called against the dummy hash, not against a None user object.
+            assert spy.call_args.args[1] == ar.DUMMY_BCRYPT_HASH
+
+    def test_username_validator_strips_whitespace(self):
+        from app.api.auth_router import RegisterRequest, LoginRequest
+        assert RegisterRequest(username="  alice  ", password="goodpass1").username == "alice"
+        assert LoginRequest(username="\t bob \n", password="x").username == "bob"
+
+    def test_secret_key_too_short_rejected(self, monkeypatch):
+        from pydantic import ValidationError
+        from app.core.config import Settings
+        monkeypatch.setenv("SECRET_KEY", "shortkey")
+        monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-fake")
+        with pytest.raises(ValidationError) as exc:
+            Settings()
+        assert "SECRET_KEY" in str(exc.value)
+
+    def test_secret_key_strong_accepted(self, monkeypatch):
+        from app.core.config import Settings
+        monkeypatch.setenv("SECRET_KEY", "x" * 32)
+        monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-fake")
+        s = Settings()
+        assert len(s.secret_key) >= 32
+
 
 # ── LangGraph routing logic test ──────────────────────────────────────────
 

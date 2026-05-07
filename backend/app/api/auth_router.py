@@ -10,11 +10,12 @@ import structlog
 from fastapi import APIRouter, Depends, HTTPException, status, Response, Cookie, Request
 from slowapi import Limiter
 from slowapi.util import get_remote_address
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from app.auth.security import (
+    DUMMY_BCRYPT_HASH,
     hash_password, verify_password,
     create_access_token, create_refresh_token, decode_refresh_token,
 )
@@ -29,14 +30,22 @@ limiter = Limiter(key_func=get_remote_address)
 
 # ── Schemas (local to auth — keep it self-contained) ──────────────────────
 
+def _strip_username(v: str) -> str:
+    return v.strip()
+
+
 class RegisterRequest(BaseModel):
     username: str = Field(..., min_length=3, max_length=32)
     password: str = Field(..., min_length=8, max_length=128)
+
+    _normalise_username = field_validator("username")(lambda cls, v: _strip_username(v))
 
 
 class LoginRequest(BaseModel):
     username: str
     password: str
+
+    _normalise_username = field_validator("username")(lambda cls, v: _strip_username(v))
 
 
 class TokenResponse(BaseModel):
@@ -57,8 +66,11 @@ class UserOut(BaseModel):
 @limiter.limit("5/minute")
 async def register(request: Request, req: RegisterRequest, db: AsyncSession = Depends(get_db)) -> UserOut:
     """Create a new user account."""
-    # Check username not taken
-    existing = await db.execute(select(User).where(User.username == req.username))
+    # Case-insensitive uniqueness — preserves display case but blocks
+    # collisions like "Alice" vs "alice".
+    existing = await db.execute(
+        select(User).where(func.lower(User.username) == req.username.lower())
+    )
     if existing.scalar_one_or_none():
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -71,6 +83,9 @@ async def register(request: Request, req: RegisterRequest, db: AsyncSession = De
     )
     db.add(user)
     await db.flush()
+    # Don't return 201 until the row is durable — see the WebSocket fix in
+    # ws_router for the same pattern.
+    await db.commit()
     logger.info("user_registered", username=req.username, user_id=str(user.id))
     return UserOut(id=str(user.id), username=user.username)
 
@@ -84,10 +99,19 @@ async def login(
     db: AsyncSession = Depends(get_db),
 ) -> TokenResponse:
     """Authenticate and return tokens."""
-    result = await db.execute(select(User).where(User.username == req.username))
+    # Case-insensitive lookup — keeps "Alice" working for legacy rows while
+    # making the new uniqueness rule on register stick.
+    result = await db.execute(
+        select(User).where(func.lower(User.username) == req.username.lower())
+    )
     user = result.scalar_one_or_none()
 
-    if not user or not verify_password(req.password, user.hashed_password):
+    # Always run bcrypt — against the real hash if the user exists, against a
+    # dummy hash otherwise — so login latency does not leak user existence.
+    target_hash = user.hashed_password if user else DUMMY_BCRYPT_HASH
+    password_ok = verify_password(req.password, target_hash)
+
+    if not user or not password_ok:
         logger.warning("login_failed", username=req.username)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -97,13 +121,15 @@ async def login(
     access_token  = create_access_token(str(user.id), user.username)
     refresh_token = create_refresh_token(str(user.id))
 
-    # Refresh token in httpOnly cookie — not accessible from JavaScript
+    # httpOnly + Secure + SameSite=Strict: same-origin only, no JS access,
+    # HTTPS only. The refresh flow is same-origin (frontend served behind
+    # the same nginx), so Strict is correct here.
     response.set_cookie(
         key="refresh_token",
         value=refresh_token,
         httponly=True,
-        secure=True,    # HTTPS only in production
-        samesite="lax",
+        secure=True,
+        samesite="strict",
         max_age=60 * 60 * 24 * 7,  # 7 days
     )
 
@@ -112,7 +138,9 @@ async def login(
 
 
 @router.post("/refresh", response_model=TokenResponse)
+@limiter.limit("10/minute")
 async def refresh(
+    request: Request,
     db: AsyncSession = Depends(get_db),
     refresh_token: str | None = Cookie(default=None),
 ) -> TokenResponse:
@@ -126,7 +154,10 @@ async def refresh(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token")
 
     import uuid
-    user = await db.get(User, uuid.UUID(user_id))
+    try:
+        user = await db.get(User, uuid.UUID(user_id))
+    except ValueError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token")
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
 
