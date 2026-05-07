@@ -54,11 +54,16 @@ async def get_current_user(
 async def get_ws_user(token: str, db: AsyncSession) -> User | None:
     """
     Same as get_current_user but for WebSocket connections where
-    we can't raise HTTP exceptions — returns None on failure instead.
+    we can't raise HTTP exceptions — returns None on auth failure.
+
+    Only auth-related errors (bad/expired JWT, missing claim, malformed
+    user_id) are swallowed; DB-layer errors propagate so transient
+    outages don't masquerade as "Unauthorized — invalid token".
     """
     try:
         payload = decode_access_token(token)
         user_id: str = payload["sub"]
-        return await db.get(User, uuid.UUID(user_id))
-    except Exception:
+        parsed_id = uuid.UUID(user_id)
+    except (JWTError, KeyError, ValueError):
         return None
+    return await db.get(User, parsed_id)
