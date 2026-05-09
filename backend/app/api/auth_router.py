@@ -12,8 +12,12 @@ from slowapi import Limiter
 from slowapi.util import get_remote_address
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
+from app.auth.password_policy import (
+    MIN_PASSWORD_LENGTH,
+    validate_password_strength,
+)
 from app.auth.security import (
     DUMMY_BCRYPT_HASH,
     hash_password, verify_password,
@@ -30,22 +34,61 @@ limiter = Limiter(key_func=get_remote_address)
 
 # ── Schemas (local to auth — keep it self-contained) ──────────────────────
 
-def _strip_username(v: str) -> str:
-    return v.strip()
+def _normalise_username(v: object) -> str:
+    """Reject null / non-string / empty / whitespace-only usernames.
+
+    Run with ``mode='before'`` so the surrounding ``Field(min_length=3)``
+    constraint then validates the *stripped* value, not the raw one.
+    """
+    if not isinstance(v, str):
+        raise ValueError("Username is required")
+    v = v.strip()
+    if not v:
+        raise ValueError("Username is required")
+    return v
+
+
+def _require_password(v: object) -> str:
+    """Reject null / non-string / empty passwords.
+
+    Whitespace-only passwords are still rejected by the strength
+    policy (no lower/upper/digit/special), but we don't ``.strip()``
+    here — leading/trailing whitespace is technically a valid choice.
+    """
+    if not isinstance(v, str) or not v:
+        raise ValueError("Password is required")
+    return v
 
 
 class RegisterRequest(BaseModel):
     username: str = Field(..., min_length=3, max_length=32)
-    password: str = Field(..., min_length=8, max_length=128)
+    password: str = Field(..., min_length=MIN_PASSWORD_LENGTH, max_length=128)
 
-    _normalise_username = field_validator("username")(lambda cls, v: _strip_username(v))
+    _normalise_username = field_validator("username", mode="before")(
+        lambda cls, v: _normalise_username(v)
+    )
+    _require_password = field_validator("password", mode="before")(
+        lambda cls, v: _require_password(v)
+    )
+
+    @model_validator(mode="after")
+    def _check_password_policy(self) -> "RegisterRequest":
+        # Run the full strength policy here (rather than in a field
+        # validator) so we can compare the password against the username.
+        validate_password_strength(self.password, self.username)
+        return self
 
 
 class LoginRequest(BaseModel):
     username: str
     password: str
 
-    _normalise_username = field_validator("username")(lambda cls, v: _strip_username(v))
+    _normalise_username = field_validator("username", mode="before")(
+        lambda cls, v: _normalise_username(v)
+    )
+    _require_password = field_validator("password", mode="before")(
+        lambda cls, v: _require_password(v)
+    )
 
 
 class TokenResponse(BaseModel):

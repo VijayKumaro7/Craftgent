@@ -99,6 +99,59 @@ class TestConnectionManager:
         assert mgr.active_sessions == 0
 
 
+# ── Password policy ───────────────────────────────────────────────────────
+
+class TestPasswordPolicy:
+    """Pure-Python checks against app.auth.password_policy — no app stack."""
+
+    def test_accepts_strong(self):
+        from app.auth.password_policy import validate_password_strength
+        validate_password_strength("Tr0ub4dor&3!XyZ", username="alice")
+
+    def test_rejects_short(self):
+        from app.auth.password_policy import validate_password_strength
+        with pytest.raises(ValueError, match="at least"):
+            validate_password_strength("Aa1!short")  # 9 chars
+
+    def test_rejects_no_upper(self):
+        from app.auth.password_policy import validate_password_strength
+        with pytest.raises(ValueError, match="uppercase"):
+            validate_password_strength("longenough1!extra")
+
+    def test_rejects_no_lower(self):
+        from app.auth.password_policy import validate_password_strength
+        with pytest.raises(ValueError, match="lowercase"):
+            validate_password_strength("LONGENOUGH1!EXTRA")
+
+    def test_rejects_no_digit(self):
+        from app.auth.password_policy import validate_password_strength
+        with pytest.raises(ValueError, match="digit"):
+            validate_password_strength("LongEnough!Extra")
+
+    def test_rejects_no_special(self):
+        from app.auth.password_policy import validate_password_strength
+        with pytest.raises(ValueError, match="special"):
+            validate_password_strength("LongEnough123ABC")
+
+    def test_rejects_common_password(self):
+        from app.auth.password_policy import validate_password_strength
+        # 'password1234' is in the embedded denylist (case-insensitive)
+        with pytest.raises(ValueError, match="too common"):
+            validate_password_strength("password1234")
+
+    def test_rejects_username_in_password(self):
+        from app.auth.password_policy import validate_password_strength
+        with pytest.raises(ValueError, match="username"):
+            validate_password_strength("AliceRocks2025!", username="alice")
+
+    def test_rejects_null_or_empty(self):
+        from app.auth.password_policy import validate_password_strength
+        with pytest.raises(ValueError, match="required"):
+            validate_password_strength("")
+        with pytest.raises(ValueError, match="required"):
+            validate_password_strength(None)  # type: ignore[arg-type]
+
+
 # ── Auth API tests ────────────────────────────────────────────────────────
 
 @pytest.fixture
@@ -150,8 +203,48 @@ class TestAuthAPI:
 
     def test_username_validator_strips_whitespace(self):
         from app.api.auth_router import RegisterRequest, LoginRequest
-        assert RegisterRequest(username="  alice  ", password="goodpass1").username == "alice"
+        # Use a policy-compliant password so the test exercises the username
+        # validator alone (independent of the strength rules).
+        assert RegisterRequest(
+            username="  alice  ", password="Tr0ub4dor&3!XyZ"
+        ).username == "alice"
         assert LoginRequest(username="\t bob \n", password="x").username == "bob"
+
+    def test_register_request_rejects_null_username(self):
+        from pydantic import ValidationError
+        from app.api.auth_router import RegisterRequest
+        with pytest.raises(ValidationError):
+            RegisterRequest(username=None, password="Tr0ub4dor&3!XyZ")  # type: ignore[arg-type]
+
+    def test_register_request_rejects_whitespace_username(self):
+        from pydantic import ValidationError
+        from app.api.auth_router import RegisterRequest
+        with pytest.raises(ValidationError):
+            RegisterRequest(username="     ", password="Tr0ub4dor&3!XyZ")
+
+    def test_register_request_rejects_null_password(self):
+        from pydantic import ValidationError
+        from app.api.auth_router import RegisterRequest
+        with pytest.raises(ValidationError):
+            RegisterRequest(username="alice", password=None)  # type: ignore[arg-type]
+
+    def test_register_request_rejects_weak_password(self):
+        from pydantic import ValidationError
+        from app.api.auth_router import RegisterRequest
+        # 12 chars but no uppercase / digit / special — caught by the policy.
+        with pytest.raises(ValidationError, match="(?i)(uppercase|digit|special)"):
+            RegisterRequest(username="alice", password="alllowercase")
+
+    def test_register_request_rejects_password_with_username(self):
+        from pydantic import ValidationError
+        from app.api.auth_router import RegisterRequest
+        with pytest.raises(ValidationError, match="(?i)username"):
+            RegisterRequest(username="alice", password="AliceTopcat99!")
+
+    def test_register_request_accepts_strong_password(self):
+        from app.api.auth_router import RegisterRequest
+        r = RegisterRequest(username="alice", password="Tr0ub4dor&3!XyZ")
+        assert r.username == "alice" and r.password == "Tr0ub4dor&3!XyZ"
 
     def test_secret_key_too_short_rejected(self, monkeypatch):
         from pydantic import ValidationError
