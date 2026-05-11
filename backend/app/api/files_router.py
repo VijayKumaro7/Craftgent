@@ -47,7 +47,7 @@ def _sanitize_filename(filename: str) -> str:
 @router.post("/api/upload", response_model=FileUploadResponse)
 async def upload_file(
     file: UploadFile = File(...),
-    session_id: str = None,  # optional: link to session
+    session_id: str = None,  # required — kept str for back-compat, validated below
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -55,11 +55,41 @@ async def upload_file(
     Upload a file for a user session.
 
     - **file**: The file to upload (required)
-    - **session_id**: Optional session ID to associate the file with
+    - **session_id**: Required session ID to associate the file with.
+      Must reference an existing session owned by the authenticated user.
     - Returns: File metadata including file_id and download URL
     """
     log = logger.bind(user_id=str(current_user.id), filename=file.filename)
 
+    # Validate session_id up front — FileUpload.session_id is NOT NULL, so
+    # we must resolve a real session before writing the file to disk (and
+    # before doing the expensive read).
+    if not session_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="session_id is required",
+        )
+    try:
+        session_uuid = uuid.UUID(session_id)
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid session_id",
+        )
+    session = await db.get(ChatSession, session_uuid)
+    if not session:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Session not found",
+        )
+    if str(session.user_id) != str(current_user.id):
+        log.warning("unauthorized_upload_session", session_id=session_id)
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have access to this session",
+        )
+
+    file_path: Path | None = None
     try:
         # Validate file type
         file_type = _get_file_type(file.filename)
@@ -83,22 +113,9 @@ async def upload_file(
 
         log.info("file_saved_to_disk", file_path=str(file_path), file_size=file_size)
 
-        # Optionally validate and get session if session_id provided
-        session = None
-        if session_id:
-            try:
-                session_uuid = uuid.UUID(session_id)
-                session = await db.get(ChatSession, session_uuid)
-                if not session:
-                    log.warning("session_not_found", session_id=session_id)
-                elif str(session.user_id) != str(current_user.id):
-                    raise ValueError(f"User does not have access to session {session_id}")
-            except ValueError as e:
-                log.warning("invalid_session_id", session_id=session_id, error=str(e))
-
-        # Create FileUpload record
+        # Create FileUpload record (session ownership already validated above)
         file_upload = FileUpload(
-            session_id=session.id if session else None,
+            session_id=session.id,
             user_id=current_user.id,
             filename=file.filename,
             file_type=file_type,
@@ -116,17 +133,26 @@ async def upload_file(
             filename=file.filename,
             file_type=file_type,
             file_size=file_size,
-            session_id=str(file_upload.session_id) if file_upload.session_id else None,
+            session_id=str(file_upload.session_id),
             upload_time=file_upload.created_at.isoformat(),
         )
 
     except ValueError as e:
+        # Validation failure (bad extension / too big / empty). If we already
+        # wrote bytes to disk, clean up so we don't leak orphaned files.
+        if file_path is not None and file_path.exists():
+            try: file_path.unlink()
+            except OSError: pass
         logger.error("upload_validation_error", error=str(e))
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Upload failed: {str(e)}"
         )
     except Exception as e:
+        # Any other failure (DB insert, disk write) — orphan-file cleanup too.
+        if file_path is not None and file_path.exists():
+            try: file_path.unlink()
+            except OSError: pass
         logger.error("upload_error", error=str(e))
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
