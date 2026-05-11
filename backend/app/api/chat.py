@@ -12,13 +12,14 @@ from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import StreamingResponse
 from slowapi import Limiter
 from slowapi.util import get_remote_address
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from anthropic import AsyncAnthropic, APIStatusError, APIConnectionError
 
 from app.core.config import get_settings, Settings
 from app.db.base import get_db
 from app.models.models import AgentName, ChatSession, Message, MessageRole, User
-from app.schemas.schemas import ChatRequest, SessionOut, ErrorResponse
+from app.schemas.schemas import ChatRequest, MessageOut, SessionOut, ErrorResponse
 from app.agents.prompts import get_system_prompt
 from app.auth.dependencies import get_current_user
 
@@ -65,17 +66,26 @@ async def _get_or_create_session(
     return session
 
 
-def _build_message_history(messages: list[Message]) -> list[dict]:
+async def _load_message_history(
+    session_id: uuid.UUID, db: AsyncSession
+) -> list[dict]:
     """
-    Convert DB messages to Anthropic API format.
-    Truncates to MAX_CONTEXT_MESSAGES to avoid token blowout.
+    Load the last MAX_CONTEXT_MESSAGES messages for a session via an
+    explicit query. Required because ``ChatSession.messages`` is a lazy
+    relationship — touching it on an ``AsyncSession`` raises
+    ``MissingGreenlet``; mirrors the pattern used by ws_router.
     """
-    recent = messages[-MAX_CONTEXT_MESSAGES:] if len(messages) > MAX_CONTEXT_MESSAGES else messages
-    return [
-        {"role": msg.role.value, "content": msg.content}
-        for msg in recent
-        if msg.role in (MessageRole.USER, MessageRole.ASSISTANT)
-    ]
+    result = await db.execute(
+        select(Message)
+        .where(
+            Message.session_id == session_id,
+            Message.role.in_((MessageRole.USER, MessageRole.ASSISTANT)),
+        )
+        .order_by(Message.created_at.desc())
+        .limit(MAX_CONTEXT_MESSAGES)
+    )
+    recent = list(reversed(result.scalars().all()))
+    return [{"role": m.role.value, "content": m.content} for m in recent]
 
 
 async def _stream_claude(
@@ -149,8 +159,8 @@ async def chat(
     # Get or create session
     session = await _get_or_create_session(body.session_id, body.agent, db)
 
-    # Build history from existing messages
-    history = _build_message_history(session.messages)
+    # Build history from existing messages (explicit query — avoids lazy load).
+    history = await _load_message_history(session.id, db)
 
     # Save user message to DB
     user_msg = Message(
@@ -211,4 +221,19 @@ async def get_session(
         logger.warning("unauthorized_session_access", session_id=str(session_id), user_id=str(user.id))
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You do not have access to this session")
 
-    return SessionOut.model_validate(session)
+    # Explicit query for messages — the relationship is lazy and accessing
+    # it via Pydantic's from_attributes would raise MissingGreenlet on the
+    # async session.
+    msg_rows = (await db.execute(
+        select(Message)
+        .where(Message.session_id == session.id)
+        .order_by(Message.created_at)
+    )).scalars().all()
+    return SessionOut(
+        id=session.id,
+        active_agent=session.active_agent,
+        created_at=session.created_at,
+        messages=[
+            MessageOut.model_validate(m, from_attributes=True) for m in msg_rows
+        ],
+    )

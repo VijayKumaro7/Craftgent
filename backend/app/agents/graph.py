@@ -213,7 +213,14 @@ def _make_agent_node(agent_name: AgentName):
                 fn = tool_map.get(tc["name"])
                 try:
                     publish_token(sid, f"🔧 `{tc['name']}`\n")
-                    res = fn.invoke(tc["args"]) if fn else f"Unknown tool: {tc['name']}"
+                    if fn is None:
+                        res = f"Unknown tool: {tc['name']}"
+                    else:
+                        # Tools are sync (subprocess.run for code_exec, blocking
+                        # HTTP for web_search, etc.). Calling .invoke directly
+                        # from this coroutine would freeze the event loop for
+                        # the entire timeout window — push it onto a thread.
+                        res = await asyncio.to_thread(fn.invoke, tc["args"])
                 except Exception as e:
                     res = f"Tool error: {e}"
                 extra.append(ToolMessage(content=str(res), tool_call_id=tc["id"]))
