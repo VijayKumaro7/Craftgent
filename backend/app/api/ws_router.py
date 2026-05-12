@@ -97,7 +97,11 @@ async def _load_history(session_id: uuid.UUID, db: AsyncSession) -> list[dict]:
             Message.session_id == session_id,
             Message.role.in_((MessageRole.USER, MessageRole.ASSISTANT)),
         )
-        .order_by(Message.created_at.desc())
+        # `id` tiebreaks `created_at` ties — `_save_messages` inserts the
+        # user/assistant pair under a single utcnow() lambda, so timestamps
+        # can collide at microsecond resolution and the LLM would otherwise
+        # see the assistant reply before its own user prompt.
+        .order_by(Message.created_at.desc(), Message.id.desc())
         .limit(MAX_CONTEXT)
     )
     # Newest-first from the DB; reverse so callers receive chronological order.

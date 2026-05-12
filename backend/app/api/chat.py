@@ -81,7 +81,8 @@ async def _load_message_history(
             Message.session_id == session_id,
             Message.role.in_((MessageRole.USER, MessageRole.ASSISTANT)),
         )
-        .order_by(Message.created_at.desc())
+        # `id` tiebreaks `created_at` ties so the LLM sees a stable transcript.
+        .order_by(Message.created_at.desc(), Message.id.desc())
         .limit(MAX_CONTEXT_MESSAGES)
     )
     recent = list(reversed(result.scalars().all()))
@@ -224,10 +225,17 @@ async def get_session(
     # Explicit query for messages — the relationship is lazy and accessing
     # it via Pydantic's from_attributes would raise MissingGreenlet on the
     # async session.
+    # Role filter mirrors the WebSocket history path (ws_router._load_history)
+    # so REST and live channels return the same set of messages to the client.
+    # `id` tiebreaks `created_at` ties (the user/assistant pair persisted in a
+    # single commit can share a microsecond — see ws_router._save_messages).
     msg_rows = (await db.execute(
         select(Message)
-        .where(Message.session_id == session.id)
-        .order_by(Message.created_at)
+        .where(
+            Message.session_id == session.id,
+            Message.role.in_((MessageRole.USER, MessageRole.ASSISTANT)),
+        )
+        .order_by(Message.created_at, Message.id)
     )).scalars().all()
     return SessionOut(
         id=session.id,

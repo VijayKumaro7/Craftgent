@@ -15,7 +15,7 @@ from pydantic import BaseModel
 
 from app.auth.dependencies import get_current_user
 from app.db.base import get_db
-from app.models.models import User, ChatSession, Message, AgentName
+from app.models.models import User, ChatSession, Message, MessageRole, AgentName
 
 router = APIRouter(prefix="/sessions", tags=["sessions"])
 
@@ -61,42 +61,62 @@ async def list_sessions(
     )
     total = count_result.scalar_one()
 
-    # Paginated sessions, newest first
-    sessions_result = await db.execute(
-        select(ChatSession)
+    # Pre-aggregate message counts per session (user + assistant only).
+    counts_subq = (
+        select(
+            Message.session_id.label("sid"),
+            func.count(Message.id).label("cnt"),
+        )
+        .where(Message.role.in_((MessageRole.USER, MessageRole.ASSISTANT)))
+        .group_by(Message.session_id)
+        .subquery()
+    )
+
+    # Latest message content per session via Postgres DISTINCT ON.
+    # (id, created_at DESC) breaks ties deterministically when two rows in the
+    # same commit share a microsecond — see `_save_messages` which inserts the
+    # user + assistant pair under a single utcnow() lambda.
+    last_msgs_subq = (
+        select(
+            Message.session_id.label("sid"),
+            Message.content.label("content"),
+        )
+        .where(Message.role.in_((MessageRole.USER, MessageRole.ASSISTANT)))
+        .order_by(
+            Message.session_id,
+            Message.created_at.desc(),
+            Message.id.desc(),
+        )
+        .distinct(Message.session_id)
+        .subquery()
+    )
+
+    rows_q = (
+        select(ChatSession, counts_subq.c.cnt, last_msgs_subq.c.content)
+        .outerjoin(counts_subq, counts_subq.c.sid == ChatSession.id)
+        .outerjoin(last_msgs_subq, last_msgs_subq.c.sid == ChatSession.id)
         .where(ChatSession.user_id == user.id)
         .order_by(ChatSession.updated_at.desc())
         .offset(offset)
         .limit(per_page)
     )
-    sessions = list(sessions_result.scalars().all())
+    rows = (await db.execute(rows_q)).all()
 
-    summaries: list[SessionSummary] = []
-    for session in sessions:
-        # Message count for this session
-        count_q = await db.execute(
-            select(func.count(Message.id)).where(Message.session_id == session.id)
-        )
-        msg_count = count_q.scalar_one()
-
-        # Last message preview
-        last_q = await db.execute(
-            select(Message.content)
-            .where(Message.session_id == session.id)
-            .order_by(Message.created_at.desc())
-            .limit(1)
-        )
-        last_content = last_q.scalar_one_or_none()
-        preview = (last_content[:80] + "...") if last_content and len(last_content) > 80 else last_content
-
-        summaries.append(SessionSummary(
+    summaries: list[SessionSummary] = [
+        SessionSummary(
             id=str(session.id),
             active_agent=session.active_agent,
-            message_count=msg_count,
-            last_message=preview,
+            message_count=int(cnt or 0),
+            last_message=(
+                (last_content[:80] + "...")
+                if last_content and len(last_content) > 80
+                else last_content
+            ),
             updated_at=session.updated_at,
             created_at=session.created_at,
-        ))
+        )
+        for session, cnt, last_content in rows
+    ]
 
     return SessionListResponse(
         sessions=summaries,
