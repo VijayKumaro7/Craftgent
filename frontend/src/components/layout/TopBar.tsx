@@ -7,8 +7,14 @@ import { useTheme } from './ThemeProvider'
 import { CustomizationPanel } from './CustomizationPanel'
 
 export function TopBar() {
-  const { activeAgent, isStreaming } = useAppStore()
-  const { username, logout } = useAuthStore()
+  const { activeAgent, isStreaming } = useAppStore(s => ({
+    activeAgent: s.activeAgent,
+    isStreaming: s.isStreaming,
+  }))
+  const { username, logout } = useAuthStore(s => ({
+    username: s.username,
+    logout: s.logout,
+  }))
   const { theme, toggleTheme } = useTheme()
 
   return (

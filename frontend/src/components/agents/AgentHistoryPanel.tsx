@@ -60,7 +60,7 @@ function HistoryEntry({ content, tokenCount, createdAt }: {
 export function AgentHistoryPanel() {
   const [open, setOpen] = useState(false)
   const [page, setPage] = useState(1)
-  const { activeAgent } = useAppStore()
+  const { activeAgent } = useAppStore(s => ({ activeAgent: s.activeAgent }))
   const { isAuthenticated } = useAuthStore()
 
   const { data, isLoading, isError } = useAgentHistory(activeAgent, page, 10)

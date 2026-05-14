@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, memo } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import type { ChatMessage as ChatMessageType } from '@/types'
@@ -19,7 +19,7 @@ function StreamCursor() {
 
 type ChildrenElement = React.ReactNode | React.ReactNode[]
 
-export function ChatMessage({ msg, isStreaming = false }: ChatMessageProps) {
+function ChatMessageComponent({ msg, isStreaming = false }: ChatMessageProps) {
   const [copied, setCopied] = useState(false)
 
   const isSystem = msg.role === 'system'
@@ -144,3 +144,9 @@ export function ChatMessage({ msg, isStreaming = false }: ChatMessageProps) {
     </div>
   )
 }
+
+export const ChatMessage = memo(ChatMessageComponent, (prevProps, nextProps) => {
+  return prevProps.msg.id === nextProps.msg.id &&
+         prevProps.msg.content === nextProps.msg.content &&
+         prevProps.isStreaming === nextProps.isStreaming
+})
