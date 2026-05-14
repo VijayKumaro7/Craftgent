@@ -2,22 +2,52 @@
  * Hotbar — Minecraft-style 9-slot item bar at the bottom.
  * Supports keyboard shortcuts 1–9 to switch slots.
  */
-import { useEffect } from 'react'
+import { useEffect, useCallback, useMemo, memo } from 'react'
 import { useAppStore } from '@/store/useAppStore'
 
-export function Hotbar() {
-  const { inventory, selectedSlot, setSelectedSlot } = useAppStore()
-  const slots = inventory.slice(0, 9)
+function HotbarComponent() {
+  const { inventory, selectedSlot, setSelectedSlot } = useAppStore(s => ({
+    inventory: s.inventory,
+    selectedSlot: s.selectedSlot,
+    setSelectedSlot: s.setSelectedSlot
+  }))
+  const slots = useMemo(() => inventory.slice(0, 9), [inventory])
+
+  const handleKey = useCallback((e: KeyboardEvent) => {
+    const n = parseInt(e.key)
+    if (n >= 1 && n <= 9) setSelectedSlot(n - 1)
+  }, [setSelectedSlot])
 
   // Keys 1–9 switch hotbar slots
   useEffect(() => {
-    const handleKey = (e: KeyboardEvent) => {
-      const n = parseInt(e.key)
-      if (n >= 1 && n <= 9) setSelectedSlot(n - 1)
-    }
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
-  }, [setSelectedSlot])
+  }, [handleKey])
+
+  const containerStyle = useMemo(() => ({
+    background: '#8b8b8b',
+    border: '3px solid',
+    borderColor: '#fff #555 #555 #fff',
+    boxShadow: '3px 3px 0 rgba(0,0,0,0.6), inset 1px 1px 0 rgba(255,255,255,0.3)',
+  }), [])
+
+  const compassStyle = useMemo(() => ({
+    background: 'linear-gradient(135deg,#6a4a1a 0%,#3a2a0a 100%)',
+    border: '3px solid',
+    borderColor: '#a0703a #3a2010 #3a2010 #a0703a',
+    boxShadow: '2px 2px 0 rgba(0,0,0,0.7)',
+    animation: 'spin 12s steps(16) infinite',
+  }), [])
+
+  const getSlotStyle = useCallback((selected: boolean) => ({
+    width: 40,
+    height: 40,
+    background: '#8b8b8b',
+    border: '3px solid',
+    borderColor: selected ? '#fff #555 #555 #fff' : '#555 #ddd #ddd #555',
+    boxShadow: selected ? 'inset 0 0 0 1px #fff' : 'none',
+    imageRendering: 'pixelated' as const,
+  }), [])
 
   return (
     <div
@@ -34,12 +64,7 @@ export function Hotbar() {
       {/* Hotbar slots */}
       <div
         className="flex gap-[2px] p-[3px]"
-        style={{
-          background: '#8b8b8b',
-          border: '3px solid',
-          borderColor: '#fff #555 #555 #fff',
-          boxShadow: '3px 3px 0 rgba(0,0,0,0.6), inset 1px 1px 0 rgba(255,255,255,0.3)',
-        }}
+        style={containerStyle}
       >
         {slots.map((slot, i) => {
           const selected = selectedSlot === i
@@ -49,15 +74,7 @@ export function Hotbar() {
               onClick={() => setSelectedSlot(i)}
               title={slot.label}
               className="relative flex items-center justify-center focus:outline-none"
-              style={{
-                width: 40,
-                height: 40,
-                background: '#8b8b8b',
-                border: '3px solid',
-                borderColor: selected ? '#fff #555 #555 #fff' : '#555 #ddd #ddd #555',
-                boxShadow: selected ? 'inset 0 0 0 1px #fff' : 'none',
-                imageRendering: 'pixelated',
-              }}
+              style={getSlotStyle(selected)}
               aria-label={`${slot.label} (slot ${i + 1})`}
               aria-pressed={selected}
             >
@@ -82,13 +99,7 @@ export function Hotbar() {
       {/* Compass */}
       <div
         className="absolute right-5 w-11 h-11 flex items-center justify-center text-[22px]"
-        style={{
-          background: 'linear-gradient(135deg,#6a4a1a 0%,#3a2a0a 100%)',
-          border: '3px solid',
-          borderColor: '#a0703a #3a2010 #3a2010 #a0703a',
-          boxShadow: '2px 2px 0 rgba(0,0,0,0.7)',
-          animation: 'spin 12s steps(16) infinite',
-        }}
+        style={compassStyle}
         aria-label="Compass"
       >
         🧭
@@ -96,3 +107,5 @@ export function Hotbar() {
     </div>
   )
 }
+
+export const Hotbar = memo(HotbarComponent)

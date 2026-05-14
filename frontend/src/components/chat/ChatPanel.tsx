@@ -28,7 +28,16 @@ function StatusPill({ status }: { status: WsStatus }) {
 }
 
 export function ChatPanel() {
-  const { messages, addSystemMessage, addUserMessage, clearMessages, isStreaming, activeAgent, inputValue, setInputValue } = useAppStore()
+  const { messages, addSystemMessage, addUserMessage, clearMessages, isStreaming, activeAgent, inputValue, setInputValue } = useAppStore(s => ({
+    messages: s.messages,
+    addSystemMessage: s.addSystemMessage,
+    addUserMessage: s.addUserMessage,
+    clearMessages: s.clearMessages,
+    isStreaming: s.isStreaming,
+    activeAgent: s.activeAgent,
+    inputValue: s.inputValue,
+    setInputValue: s.setInputValue,
+  }))
   const { status, send } = useWebSocket()
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([])
   const [showFileUpload, setShowFileUpload] = useState(false)

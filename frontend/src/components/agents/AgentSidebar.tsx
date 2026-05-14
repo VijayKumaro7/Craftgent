@@ -38,7 +38,12 @@ function Chip({ children, color }: { children: React.ReactNode; color: string })
 }
 
 export function AgentSidebar() {
-  const { activeAgent, setActiveAgent, isStreaming, insertIntoInput } = useAppStore()
+  const { activeAgent, setActiveAgent, isStreaming, insertIntoInput } = useAppStore(s => ({
+    activeAgent: s.activeAgent,
+    setActiveAgent: s.setActiveAgent,
+    isStreaming: s.isStreaming,
+    insertIntoInput: s.insertIntoInput,
+  }))
 
   return (
     <aside className="bg-[rgba(0,0,0,0.72)] border-r-[3px] border-black/60 overflow-y-auto flex flex-col select-none" style={{ scrollbarWidth: 'none' }}>
