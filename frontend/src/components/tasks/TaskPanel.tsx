@@ -17,7 +17,12 @@ function StatusDot({ status }: { status: string }) {
 }
 
 export function TaskPanel() {
-  const { tasks, updateTaskProgress, inventory, activeAgent } = useAppStore()
+  const { tasks, updateTaskProgress, inventory, activeAgent } = useAppStore(s => ({
+    tasks: s.tasks,
+    updateTaskProgress: s.updateTaskProgress,
+    inventory: s.inventory,
+    activeAgent: s.activeAgent,
+  }))
   const { data: statsData } = useAgentStats()
   const staticAgent = AGENTS[activeAgent]
   const live        = statsData?.stats?.[activeAgent]
