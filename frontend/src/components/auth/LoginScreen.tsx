@@ -5,7 +5,7 @@
  * Redirects to /chat on successful login.
  * Uses the same grass/stone/dirt palette as the main UI.
  */
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/useAuthStore'
 import { SkyBackground } from '@/components/layout/SkyBackground'

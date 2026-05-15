@@ -29,6 +29,7 @@ export function Leaderboard() {
         setError(null)
       } catch (err) {
         // Gracefully handle if endpoint doesn't exist yet
+        // eslint-disable-next-line no-console
         console.info('Leaderboard not available:', err instanceof Error ? err.message : 'Unknown error')
         setLoading(false)
       }

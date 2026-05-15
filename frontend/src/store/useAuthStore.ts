@@ -23,10 +23,12 @@ interface AuthState {
   clearError: () => void
 }
 
-const withDevtools = import.meta.env.DEV ? devtools : <T>(fn: T) => fn
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const withDevtools = (import.meta.env.DEV ? devtools : <T>(fn: T) => fn) as any
 
 export const useAuthStore = create<AuthState>()(
   withDevtools(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (set: any, get: any) => ({
       accessToken: null,
       username: null,

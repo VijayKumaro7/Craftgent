@@ -7,7 +7,7 @@
  *   /login → LoginScreen (public)
  *   /chat → Shell (protected, redirects to / if not authenticated)
  */
-import { useEffect, useState, lazy, Suspense } from 'react'
+import React, { useEffect, useState, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuthStore }       from '@/store/useAuthStore'
 import { useAppStore }        from '@/store/useAppStore'

@@ -3,6 +3,7 @@
  * Active agent card pulses when streaming (shows handoff visually).
  */
 
+import React from 'react'
 import { AGENTS } from '@/types'
 import type { AgentName } from '@/types'
 import { useAppStore } from '@/store/useAppStore'

@@ -19,7 +19,9 @@ interface CacheOptions {
  * In-memory cache with TTL support
  */
 class CacheStore {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private cache = new Map<string, CacheEntry<any>>()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private pendingRequests = new Map<string, Promise<any>>()
 
   /**
@@ -148,6 +150,7 @@ export function useCachedData<T>(
       .finally(() => {
         setLoading(false)
       })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key, options.forceRefresh])
 
   const refresh = React.useCallback(() => {
