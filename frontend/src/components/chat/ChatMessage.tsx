@@ -42,6 +42,7 @@ function ChatMessageComponent({ msg, isStreaming = false }: ChatMessageProps) {
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center gap-2">
           {!isSystem && !isUser && msg.agent && (
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             <AgentAvatar agent={msg.agent as any} size={28} className="flex-shrink-0" />
           )}
           <div className="font-terminal text-[19px] leading-tight">
@@ -133,6 +134,7 @@ function ChatMessageComponent({ msg, isStreaming = false }: ChatMessageProps) {
                 h3: ({ children }: { children: ChildrenElement }) => (
                   <h3 className="text-base font-bold my-1 text-yellow-100">{children}</h3>
                 ),
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               } as any}
             >
               {msg.content}

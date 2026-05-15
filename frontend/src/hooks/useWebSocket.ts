@@ -143,6 +143,7 @@ export function useWebSocket(): UseWebSocketReturn {
       default:
         break
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeAgent, addStreamingMessage, appendToken, finaliseMessage,
       addSystemMessage, setIsStreaming, setSessionId, setActiveAgent])
 

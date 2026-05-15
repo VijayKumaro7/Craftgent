@@ -1,7 +1,7 @@
 /**
  * TaskPanel — Phase 3. Live XP from API, animated bars.
  */
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useAppStore }   from '@/store/useAppStore'
 import { useAgentStats } from '@/hooks/useAgentStats'
 import { McBar }         from '@/components/ui/McBar'

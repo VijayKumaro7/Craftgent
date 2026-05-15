@@ -144,6 +144,7 @@ export function usePerformanceTracking(componentName: string) {
     return () => {
       const duration = monitor.end(`render-${componentName}`)
       if (import.meta.env.MODE === 'development') {
+        // eslint-disable-next-line no-console
         console.log(`✅ ${componentName} mounted in ${duration.toFixed(2)}ms`)
       }
     }
@@ -152,6 +153,7 @@ export function usePerformanceTracking(componentName: string) {
   useEffect(() => {
     return () => {
       if (import.meta.env.MODE === 'development') {
+        // eslint-disable-next-line no-console
         console.log(`🗑️ ${componentName} unmounted`)
       }
     }
@@ -176,11 +178,13 @@ export async function measureAsync<T>(name: string, fn: () => Promise<T>): Promi
 /**
  * Report Web Vitals
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function reportWebVitals(metric: any) {
   const { name, value } = metric
 
   // Log to console in development
   if (import.meta.env.MODE === 'development') {
+    // eslint-disable-next-line no-console
     console.log(`📊 Web Vital: ${name} = ${value.toFixed(2)}`)
   }
 

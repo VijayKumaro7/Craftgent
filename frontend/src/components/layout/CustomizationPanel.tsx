@@ -37,6 +37,7 @@ export function CustomizationPanel() {
               </label>
               <select
                 value={responseFormat}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 onChange={(e) => setResponseFormat(e.target.value as any)}
                 className="w-full bg-black/60 border border-white/20 rounded px-2 py-1 font-terminal text-[11px] text-white focus:outline-none focus:border-white/40 focus:bg-black/80"
               >
@@ -53,6 +54,7 @@ export function CustomizationPanel() {
               </label>
               <select
                 value={tone}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 onChange={(e) => setTone(e.target.value as any)}
                 className="w-full bg-black/60 border border-white/20 rounded px-2 py-1 font-terminal text-[11px] text-white focus:outline-none focus:border-white/40 focus:bg-black/80"
               >
@@ -69,6 +71,7 @@ export function CustomizationPanel() {
               </label>
               <select
                 value={codeLanguage}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 onChange={(e) => setCodeLanguage(e.target.value as any)}
                 className="w-full bg-black/60 border border-white/20 rounded px-2 py-1 font-terminal text-[11px] text-white focus:outline-none focus:border-white/40 focus:bg-black/80"
               >
@@ -86,6 +89,7 @@ export function CustomizationPanel() {
               </label>
               <select
                 value={outputLanguage}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 onChange={(e) => setOutputLanguage(e.target.value as any)}
                 className="w-full bg-black/60 border border-white/20 rounded px-2 py-1 font-terminal text-[11px] text-white focus:outline-none focus:border-white/40 focus:bg-black/80"
               >

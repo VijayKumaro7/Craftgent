@@ -14,11 +14,14 @@ export function lazyLoadComponent<P extends object>(
   const Component = React.lazy(importFn)
   const Fallback = fallbackComponent || LoadingFallback
 
-  return (props: P) => (
+  const LazyComponent = (props: P) => (
     <React.Suspense fallback={<Fallback />}>
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
       <Component {...(props as any)} />
     </React.Suspense>
   )
+  LazyComponent.displayName = 'LazyComponent'
+  return LazyComponent
 }
 
 /**
@@ -37,12 +40,14 @@ function LoadingFallback() {
  */
 export function useIntersectionObserver(
   ref: React.RefObject<HTMLElement>,
-  options: IntersectionObserverInit = {}
+  options?: { threshold?: number | number[], root?: Element | null, rootMargin?: string }
 ): IntersectionObserverEntry | null {
   const [entry, setEntry] = React.useState<IntersectionObserverEntry | null>(null)
 
   React.useEffect(() => {
     if (!ref.current) return
+
+    const element = ref.current
 
     const observer = new IntersectionObserver(([entry]) => {
       setEntry(entry)
@@ -51,12 +56,10 @@ export function useIntersectionObserver(
       ...options,
     })
 
-    observer.observe(ref.current)
+    observer.observe(element)
 
     return () => {
-      if (ref.current) {
-        observer.unobserve(ref.current)
-      }
+      observer.unobserve(element)
       observer.disconnect()
     }
   }, [ref, options])
@@ -119,6 +122,7 @@ export function useDeferredCallback(callback: () => void, deps: React.Dependency
     } else {
       setTimeout(callback, 0)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
 }
 

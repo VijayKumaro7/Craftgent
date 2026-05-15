@@ -95,10 +95,12 @@ const INITIAL_INVENTORY: InventorySlot[] = [
 
 // ── Store ─────────────────────────────────────────────────────────────────
 
-const withDevtools = import.meta.env.DEV ? devtools : <T>(fn: T) => fn
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const withDevtools = (import.meta.env.DEV ? devtools : <T>(fn: T) => fn) as any
 
 export const useAppStore = create<AppState>()(
   withDevtools(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (set: any) => ({
       // Agent
       activeAgent: 'NEXUS',

@@ -2,7 +2,7 @@
  * ChatPanel — main chat area (Phase 2 version).
  * Uses useWebSocket() instead of SSE streamChat().
  */
-import { useRef, useEffect, useState } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import { useAppStore } from '@/store/useAppStore'
 import { useWebSocket, type WsStatus } from '@/hooks/useWebSocket'
 import { VirtualizedMessageList } from './VirtualizedMessageList'

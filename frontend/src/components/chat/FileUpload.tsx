@@ -1,7 +1,7 @@
 /**
  * FileUpload — file upload component with drag-drop and preview
  */
-import { useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useFileUpload, type UploadedFile } from '@/hooks/useFileUpload'
 import { UI_ICONS } from '@/constants/assets'
 
@@ -60,8 +60,8 @@ export function FileUpload({ onFilesSelected, maxFiles = 5 }: FileUploadProps) {
     onFilesSelected?.(updated)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getFileIcon = (_name: string): string => {
-    // Use FILE icon for all file types (more consistent than emoji)
     return UI_ICONS.FILE
   }
 
