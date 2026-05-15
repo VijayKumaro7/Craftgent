@@ -27,7 +27,7 @@ const withDevtools = import.meta.env.DEV ? devtools : <T>(fn: T) => fn
 
 export const useAuthStore = create<AuthState>()(
   withDevtools(
-    (set, get) => ({
+    (set: any, get: any) => ({
       accessToken: null,
       username: null,
       isAuthenticated: false,
