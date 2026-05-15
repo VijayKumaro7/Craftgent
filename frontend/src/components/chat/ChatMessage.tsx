@@ -1,4 +1,4 @@
-import { useState, memo } from 'react'
+import { useState, memo, ReactNode } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import type { ChatMessage as ChatMessageType } from '@/types'
@@ -17,7 +17,7 @@ function StreamCursor() {
   )
 }
 
-type ChildrenElement = React.ReactNode | React.ReactNode[]
+type ChildrenElement = ReactNode | ReactNode[]
 
 function ChatMessageComponent({ msg, isStreaming = false }: ChatMessageProps) {
   const [copied, setCopied] = useState(false)

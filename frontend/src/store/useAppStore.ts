@@ -99,7 +99,7 @@ const withDevtools = import.meta.env.DEV ? devtools : <T>(fn: T) => fn
 
 export const useAppStore = create<AppState>()(
   withDevtools(
-    (set) => ({
+    (set: any) => ({
       // Agent
       activeAgent: 'NEXUS',
       setActiveAgent: (agent) => set({ activeAgent: agent }, false, 'setActiveAgent'),
