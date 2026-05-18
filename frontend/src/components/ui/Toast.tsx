@@ -68,36 +68,38 @@ export function ToastContainer() {
     }
   }, [])
 
-  const typeStyles = {
-    success: 'bg-green-900/80 border-green-500/30 text-green-300',
-    error: 'bg-red-900/80 border-red-500/30 text-red-300',
-    warning: 'bg-yellow-900/80 border-yellow-500/30 text-yellow-300',
-    info: 'bg-blue-900/80 border-blue-500/30 text-blue-300',
+  const typeStyles: Record<string, string> = {
+    success: 'border-success/30 text-success',
+    error:   'border-error/30 text-error',
+    warning: 'border-warning/30 text-warning',
+    info:    'border-accent-primary/30 text-accent-hover',
   }
 
-  const icons = {
-    success: '✅',
-    error: '❌',
-    warning: '⚠️',
-    info: 'ℹ️',
+  const icons: Record<string, string> = {
+    success: '✓',
+    error:   '✕',
+    warning: '⚠',
+    info:    'i',
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 space-y-2 max-w-sm pointer-events-none">
+    <div className="fixed bottom-6 right-6 z-[9999] space-y-2 max-w-sm pointer-events-none">
       {toasts.map((toast) => (
         <div
           key={toast.id}
-          className={`px-4 py-3 rounded border backdrop-blur-sm animate-[slideIn_0.3s_ease-out] ${typeStyles[toast.type]} pointer-events-auto`}
+          className={`glass-strong rounded-xl px-4 py-3 border animate-slide-in-left ${typeStyles[toast.type]} pointer-events-auto shadow-card`}
         >
-          <div className="flex items-start gap-2">
-            <span className="text-lg flex-shrink-0">{icons[toast.type]}</span>
-            <p className="font-terminal text-[13px] leading-tight flex-1">{toast.message}</p>
+          <div className="flex items-start gap-3">
+            <span className="text-sm font-bold flex-shrink-0 w-5 h-5 flex items-center justify-center rounded-full border border-current">
+              {icons[toast.type]}
+            </span>
+            <p className="text-sm leading-snug flex-1 text-text-primary">{toast.message}</p>
             <button
               onClick={() => {
                 activeToasts.delete(toast.id)
                 setToasts((prev) => prev.filter((t) => t.id !== toast.id))
               }}
-              className="text-white/50 hover:text-white/80 flex-shrink-0"
+              className="text-text-muted hover:text-text-primary flex-shrink-0 text-xs"
             >
               ✕
             </button>

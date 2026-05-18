@@ -1,6 +1,3 @@
-/**
- * FeatureCard — reusable feature highlight card for landing page
- */
 import { ReactNode } from 'react'
 
 interface FeatureCardProps {
@@ -11,16 +8,16 @@ interface FeatureCardProps {
 
 export function FeatureCard({ icon, title, description }: FeatureCardProps) {
   return (
-    <div
-      className="p-6 bg-[rgba(0,0,0,0.72)] border-3 border-[#5d9e32] transition-all duration-300 hover:border-[#6abf38] hover:shadow-lg"
-      style={{
-        boxShadow: '2px 2px 0 rgba(0,0,0,0.8)',
-        textShadow: '1px 1px 0 rgba(0,0,0,0.5)',
-      }}
-    >
-      <div className="text-4xl mb-4 animate-pulse">{icon}</div>
-      <h3 className="font-pixel text-[10px] text-[#5d9e32] mb-3 uppercase">{title}</h3>
-      <p className="font-terminal text-[8px] text-[#aaffaa] leading-relaxed">{description}</p>
+    <div className="glass-card rounded-xl p-6 group cursor-default">
+      <div className="text-3xl mb-4 transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-1">
+        {icon}
+      </div>
+      <h3 className="text-text-primary font-semibold text-base mb-2 group-hover:text-accent-hover transition-colors duration-200">
+        {title}
+      </h3>
+      <p className="text-text-secondary text-sm leading-relaxed">
+        {description}
+      </p>
     </div>
   )
 }

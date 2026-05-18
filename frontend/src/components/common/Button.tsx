@@ -1,34 +1,42 @@
-/**
- * Button — Minecraft-styled button with pixel art aesthetic
- */
 import { ReactNode } from 'react'
 
 interface ButtonProps {
   onClick?: () => void
   children: ReactNode
-  variant?: 'primary' | 'secondary' | 'ghost'
+  variant?: 'primary' | 'secondary' | 'ghost' | 'outline'
   className?: string
   disabled?: boolean
+  type?: 'button' | 'submit' | 'reset'
 }
 
-export function Button({ onClick, children, variant = 'primary', className = '', disabled = false }: ButtonProps) {
-  const variants = {
-    primary: 'bg-[#5d9e32] hover:bg-[#6abf38] active:bg-[#3e6b1f] border-3 border-[#6abf38] text-white font-pixel',
-    secondary: 'bg-[#3e6b1f] hover:bg-[#5d9e32] border-3 border-[#5d9e32] text-white font-pixel',
-    ghost: 'bg-transparent hover:bg-[rgba(93,158,50,0.2)] border-3 border-[#5d9e32] text-[#aaffaa] font-pixel',
+export function Button({
+  onClick,
+  children,
+  variant = 'primary',
+  className = '',
+  disabled = false,
+  type = 'button',
+}: ButtonProps) {
+  const base =
+    'inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg font-semibold text-sm transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-primary/60 select-none'
+
+  const variants: Record<string, string> = {
+    primary:
+      'btn-gradient text-white shadow-glow-sm hover:shadow-glow-md disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none',
+    secondary:
+      'bg-bg-elevated border border-border-default text-text-primary hover:border-accent-primary hover:shadow-glow-sm disabled:opacity-50 disabled:cursor-not-allowed',
+    ghost:
+      'bg-transparent text-text-secondary hover:text-text-primary hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed',
+    outline:
+      'bg-transparent border border-accent-primary text-accent-primary hover:bg-accent-primary/10 hover:shadow-glow-sm disabled:opacity-50 disabled:cursor-not-allowed',
   }
 
   return (
     <button
+      type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`px-6 py-3 transition-all duration-200 hover:shadow-lg active:shadow-inner ${variants[variant]} ${className}`}
-      style={{
-        boxShadow: disabled ? 'none' : '2px 2px 0 rgba(0,0,0,0.8)',
-        textShadow: '2px 2px 0 rgba(0,0,0,0.8)',
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        opacity: disabled ? 0.5 : 1,
-      }}
+      className={`${base} ${variants[variant]} ${className}`}
     >
       {children}
     </button>

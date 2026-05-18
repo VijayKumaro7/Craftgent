@@ -1,78 +1,80 @@
-/**
- * HeroSection — hero banner with title, tagline, and main CTA
- */
 import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/common/Button'
+
+const BADGES = ['Real-time Streaming', 'Multi-Agent Routing', 'File Analysis', 'Web Search', 'Code Execution']
 
 export function HeroSection() {
   const navigate = useNavigate()
 
   return (
-    <section className="relative min-h-[60vh] flex items-center justify-center py-20 px-6 overflow-hidden">
-      {/* Parallax background particles */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(12)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute animate-pulse"
-            style={{
-              width: Math.random() * 30 + 10 + 'px',
-              height: Math.random() * 30 + 10 + 'px',
-              left: Math.random() * 100 + '%',
-              top: Math.random() * 100 + '%',
-              opacity: Math.random() * 0.3 + 0.1,
-              backgroundColor: ['#5d9e32', '#6abf38', '#55ffff', '#aaffaa'][Math.floor(Math.random() * 4)],
-            }}
-          />
-        ))}
-      </div>
+    <section className="relative min-h-[90vh] flex items-center justify-center py-24 px-6 overflow-hidden">
+      {/* Decorative radial glow behind hero */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+        style={{
+          width: 800,
+          height: 800,
+          background: 'radial-gradient(circle at center,rgba(99,102,241,0.12) 0%,transparent 70%)',
+        }}
+      />
 
-      {/* Hero content */}
       <div className="relative text-center max-w-4xl mx-auto animate-fade-in">
-        {/* Main title */}
-        <div className="mb-6">
-          <h1 className="font-pixel text-[20px] md:text-[28px] text-[#5d9e32] mb-4" style={{ textShadow: '3px 3px 0 rgba(0,0,0,0.8)' }}>
-            ⛏ CRAFTGENT
-          </h1>
-          <div className="h-1 w-32 bg-[#5d9e32] mx-auto mb-8" style={{ boxShadow: '0 2px 4px rgba(0,0,0,0.8)' }} />
+        {/* Eyebrow label */}
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-sm text-text-secondary mb-8">
+          <span className="w-2 h-2 rounded-full bg-success animate-pulse inline-block" />
+          Multi-Agent AI Platform · v0.2.0
         </div>
 
-        {/* Subtitle */}
-        <h2 className="font-terminal text-[10px] md:text-[12px] text-[#55ffff] mb-4 uppercase leading-relaxed" style={{ textShadow: '2px 2px 0 rgba(0,0,0,0.8)' }}>
-          Enter the Minecraft AI Command Center
-        </h2>
+        {/* Main headline */}
+        <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold mb-6 leading-tight tracking-tight">
+          <span className="text-text-primary">AI Agents That</span>
+          <br />
+          <span className="gradient-text">Think, Build &amp; Deliver</span>
+        </h1>
 
-        {/* Description */}
-        <p className="font-terminal text-[8px] text-[#aaffaa] mb-8 max-w-2xl mx-auto leading-relaxed">
-          Harness the power of 4 specialized AI agents. Route your tasks intelligently. Craft solutions in real-time. A retro-futuristic collaboration between you and cutting-edge artificial intelligence.
+        {/* Sub-headline */}
+        <p className="text-text-secondary text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
+          Craftgent orchestrates four specialized AI agents — NEXUS, ALEX, VORTEX, and RESEARCHER —
+          routing your tasks intelligently through LangGraph to deliver accurate, real-time results.
         </p>
 
-        {/* Features teaser */}
-        <div className="flex flex-wrap justify-center gap-4 mb-12">
-          {['Real-time Chat', 'Agent Routing', 'File Upload', 'Web Search'].map((feature, idx) => (
-            <div
-              key={idx}
-              className="px-3 py-1 bg-[rgba(93,158,50,0.2)] border border-[#5d9e32] font-pixel text-[6px] text-[#5d9e32]"
-              style={{ textShadow: '1px 1px 0 rgba(0,0,0,0.8)' }}
+        {/* CTA buttons */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14">
+          <Button
+            variant="primary"
+            onClick={() => navigate('/login')}
+            className="w-full sm:w-auto text-base px-8 py-3 shadow-glow-md"
+          >
+            Start for free →
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => navigate('/login')}
+            className="w-full sm:w-auto text-base px-8 py-3"
+          >
+            Sign in
+          </Button>
+        </div>
+
+        {/* Feature badges */}
+        <div className="flex flex-wrap justify-center gap-2">
+          {BADGES.map((badge, i) => (
+            <span
+              key={i}
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium glass text-text-secondary"
             >
-              ✓ {feature}
-            </div>
+              <span className="w-1.5 h-1.5 rounded-full bg-accent-primary/70 inline-block" />
+              {badge}
+            </span>
           ))}
         </div>
 
-        {/* Main CTA button */}
-        <Button
-          variant="primary"
-          onClick={() => navigate('/login')}
-          className="text-[10px] px-8 py-4 mb-6 hover:scale-105 transition-transform"
-        >
-          ▶ GET STARTED
-        </Button>
-
-        {/* Scroll hint */}
-        <div className="mt-16 animate-bounce">
-          <p className="font-pixel text-[6px] text-[#ffff55] mb-2">Scroll to explore</p>
-          <div className="text-[20px]">↓</div>
+        {/* Scroll indicator */}
+        <div className="mt-16 flex flex-col items-center gap-1 text-text-muted animate-float">
+          <span className="text-xs tracking-widest uppercase">Scroll to explore</span>
+          <svg width="16" height="20" viewBox="0 0 16 20" fill="none" aria-hidden="true">
+            <path d="M8 0v16M1 9l7 8 7-8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
         </div>
       </div>
     </section>

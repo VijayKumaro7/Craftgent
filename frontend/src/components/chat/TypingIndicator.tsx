@@ -1,31 +1,44 @@
-import { useEffect, useState } from 'react'
-
 interface TypingIndicatorProps {
   agentName?: string
 }
 
+const AGENT_COLOR: Record<string, string> = {
+  NEXUS:      '#6366f1',
+  ALEX:       '#10b981',
+  VORTEX:     '#a855f7',
+  RESEARCHER: '#f59e0b',
+}
+
 export function TypingIndicator({ agentName = 'NEXUS' }: TypingIndicatorProps) {
-  const [dots, setDots] = useState('.')
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setDots(prev => {
-        if (prev === '.') return '..'
-        if (prev === '..') return '...'
-        return '.'
-      })
-    }, 500)
-
-    return () => clearInterval(interval)
-  }, [])
+  const color = AGENT_COLOR[agentName] ?? '#6366f1'
 
   return (
-    <div className="mb-3 animate-[fadeIn_0.1s_steps(2,end)]">
-      <div className="font-terminal text-[19px] leading-tight">
-        <span className="font-bold text-chat-agent">{agentName}:</span>
+    <div className="flex items-center gap-3 px-4 py-3 animate-fade-in">
+      {/* Agent dot */}
+      <div
+        className="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold text-white"
+        style={{ background: color }}
+      >
+        {agentName[0]}
       </div>
-      <div className="font-terminal text-[19px] leading-[1.8] drop-shadow-[1px_1px_0_#000] text-[#e8e8e8]">
-        <span className="inline-block">thinking{dots}</span>
+
+      <div className="flex flex-col gap-0.5">
+        <span className="text-xs font-medium" style={{ color }}>{agentName}</span>
+        {/* Three bouncing dots */}
+        <div className="flex items-center gap-1">
+          {[0, 1, 2].map(i => (
+            <span
+              key={i}
+              className="w-1.5 h-1.5 rounded-full inline-block"
+              style={{
+                background: color,
+                animation: `typingDot 1.2s ease-in-out infinite`,
+                animationDelay: `${i * 0.2}s`,
+                opacity: 0.3,
+              }}
+            />
+          ))}
+        </div>
       </div>
     </div>
   )
