@@ -44,10 +44,10 @@ function Shell() {
 
   useEffect(() => {
     const seq = [
-      { msg: '[SERVER] CraftAgent v0.2.0 — Phase 2 online.', delay: 400  },
-      { msg: `[SERVER] Welcome back, ${username ?? 'Operator'}!`,  delay: 900  },
-      { msg: '[SERVER] 3 agents joined the game. LangGraph routing active.', delay: 1500 },
-      { msg: 'NEXUS: Greetings! I can delegate to ALEX (code) or VORTEX (data). What shall we craft?', delay: 2400 },
+      { msg: '[SERVER] Craftgent v0.2.0 — online.',                                          delay: 400  },
+      { msg: `[SERVER] Welcome back, ${username ?? 'Operator'}!`,                            delay: 900  },
+      { msg: '[SERVER] 3 agents ready. LangGraph routing active.',                           delay: 1500 },
+      { msg: 'NEXUS: Hello! I can delegate to ALEX (code) or VORTEX (data). How can I help?', delay: 2400 },
     ]
     seq.forEach(({ msg, delay }) => setTimeout(() => addSystemMessage(msg), delay))
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
@@ -55,45 +55,40 @@ function Shell() {
   return (
     <>
       <SkyBackground />
-      <div className="scanlines fixed inset-0 pointer-events-none" style={{ zIndex: 9995 }} />
       <NotificationStack />
-      <div className="relative h-screen" style={{
-        zIndex: 10,
-        display: 'grid',
-        gridTemplateColumns: isMobile ? '1fr' : '200px 1fr 224px',
-        gridTemplateRows: isMobile ? '44px 1fr 68px 68px' : '44px 1fr 68px',
-        border: '3px solid rgba(255,255,255,0.15)',
-        boxShadow: '0 0 0 1px rgba(0,0,0,0.8)',
-      }}>
+      <div
+        className="relative h-screen animate-fade-in"
+        style={{
+          zIndex: 10,
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : '220px 1fr 232px',
+          gridTemplateRows: isMobile ? '52px 1fr 60px 120px' : '52px 1fr 60px',
+        }}
+      >
         <TopBar />
-        {/* Left sidebar - hidden on mobile */}
         {!isMobile && <AgentSidebar />}
-        <main className="relative overflow-hidden" style={{ background: 'rgba(0,0,0,0.0)' }}>
+        <main className="relative overflow-hidden">
           <Suspense fallback={<SkeletonMessages count={5} />}>
             <ChatPanel />
           </Suspense>
         </main>
-        {/* Right sidebar - hidden on mobile */}
         {!isMobile && (
-          <Suspense fallback={<div style={{ background: 'rgba(0,0,0,0.72)' }} />}>
+          <Suspense fallback={<div className="glass-strong" />}>
             <TaskPanel />
           </Suspense>
         )}
-        {/* Bottom bar spans full width on mobile */}
-        <div style={{ gridColumn: isMobile ? '1 / -1' : 'auto', gridRow: isMobile ? 'auto' : 'auto' }}>
+        <div style={{ gridColumn: isMobile ? '1 / -1' : 'auto' }}>
           <Hotbar />
         </div>
-        {/* Mobile bottom navigation for sidebars */}
         {isMobile && (
-          <div style={{ gridColumn: '1 / -1', gridRow: 'auto', background: 'rgba(0,0,0,0.72)', borderTop: '3px solid rgba(255,255,255,0.15)', overflow: 'y-auto' }}>
-            <div style={{ display: 'flex', height: '100%' }}>
-              <div style={{ flex: 1, overflowY: 'auto' }}>
-                <AgentSidebar />
-              </div>
-              <div style={{ flex: 1, overflowY: 'auto', borderLeft: '3px solid rgba(255,255,255,0.15)' }}>
-                <Suspense fallback={<div />}>
-                  <TaskPanel />
-                </Suspense>
+          <div
+            style={{ gridColumn: '1 / -1' }}
+            className="glass-strong border-t border-border-subtle overflow-hidden"
+          >
+            <div className="flex h-full">
+              <div className="flex-1 overflow-y-auto"><AgentSidebar /></div>
+              <div className="flex-1 overflow-y-auto border-l border-border-subtle">
+                <Suspense fallback={<div />}><TaskPanel /></Suspense>
               </div>
             </div>
           </div>
@@ -107,10 +102,16 @@ function BootScreen() {
   return (
     <>
       <SkyBackground />
-      <div className="fixed inset-0 flex items-center justify-center" style={{ zIndex: 20 }}>
-        <div className="font-pixel text-[10px] text-white drop-shadow-[2px_2px_0_rgba(0,0,0,0.8)] animate-pulse">
-          ⛏ LOADING...
-        </div>
+      <div className="fixed inset-0 flex flex-col items-center justify-center gap-4" style={{ zIndex: 20 }}>
+        <div className="gradient-text font-semibold text-2xl animate-pulse">Craftgent</div>
+        <div
+          className="w-8 h-8 rounded-full border-2"
+          style={{
+            borderColor: 'rgba(99,102,241,0.3)',
+            borderTopColor: '#6366f1',
+            animation: 'spinSlow 1s linear infinite',
+          }}
+        />
       </div>
     </>
   )

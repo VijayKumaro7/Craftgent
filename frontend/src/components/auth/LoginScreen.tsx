@@ -1,10 +1,3 @@
-/**
- * LoginScreen — Minecraft-styled auth gate with routing.
- *
- * Shows login form by default, toggles to register.
- * Redirects to /chat on successful login.
- * Uses the same grass/stone/dirt palette as the main UI.
- */
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/useAuthStore'
@@ -17,12 +10,13 @@ interface FieldProps {
   onChange: (v: string) => void
   disabled?: boolean
   autoFocus?: boolean
+  placeholder?: string
 }
 
-function McField({ label, type = 'text', value, onChange, disabled, autoFocus }: FieldProps) {
+function AuthField({ label, type = 'text', value, onChange, disabled, autoFocus, placeholder }: FieldProps) {
   return (
-    <div className="flex flex-col gap-1">
-      <label className="font-pixel text-[7px] text-chat-sys drop-shadow-[1px_1px_0_#000]">
+    <div className="flex flex-col gap-1.5">
+      <label className="text-text-secondary text-xs font-medium uppercase tracking-wider">
         {label}
       </label>
       <input
@@ -31,58 +25,10 @@ function McField({ label, type = 'text', value, onChange, disabled, autoFocus }:
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
         autoFocus={autoFocus}
-        className={[
-          'w-full bg-[#000000aa] border-[3px] px-3 py-2',
-          'border-t-[#555] border-l-[#555] border-b-[#ddd] border-r-[#ddd]',
-          'font-terminal text-[20px] text-white placeholder:text-white/30',
-          'outline-none focus:border-t-[#888] focus:border-l-[#888]',
-          'caret-chat-agent',
-          disabled ? 'opacity-50 cursor-not-allowed' : '',
-        ].join(' ')}
+        placeholder={placeholder}
+        className="w-full bg-bg-secondary border border-border-subtle rounded-lg px-4 py-2.5 text-text-primary text-sm placeholder:text-text-muted outline-none transition-all duration-200 focus:border-accent-primary focus:shadow-glow-sm disabled:opacity-50 disabled:cursor-not-allowed"
       />
     </div>
-  )
-}
-
-function McButton({
-  children,
-  onClick,
-  disabled,
-  variant = 'primary',
-}: {
-  children: React.ReactNode
-  onClick?: () => void
-  disabled?: boolean
-  variant?: 'primary' | 'secondary'
-}) {
-  const base = [
-    'w-full font-pixel text-[8px] py-3 px-4',
-    'border-[3px] transition-none select-none',
-    'focus:outline-none',
-    disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer active:border-t-[#555] active:border-l-[#555] active:border-b-[#ddd] active:border-r-[#ddd]',
-  ]
-
-  const variants = {
-    primary: [
-      'text-white drop-shadow-[1px_1px_0_#000]',
-      'border-t-[#aef060] border-l-[#aef060] border-b-[#2a5a08] border-r-[#2a5a08]',
-      disabled ? 'bg-mc-stone-d' : 'bg-mc-grass hover:bg-mc-grass-t',
-    ],
-    secondary: [
-      'text-white/70 drop-shadow-[1px_1px_0_#000]',
-      'border-t-[#aaa] border-l-[#aaa] border-b-[#333] border-r-[#333]',
-      'bg-mc-stone hover:bg-mc-stone-d',
-    ],
-  }
-
-  return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      className={[...base, ...variants[variant]].join(' ')}
-    >
-      {children}
-    </button>
   )
 }
 
@@ -94,16 +40,12 @@ export function LoginScreen() {
   const [confirm,  setConfirm]  = useState('')
   const { login, register, isLoading, error, clearError, isAuthenticated } = useAuthStore()
 
-  // Redirect to /chat if already authenticated
   useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/chat', { replace: true })
-    }
+    if (isAuthenticated) navigate('/chat', { replace: true })
   }, [isAuthenticated, navigate])
 
   const handleSubmit = async () => {
     if (!username.trim() || !password.trim()) return
-
     let success = false
     if (mode === 'register') {
       if (password !== confirm) return
@@ -111,126 +53,118 @@ export function LoginScreen() {
     } else {
       success = await login(username.trim(), password)
     }
-
-    // Redirect to /chat on successful login/register
-    if (success) {
-      navigate('/chat', { replace: true })
-    }
+    if (success) navigate('/chat', { replace: true })
   }
 
   const handleKey = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') handleSubmit()
   }
 
-  const isInvalid = !username.trim() || !password.trim() ||
+  const isInvalid =
+    !username.trim() ||
+    !password.trim() ||
     (mode === 'register' && password !== confirm)
 
   return (
     <>
       <SkyBackground />
-      <div className="scanlines fixed inset-0 pointer-events-none" style={{ zIndex: 9995 }} />
 
-      {/* Center panel */}
-      <div className="fixed inset-0 flex items-center justify-center" style={{ zIndex: 10 }}>
+      <div className="fixed inset-0 flex items-center justify-center px-4" style={{ zIndex: 10 }}>
         <div
-          className="w-[400px] flex flex-col gap-4"
-          style={{
-            background: 'rgba(0,0,0,0.82)',
-            border: '3px solid',
-            borderColor: '#fff3 #0008 #0008 #fff3',
-            padding: '28px 32px',
-            boxShadow: '4px 4px 0 rgba(0,0,0,0.6)',
-          }}
+          className="w-full max-w-sm glass-strong rounded-2xl p-8 animate-scale-in"
           onKeyDown={handleKey}
         >
-          {/* Title */}
-          <div className="text-center mb-2">
-            <div className="font-pixel text-[12px] text-white drop-shadow-[2px_2px_0_rgba(0,0,0,0.8)] leading-relaxed">
-              ⛏ CRAFTGENT
+          {/* Logo */}
+          <div className="text-center mb-8">
+            <div className="w-12 h-12 rounded-xl btn-gradient flex items-center justify-center text-xl font-bold text-white mx-auto mb-4 shadow-glow-md">
+              CG
             </div>
-            <div className="font-pixel text-[6px] text-mc-grass-t mt-1">
-              AI Command Center
-            </div>
+            <h1 className="text-text-primary font-bold text-xl mb-1">Craftgent</h1>
+            <p className="text-text-secondary text-sm">Multi-Agent AI Platform</p>
           </div>
 
           {/* Mode tabs */}
-          <div className="flex gap-1">
+          <div className="flex gap-1 p-1 bg-bg-secondary rounded-lg mb-6">
             {(['login', 'register'] as const).map(m => (
               <button
                 key={m}
                 onClick={() => { setMode(m); clearError() }}
-                className={[
-                  'flex-1 font-pixel text-[6px] py-2',
-                  'border-[2px] transition-none',
+                className={`flex-1 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
                   mode === m
-                    ? 'bg-mc-grass border-t-[#aef] border-l-[#aef] border-b-[#2a5] border-r-[#2a5] text-white'
-                    : 'bg-[#333] border-t-[#555] border-l-[#555] border-b-[#aaa] border-r-[#aaa] text-white/50 hover:text-white/80',
-                ].join(' ')}
+                    ? 'bg-accent-primary text-white shadow-glow-sm'
+                    : 'text-text-muted hover:text-text-secondary'
+                }`}
               >
-                {m === 'login' ? '▶ LOGIN' : '✦ REGISTER'}
+                {m === 'login' ? 'Sign in' : 'Register'}
               </button>
             ))}
           </div>
 
           {/* Fields */}
-          <McField
-            label="USERNAME"
-            value={username}
-            onChange={setUsername}
-            disabled={isLoading}
-            autoFocus
-          />
-          <McField
-            label="PASSWORD"
-            type="password"
-            value={password}
-            onChange={setPassword}
-            disabled={isLoading}
-          />
-          {mode === 'register' && (
-            <McField
-              label="CONFIRM PASSWORD"
-              type="password"
-              value={confirm}
-              onChange={setConfirm}
+          <div className="flex flex-col gap-4">
+            <AuthField
+              label="Username"
+              value={username}
+              onChange={setUsername}
               disabled={isLoading}
+              autoFocus
+              placeholder="Enter your username"
             />
-          )}
+            <AuthField
+              label="Password"
+              type="password"
+              value={password}
+              onChange={setPassword}
+              disabled={isLoading}
+              placeholder="Enter your password"
+            />
+            {mode === 'register' && (
+              <AuthField
+                label="Confirm Password"
+                type="password"
+                value={confirm}
+                onChange={setConfirm}
+                disabled={isLoading}
+                placeholder="Confirm your password"
+              />
+            )}
+          </div>
 
-          {/* Password match indicator */}
+          {/* Password match */}
           {mode === 'register' && confirm && (
-            <div className={`font-pixel text-[6px] ${password === confirm ? 'text-[#5aff5a]' : 'text-mc-redstone'}`}>
+            <p className={`mt-2 text-xs ${password === confirm ? 'text-success' : 'text-error'}`}>
               {password === confirm ? '✓ Passwords match' : '✗ Passwords do not match'}
-            </div>
+            </p>
           )}
 
           {/* Error */}
           {error && (
-            <div className="font-pixel text-[6px] text-mc-redstone border border-mc-redstone/30 px-2 py-1.5 bg-mc-redstone/10">
-              ✗ {error}
+            <div className="mt-3 px-3 py-2 rounded-lg bg-error/10 border border-error/20 text-error text-xs">
+              {error}
             </div>
           )}
 
           {/* Submit */}
-          <McButton
+          <button
             onClick={handleSubmit}
             disabled={isLoading || isInvalid}
+            className="mt-6 w-full btn-gradient text-white font-semibold py-2.5 rounded-lg text-sm shadow-glow-sm hover:shadow-glow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
           >
             {isLoading
-              ? '▌▌▌ LOADING...'
+              ? 'Loading…'
               : mode === 'login'
-              ? '▶ ENTER WORLD'
-              : '✦ CREATE ACCOUNT'
+              ? 'Sign in →'
+              : 'Create account →'
             }
-          </McButton>
+          </button>
 
           {/* Footer hint */}
-          <div className="font-pixel text-[5px] text-white/30 text-center leading-relaxed">
+          <p className="mt-4 text-center text-text-muted text-xs">
             {mode === 'login'
-              ? 'No account? Click REGISTER above.'
-              : 'Already have an account? Click LOGIN above.'
+              ? "Don't have an account? Click Register above."
+              : 'Already have an account? Click Sign in above.'
             }
-          </div>
+          </p>
         </div>
       </div>
     </>

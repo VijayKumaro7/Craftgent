@@ -1,6 +1,3 @@
-/**
- * LandingPage — public landing page showcasing CraftAgent features
- */
 import { SkyBackground } from '@/components/layout/SkyBackground'
 import { LandingHeader } from '@/components/landing/LandingHeader'
 import { HeroSection } from '@/components/landing/HeroSection'
@@ -12,12 +9,14 @@ export function LandingPage() {
   return (
     <>
       <SkyBackground />
-      <div className="scanlines fixed inset-0 pointer-events-none" style={{ zIndex: 9995 }} />
 
-      <div className="relative min-h-screen w-full" style={{ zIndex: 10 }}>
+      <div
+        className="relative w-full"
+        style={{ zIndex: 10, overflowY: 'auto', height: '100vh' }}
+      >
         <LandingHeader />
 
-        <main className="flex flex-col">
+        <main>
           <HeroSection />
           <FeaturesSection />
           <AgentShowcase />

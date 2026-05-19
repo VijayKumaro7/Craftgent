@@ -1,15 +1,11 @@
-/**
- * Hotbar — Minecraft-style 9-slot item bar at the bottom.
- * Supports keyboard shortcuts 1–9 to switch slots.
- */
 import { useEffect, useCallback, useMemo, memo } from 'react'
 import { useAppStore } from '@/store/useAppStore'
 
 function HotbarComponent() {
   const { inventory, selectedSlot, setSelectedSlot } = useAppStore(s => ({
-    inventory: s.inventory,
-    selectedSlot: s.selectedSlot,
-    setSelectedSlot: s.setSelectedSlot
+    inventory:       s.inventory,
+    selectedSlot:    s.selectedSlot,
+    setSelectedSlot: s.setSelectedSlot,
   }))
   const slots = useMemo(() => inventory.slice(0, 9), [inventory])
 
@@ -18,54 +14,18 @@ function HotbarComponent() {
     if (n >= 1 && n <= 9) setSelectedSlot(n - 1)
   }, [setSelectedSlot])
 
-  // Keys 1–9 switch hotbar slots
   useEffect(() => {
     window.addEventListener('keydown', handleKey)
     return () => window.removeEventListener('keydown', handleKey)
   }, [handleKey])
 
-  const containerStyle = useMemo(() => ({
-    background: '#8b8b8b',
-    border: '3px solid',
-    borderColor: '#fff #555 #555 #fff',
-    boxShadow: '3px 3px 0 rgba(0,0,0,0.6), inset 1px 1px 0 rgba(255,255,255,0.3)',
-  }), [])
-
-  const compassStyle = useMemo(() => ({
-    background: 'linear-gradient(135deg,#6a4a1a 0%,#3a2a0a 100%)',
-    border: '3px solid',
-    borderColor: '#a0703a #3a2010 #3a2010 #a0703a',
-    boxShadow: '2px 2px 0 rgba(0,0,0,0.7)',
-    animation: 'spin 12s steps(16) infinite',
-  }), [])
-
-  const getSlotStyle = useCallback((selected: boolean) => ({
-    width: 40,
-    height: 40,
-    background: '#8b8b8b',
-    border: '3px solid',
-    borderColor: selected ? '#fff #555 #555 #fff' : '#555 #ddd #ddd #555',
-    boxShadow: selected ? 'inset 0 0 0 1px #fff' : 'none',
-    imageRendering: 'pixelated' as const,
-  }), [])
-
   return (
     <div
-      className="col-span-3 flex items-center justify-center gap-0 py-1.5 relative"
-      style={{ background: 'transparent' }}
+      className="col-span-3 flex items-center justify-center py-2 glass-strong border-t border-border-subtle"
+      style={{ minHeight: 60 }}
     >
-      {/* Coord display */}
-      <div className="absolute left-3 font-pixel text-[5px] text-white drop-shadow-[1px_1px_0_#000] leading-[2]">
-        <div>X: 128</div>
-        <div>Y: 64</div>
-        <div>Z: -256</div>
-      </div>
-
-      {/* Hotbar slots */}
-      <div
-        className="flex gap-[2px] p-[3px]"
-        style={containerStyle}
-      >
+      {/* Slot bar */}
+      <div className="flex items-center gap-1.5 px-2 py-1.5 glass rounded-xl">
         {slots.map((slot, i) => {
           const selected = selectedSlot === i
           return (
@@ -73,36 +33,36 @@ function HotbarComponent() {
               key={slot.id}
               onClick={() => setSelectedSlot(i)}
               title={slot.label}
-              className="relative flex items-center justify-center focus:outline-none"
-              style={getSlotStyle(selected)}
-              aria-label={`${slot.label} (slot ${i + 1})`}
+              className={`relative flex items-center justify-center rounded-lg transition-all duration-150 focus:outline-none ${
+                selected
+                  ? 'shadow-glow-sm'
+                  : 'hover:bg-white/5'
+              }`}
+              style={{
+                width: 44,
+                height: 44,
+                background: selected
+                  ? 'rgba(99,102,241,0.15)'
+                  : 'rgba(17,24,39,0.5)',
+                border: selected
+                  ? '1px solid rgba(99,102,241,0.5)'
+                  : '1px solid rgba(99,102,241,0.1)',
+              }}
+              aria-label={`${slot.label} (key ${i + 1})`}
               aria-pressed={selected}
             >
-              <span className="text-[22px] leading-none">{slot.emoji}</span>
-              <span
-                className="absolute bottom-[1px] right-[2px] font-pixel text-[5px] text-white"
-                style={{ textShadow: '1px 1px 0 #000' }}
-              >
+              <span className="text-xl leading-none">{slot.emoji}</span>
+              {/* Count */}
+              <span className="absolute bottom-0.5 right-1 text-[9px] text-text-muted font-mono">
                 {slot.count}
               </span>
               {/* Slot number */}
-              <span
-                className="absolute top-[1px] left-[2px] font-pixel text-[4px] text-white/40"
-              >
+              <span className="absolute top-0.5 left-1 text-[9px] text-text-muted">
                 {i + 1}
               </span>
             </button>
           )
         })}
-      </div>
-
-      {/* Compass */}
-      <div
-        className="absolute right-5 w-11 h-11 flex items-center justify-center text-[22px]"
-        style={compassStyle}
-        aria-label="Compass"
-      >
-        🧭
       </div>
     </div>
   )

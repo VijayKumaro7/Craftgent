@@ -1,62 +1,58 @@
-/**
- * AgentShowcase — showcase the 4 AI agents with details
- */
 import { useEffect, useRef, useState } from 'react'
 import { AgentCard } from '@/components/common/AgentCard'
 
 const AGENTS = [
   {
     name: 'NEXUS',
-    role: 'Research Mage',
-    description: 'The orchestrator. General Q&A, research synthesis, and knowledge delegation. Routes complex tasks to specialized agents.',
+    role: 'Research Orchestrator',
+    description: 'The command center. NEXUS handles general Q&A, synthesizes research, and intelligently routes complex tasks to the right specialist agent.',
     imageSrc: '/assets/agents/nexus.png',
-    color: '#55ffff',
-    abilities: ['Orchestrate', 'Research', 'Synthesize'],
+    color: '#6366f1',
+    abilities: ['Orchestrate', 'Research', 'Delegate'],
   },
   {
     name: 'ALEX',
-    role: 'Code Warrior',
-    description: 'The specialist in code. Generation, debugging, architecture design, and optimization. Executes and tests code solutions.',
+    role: 'Code Specialist',
+    description: 'Your engineering co-pilot. ALEX generates, debugs, and optimizes code across any language — and can execute it in a sandboxed environment.',
     imageSrc: '/assets/agents/alex.png',
-    color: '#aaffaa',
-    abilities: ['Generate', 'Debug', 'Optimize'],
+    color: '#10b981',
+    abilities: ['Generate', 'Debug', 'Execute'],
   },
   {
     name: 'VORTEX',
-    role: 'Data Creeper',
-    description: 'Master of data. Analytics, SQL queries, statistical analysis, and dataset visualization. Extracts insights from raw data.',
+    role: 'Data Analyst',
+    description: 'Master of structured data. VORTEX runs SQL queries, performs statistical analysis, and extracts actionable insights from raw datasets.',
     imageSrc: '/assets/agents/vortex.png',
-    color: '#cc88ff',
+    color: '#a855f7',
     abilities: ['Analyze', 'Query', 'Visualize'],
   },
   {
     name: 'RESEARCHER',
-    role: 'Archaeologist',
-    description: 'The investigator. Deep research, source verification, multi-step analysis. Unearths truths buried in information.',
+    role: 'Deep Investigator',
+    description: 'The fact-finder. RESEARCHER performs multi-step web research, verifies sources, and synthesizes comprehensive reports from live information.',
     imageSrc: '/assets/agents/researcher.png',
-    color: '#d4a574',
-    abilities: ['Investigate', 'Verify', 'Synthesize'],
+    color: '#f59e0b',
+    abilities: ['Investigate', 'Verify', 'Report'],
   },
 ]
 
 export function AgentShowcase() {
-  const [visibleAgents, setVisibleAgents] = useState<boolean[]>(Array(4).fill(false))
-  const sectionRef = useRef<HTMLDivElement>(null)
+  const [visible, setVisible] = useState<boolean[]>(Array(4).fill(false))
+  const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       entries => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
-            // Stagger reveal animation
             AGENTS.forEach((_, idx) => {
               setTimeout(() => {
-                setVisibleAgents(prev => {
-                  const newState = [...prev]
-                  newState[idx] = true
-                  return newState
+                setVisible(prev => {
+                  const next = [...prev]
+                  next[idx] = true
+                  return next
                 })
-              }, idx * 150)
+              }, idx * 120)
             })
             observer.unobserve(entry.target)
           }
@@ -64,58 +60,44 @@ export function AgentShowcase() {
       },
       { threshold: 0.1 }
     )
-
-    if (sectionRef.current) observer.observe(sectionRef.current)
+    if (ref.current) observer.observe(ref.current)
     return () => observer.disconnect()
   }, [])
 
   return (
     <section
-      ref={sectionRef}
-      className="py-20 px-6 bg-[rgba(0,0,0,0.1)]"
+      id="agents"
+      ref={ref}
+      className="py-24 px-6"
+      style={{ background: 'rgba(99,102,241,0.03)' }}
     >
       <div className="max-w-6xl mx-auto">
-        {/* Section header */}
+        {/* Header */}
         <div className="text-center mb-16">
-          <h2 className="font-pixel text-[16px] text-[#5d9e32] mb-4" style={{ textShadow: '2px 2px 0 rgba(0,0,0,0.8)' }}>
-            🎮 THE PARTY MEMBERS
-          </h2>
-          <p className="font-terminal text-[8px] text-[#aaffaa] mb-4">Four specialized agents ready to collaborate</p>
-          <div className="h-1 w-24 bg-[#5d9e32] mx-auto" style={{ boxShadow: '0 2px 4px rgba(0,0,0,0.8)' }} />
+          <p className="text-accent-primary text-sm font-semibold uppercase tracking-widest mb-3">Meet the team</p>
+          <h2 className="text-4xl font-bold text-text-primary mb-4">Your AI agent squad</h2>
+          <p className="text-text-secondary text-lg max-w-2xl mx-auto">
+            Four specialized agents collaborate through LangGraph — each expert in their domain, coordinated by NEXUS.
+          </p>
         </div>
 
-        {/* Agents grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Agent grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {AGENTS.map((agent, idx) => (
             <div
               key={idx}
-              className={`transform transition-all duration-500 ${
-                visibleAgents[idx]
-                  ? 'opacity-100 translate-y-0'
-                  : 'opacity-0 translate-y-8'
-              }`}
-              style={{
-                transitionDelay: visibleAgents[idx] ? `${idx * 150}ms` : '0ms',
-              }}
+              style={{ transitionDelay: `${idx * 100}ms` }}
+              className={`transition-all duration-500 ${visible[idx] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
             >
-              <AgentCard
-                name={agent.name}
-                role={agent.role}
-                description={agent.description}
-                imageSrc={agent.imageSrc}
-                color={agent.color}
-                abilities={agent.abilities}
-              />
+              <AgentCard {...agent} />
             </div>
           ))}
         </div>
 
-        {/* Agent interaction hint */}
-        <div className="mt-12 text-center">
-          <p className="font-terminal text-[8px] text-[#55ffff]">
-            Each agent specializes in different tasks. Route your queries to the right agent for optimal results.
-          </p>
-        </div>
+        {/* Footer hint */}
+        <p className="text-center text-text-muted text-sm mt-10">
+          Each agent specializes in different domains — route your query to the right expert for the best results.
+        </p>
       </div>
     </section>
   )

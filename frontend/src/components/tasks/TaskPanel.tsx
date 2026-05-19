@@ -1,36 +1,59 @@
-/**
- * TaskPanel — Phase 3. Live XP from API, animated bars.
- */
 import React, { useEffect } from 'react'
 import { useAppStore }   from '@/store/useAppStore'
 import { useAgentStats } from '@/hooks/useAgentStats'
-import { McBar }         from '@/components/ui/McBar'
 import { AGENTS }        from '@/types'
 
-function SectionLabel({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-  return <div className={`font-pixel text-[6px] text-chat-sys px-2 py-1.5 border-b border-chat-sys/20 drop-shadow-[1px_1px_0_#000] ${className}`}>{children}</div>
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="px-4 py-2.5 border-b border-border-subtle">
+      <span className="text-text-muted text-xs font-semibold uppercase tracking-widest">{children}</span>
+    </div>
+  )
 }
-function StatusDot({ status }: { status: string }) {
-  const color = { done: 'text-[#5aff5a]', running: 'text-yellow-300 animate-pulse', queued: 'text-white/30' } as Record<string,string>
-  const icon  = { done: '■', running: '▶', queued: '◌' } as Record<string,string>
-  return <span className={`font-pixel text-[6px] ${color[status] ?? ''} flex-shrink-0`}>{icon[status] ?? '○'}</span>
+
+function ProgressBar({ value, color = '#6366f1', animate = false }: { value: number; color?: string; animate?: boolean }) {
+  return (
+    <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
+      <div
+        className={`h-full rounded-full ${animate ? 'transition-[width] duration-500' : ''}`}
+        style={{ width: `${Math.min(100, Math.max(0, value))}%`, background: color }}
+      />
+    </div>
+  )
+}
+
+function StatusBadge({ status }: { status: string }) {
+  const cfg: Record<string, { label: string; color: string; bg: string }> = {
+    done:    { label: 'Done',    color: '#10b981', bg: 'rgba(16,185,129,0.12)' },
+    running: { label: 'Running', color: '#f59e0b', bg: 'rgba(245,158,11,0.12)' },
+    queued:  { label: 'Queued',  color: '#475569', bg: 'rgba(71,85,105,0.12)'  },
+  }
+  const c = cfg[status] ?? cfg.queued
+  return (
+    <span
+      className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium flex-shrink-0 ${status === 'running' ? 'animate-pulse' : ''}`}
+      style={{ color: c.color, background: c.bg }}
+    >
+      {c.label}
+    </span>
+  )
 }
 
 export function TaskPanel() {
   const { tasks, updateTaskProgress, inventory, activeAgent } = useAppStore(s => ({
-    tasks: s.tasks,
+    tasks:              s.tasks,
     updateTaskProgress: s.updateTaskProgress,
-    inventory: s.inventory,
-    activeAgent: s.activeAgent,
+    inventory:          s.inventory,
+    activeAgent:        s.activeAgent,
   }))
   const { data: statsData } = useAgentStats()
   const staticAgent = AGENTS[activeAgent]
-  const live        = statsData?.stats?.[activeAgent]
-  const hp        = live?.hp          ?? staticAgent.hp
-  const mp        = live?.mp          ?? staticAgent.mp
-  const level     = live?.level       ?? staticAgent.level
-  const xpPct     = live?.xp_percent  ?? staticAgent.xp
-  const msgCount  = live?.message_count ?? 0
+  const live     = statsData?.stats?.[activeAgent]
+  const hp       = live?.hp         ?? staticAgent.hp
+  const mp       = live?.mp         ?? staticAgent.mp
+  const level    = live?.level      ?? staticAgent.level
+  const xpPct    = live?.xp_percent ?? staticAgent.xp
+  const msgCount = live?.message_count ?? 0
 
   useEffect(() => {
     const running = tasks.find(t => t.status === 'running')
@@ -45,66 +68,99 @@ export function TaskPanel() {
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <aside className="bg-[rgba(0,0,0,0.72)] border-l-[3px] border-black/60 overflow-y-auto flex flex-col" style={{ scrollbarWidth: 'none' }}>
-      <SectionLabel>▶ INVENTORY</SectionLabel>
-      <div className="grid grid-cols-3 gap-[3px] p-1.5">
-        {inventory.map((slot, i) => (
-          <div key={slot.id} title={slot.label}
-            className="aspect-square bg-[#8b8b8b] flex items-center justify-center border-[3px] relative cursor-pointer hover:bg-[#a0a0a0] group"
-            style={{ borderColor: i === 1 ? '#fff #555 #555 #fff' : '#555 #ddd #ddd #555' }}>
-            <span className="text-[18px] leading-none">{slot.emoji}</span>
-            <span className="absolute bottom-[1px] right-[2px] font-pixel text-[5px] text-white drop-shadow-[1px_1px_0_#000]">{slot.count}</span>
-            <div className="absolute bottom-[110%] left-1/2 -translate-x-1/2 hidden group-hover:block z-50 whitespace-nowrap bg-[rgba(16,0,16,0.9)] border-2 border-[#555] font-pixel text-[5px] text-white px-1.5 py-1">{slot.label}</div>
+    <aside
+      className="flex flex-col overflow-y-auto border-l border-border-subtle"
+      style={{ background: 'rgba(10,10,15,0.85)', scrollbarWidth: 'none' }}
+    >
+      {/* Inventory */}
+      <SectionLabel>Inventory</SectionLabel>
+      <div className="grid grid-cols-3 gap-1.5 p-3">
+        {inventory.map((slot) => (
+          <div
+            key={slot.id}
+            title={slot.label}
+            className="aspect-square glass-card rounded-lg flex items-center justify-center relative cursor-pointer group"
+          >
+            <span className="text-xl leading-none">{slot.emoji}</span>
+            <span className="absolute bottom-1 right-1 text-[10px] text-text-muted font-mono">{slot.count}</span>
+            {/* Tooltip */}
+            <div className="absolute bottom-[110%] left-1/2 -translate-x-1/2 hidden group-hover:block z-50 whitespace-nowrap glass-strong rounded-lg text-xs text-text-secondary px-2.5 py-1.5 pointer-events-none">
+              {slot.label}
+            </div>
           </div>
         ))}
       </div>
 
-      <div className="px-2 pb-1">
-        <div className="font-pixel text-[5px] text-[#5aff5a] drop-shadow-[1px_1px_0_#000] flex justify-between mb-0.5">
-          <span>{activeAgent} LV.{level}</span><span>{xpPct}%</span>
+      {/* Agent stats */}
+      <div className="px-4 pb-4">
+        {/* Level + XP */}
+        <div className="flex items-center justify-between mb-1.5">
+          <span className="text-sm font-semibold text-text-primary">{activeAgent}</span>
+          <span
+            className="text-xs px-2 py-0.5 rounded-full font-medium"
+            style={{ background: 'rgba(99,102,241,0.15)', color: '#818cf8' }}
+          >
+            Lv.{level}
+          </span>
         </div>
-        <McBar value={xpPct} variant="xp" className="h-[6px]" animate />
-        <div className="flex justify-between mt-1">
-          <div className="flex gap-1 items-center">
-            <span className="font-pixel text-[4px] text-white/40">HP</span>
-            <McBar value={hp} variant="hp" className="w-14" />
+        <div className="flex justify-between text-xs text-text-muted mb-1">
+          <span>XP</span><span>{xpPct}%</span>
+        </div>
+        <ProgressBar value={xpPct} color="linear-gradient(90deg,#6366f1,#a855f7)" animate />
+
+        <div className="flex gap-3 mt-2.5">
+          <div className="flex-1">
+            <div className="flex justify-between text-[10px] text-text-muted mb-1">
+              <span>HP</span><span>{hp}%</span>
+            </div>
+            <ProgressBar value={hp} color="#10b981" />
           </div>
-          <div className="flex gap-1 items-center">
-            <span className="font-pixel text-[4px] text-white/40">MP</span>
-            <McBar value={mp} variant="mp" className="w-14" />
+          <div className="flex-1">
+            <div className="flex justify-between text-[10px] text-text-muted mb-1">
+              <span>MP</span><span>{mp}%</span>
+            </div>
+            <ProgressBar value={mp} color="#06b6d4" />
           </div>
         </div>
-        {msgCount > 0 && <div className="font-pixel text-[4px] text-white/30 mt-1">{msgCount} messages sent</div>}
+        {msgCount > 0 && (
+          <p className="text-[10px] text-text-muted mt-2">{msgCount} messages sent</p>
+        )}
       </div>
 
-      <SectionLabel>▶ ACTIVE QUESTS</SectionLabel>
+      {/* Active tasks */}
+      <SectionLabel>Active Tasks</SectionLabel>
       {tasks.map(task => (
-        <div key={task.id} className="px-2 py-1.5 border-b border-white/10">
-          <div className="flex items-start gap-1.5 mb-1">
-            <span className="text-[12px] mt-px flex-shrink-0">{task.icon}</span>
-            <div className="flex-1 min-w-0">
-              <div className="font-pixel text-[5px] text-white drop-shadow-[1px_1px_0_#000] mb-1 leading-[1.8]">{task.name}</div>
-              <McBar value={task.progress}
-                variant={task.status === 'done' ? 'xp' : task.status === 'running' ? 'gold' : 'quest'}
-                animate={task.status === 'running'} />
-            </div>
-            <StatusDot status={task.status} />
+        <div key={task.id} className="px-4 py-3 border-b border-border-subtle/50">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-base flex-shrink-0">{task.icon}</span>
+            <span className="text-sm text-text-primary flex-1 min-w-0 truncate">{task.name}</span>
+            <StatusBadge status={task.status} />
           </div>
+          <ProgressBar
+            value={task.progress}
+            color={task.status === 'done' ? '#10b981' : task.status === 'running' ? '#f59e0b' : '#475569'}
+            animate={task.status === 'running'}
+          />
         </div>
       ))}
 
-      <SectionLabel className="mt-1">▶ CRAFTING</SectionLabel>
-      <div className="p-2">
-        <div className="flex gap-2 items-center">
-          <div className="grid grid-cols-3 gap-[2px]">
-            {['🔍','⚡','🗄️','📡','🧬','🔧','','📜',''].map((e, i) => (
-              <div key={i} className="w-[18px] h-[18px] bg-[#555] border-[2px] border-t-[#333] border-l-[#333] border-b-[#888] border-r-[#888] flex items-center justify-center text-[10px]">{e}</div>
-            ))}
-          </div>
-          <span className="font-pixel text-[10px] text-white">→</span>
-          <span className="text-[22px]">🤖</span>
-        </div>
-        <div className="font-pixel text-[4px] text-yellow-300 mt-1 drop-shadow-[1px_1px_0_#000]">✦ Recipe: SUPER AGENT (Legendary)</div>
+      {/* Quick actions */}
+      <SectionLabel>Quick Actions</SectionLabel>
+      <div className="p-3 space-y-2">
+        {[
+          { icon: '🔍', label: 'Web Search' },
+          { icon: '💻', label: 'Run Code' },
+          { icon: '📊', label: 'SQL Query' },
+          { icon: '📜', label: 'Summarize' },
+        ].map(action => (
+          <button
+            key={action.label}
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg glass-card text-left text-sm text-text-secondary hover:text-text-primary transition-all duration-200"
+          >
+            <span>{action.icon}</span>
+            <span>{action.label}</span>
+          </button>
+        ))}
       </div>
     </aside>
   )

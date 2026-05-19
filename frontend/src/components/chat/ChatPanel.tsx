@@ -1,7 +1,3 @@
-/**
- * ChatPanel — main chat area (Phase 2 version).
- * Uses useWebSocket() instead of SSE streamChat().
- */
 import React, { useRef, useEffect, useState } from 'react'
 import { useAppStore } from '@/store/useAppStore'
 import { useWebSocket, type WsStatus } from '@/hooks/useWebSocket'
@@ -11,32 +7,39 @@ import { SessionTabs } from './SessionTabs'
 import { FileUpload } from './FileUpload'
 import type { UploadedFile } from '@/hooks/useFileUpload'
 
-function StatusPill({ status }: { status: WsStatus }) {
-  const cfg: Record<WsStatus, { color: string; label: string }> = {
-    connected:    { color: '#5aff5a', label: 'ONLINE'       },
-    connecting:   { color: '#f5c842', label: 'CONNECTING...' },
-    disconnected: { color: '#888',    label: 'OFFLINE'      },
-    error:        { color: '#e02020', label: 'ERROR'        },
-  }
-  const { color, label } = cfg[status]
+const STATUS_CONFIG: Record<WsStatus, { color: string; label: string; pulse: boolean }> = {
+  connected:    { color: '#10b981', label: 'Connected',    pulse: false },
+  connecting:   { color: '#f59e0b', label: 'Connecting…',  pulse: true  },
+  disconnected: { color: '#6b7280', label: 'Offline',      pulse: false },
+  error:        { color: '#ef4444', label: 'Error',        pulse: false },
+}
+
+function StatusDot({ status }: { status: WsStatus }) {
+  const cfg = STATUS_CONFIG[status]
   return (
-    <div className="flex items-center gap-1 px-2 border-r-2 border-white/10 flex-shrink-0">
-      <span className="inline-block w-2 h-2 rounded-full" style={{ background: color }} />
-      <span className="font-pixel text-[5px]" style={{ color }}>{label}</span>
+    <div className="flex items-center gap-1.5 px-3 flex-shrink-0">
+      <span
+        className={`w-2 h-2 rounded-full inline-block ${cfg.pulse ? 'animate-pulse' : ''}`}
+        style={{ background: cfg.color }}
+      />
+      <span className="text-text-muted text-xs">{cfg.label}</span>
     </div>
   )
 }
 
 export function ChatPanel() {
-  const { messages, addSystemMessage, addUserMessage, clearMessages, isStreaming, activeAgent, inputValue, setInputValue } = useAppStore(s => ({
-    messages: s.messages,
+  const {
+    messages, addSystemMessage, addUserMessage, clearMessages,
+    isStreaming, activeAgent, inputValue, setInputValue,
+  } = useAppStore(s => ({
+    messages:        s.messages,
     addSystemMessage: s.addSystemMessage,
-    addUserMessage: s.addUserMessage,
-    clearMessages: s.clearMessages,
-    isStreaming: s.isStreaming,
-    activeAgent: s.activeAgent,
-    inputValue: s.inputValue,
-    setInputValue: s.setInputValue,
+    addUserMessage:  s.addUserMessage,
+    clearMessages:   s.clearMessages,
+    isStreaming:     s.isStreaming,
+    activeAgent:     s.activeAgent,
+    inputValue:      s.inputValue,
+    setInputValue:   s.setInputValue,
   }))
   const { status, send } = useWebSocket()
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([])
@@ -53,8 +56,8 @@ export function ChatPanel() {
   const handleCommand = (cmd: string) => {
     const c = cmd.toLowerCase().trim()
     if (c === '/clear')       clearMessages()
-    else if (c === '/help')   addSystemMessage('/clear  /help  /agents')
-    else if (c === '/agents') addSystemMessage('NEXUS (Research) · ALEX (Code) · VORTEX (Data)')
+    else if (c === '/help')   addSystemMessage('Commands: /clear  /help  /agents')
+    else if (c === '/agents') addSystemMessage('NEXUS · ALEX · VORTEX · RESEARCHER')
     else                      addSystemMessage(`Unknown command: ${cmd}`)
   }
 
@@ -63,20 +66,17 @@ export function ChatPanel() {
     if (!trimmed || isStreaming) return
     if (trimmed.startsWith('/')) { handleCommand(trimmed); setInputValue(''); return }
 
-    let messageContent = trimmed
-    // Append file references if any
+    let content = trimmed
     if (uploadedFiles.length > 0) {
-      const fileRefs = uploadedFiles
-        .map(f => `[${f.name}](file://${f.token || f.url || f.id})`)
-        .join(' ')
-      messageContent = `${trimmed}\n\n${fileRefs}`
+      const refs = uploadedFiles.map(f => `[${f.name}](file://${f.token || f.url || f.id})`).join(' ')
+      content = `${trimmed}\n\n${refs}`
       setUploadedFiles([])
       setShowFileUpload(false)
     }
 
-    addUserMessage(messageContent)
+    addUserMessage(content)
     setInputValue('')
-    send(messageContent)
+    send(content)
   }
 
   const handleKey = (e: React.KeyboardEvent) => {
@@ -87,52 +87,86 @@ export function ChatPanel() {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="absolute inset-0 pointer-events-none z-0" style={{
-        backgroundImage: 'repeating-linear-gradient(90deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 32px),repeating-linear-gradient(0deg,rgba(255,255,255,.015) 0,rgba(255,255,255,.015) 1px,transparent 1px,transparent 32px)',
-      }} />
-
-      <div className="relative z-10">
+      {/* Session tabs */}
+      <div className="flex-shrink-0 border-b border-border-subtle">
         <SessionTabs />
       </div>
 
-      <div ref={scrollRef} className="relative z-10 flex-1 overflow-hidden"
-        style={{ background: 'rgba(0,0,0,0.55)' }}>
+      {/* Message area */}
+      <div ref={scrollRef} className="flex-1 overflow-hidden">
         <VirtualizedMessageList messages={messages} isStreaming={isStreaming} />
         {isStreaming && <TypingIndicator agentName={activeAgent} />}
       </div>
 
       {/* File upload panel */}
       {showFileUpload && (
-        <div className="relative z-10 px-3 py-2 border-t-2 border-white/10" style={{ background: 'rgba(0,0,0,0.55)' }}>
+        <div className="px-4 py-3 border-t border-border-subtle glass-strong">
           <FileUpload onFilesSelected={setUploadedFiles} />
         </div>
       )}
 
-      <div className="relative z-10 flex items-stretch h-9 border-t-[3px] border-black/80" style={{ background: 'rgba(0,0,0,0.72)' }}>
-        <StatusPill status={status} />
+      {/* Input bar */}
+      <div
+        className="flex items-center gap-2 px-3 py-2 border-t border-border-subtle glass-strong flex-shrink-0"
+        style={{ minHeight: 56 }}
+      >
+        <StatusDot status={status} />
+
+        {/* File upload toggle */}
         <button
           onClick={() => setShowFileUpload(!showFileUpload)}
-          className="flex items-center px-2 border-r-2 border-white/10 font-pixel text-[5px] text-chat-sys hover:bg-white/5 focus:outline-none transition-colors"
-          title="Toggle file upload"
-          aria-label="Upload file"
+          className={`p-2 rounded-lg text-sm transition-all duration-200 flex-shrink-0 ${
+            showFileUpload || uploadedFiles.length > 0
+              ? 'text-accent-hover bg-accent-primary/20'
+              : 'text-text-muted hover:text-text-primary hover:bg-white/5'
+          }`}
+          title="Attach file"
+          aria-label="Toggle file upload"
         >
-          📎 {uploadedFiles.length > 0 && <span className="ml-1 text-white/70">{uploadedFiles.length}</span>}
+          📎{uploadedFiles.length > 0 && <span className="ml-1 text-xs">{uploadedFiles.length}</span>}
         </button>
-        <div className="flex items-center px-2 border-r-2 border-white/10">
-          <span className="font-pixel text-[8px] text-chat-sys">T›</span>
+
+        {/* Agent label */}
+        <div
+          className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium flex-shrink-0"
+          style={{ background: 'rgba(99,102,241,0.12)', color: '#818cf8', border: '1px solid rgba(99,102,241,0.2)' }}
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-accent-primary inline-block" />
+          {activeAgent}
         </div>
-        <input ref={inputRef} type="text" value={inputValue}
-          onChange={e => setInputValue(e.target.value)} onKeyDown={handleKey}
+
+        {/* Text input */}
+        <input
+          ref={inputRef}
+          type="text"
+          value={inputValue}
+          onChange={e => setInputValue(e.target.value)}
+          onKeyDown={handleKey}
           disabled={isStreaming || status !== 'connected'}
-          placeholder={isStreaming ? 'Agent is thinking...' : status !== 'connected' ? 'Connecting...' : 'Press T to chat... /help for commands'}
-          className="flex-1 bg-transparent border-none outline-none font-terminal text-[20px] text-white placeholder:text-white/30 px-3 caret-chat-agent"
+          placeholder={
+            isStreaming
+              ? `${activeAgent} is thinking…`
+              : status !== 'connected'
+              ? 'Connecting…'
+              : 'Ask anything… or /help for commands'
+          }
+          className="flex-1 bg-transparent border-none outline-none text-text-primary text-sm placeholder:text-text-muted"
           aria-label="Chat input"
         />
-        <button onClick={handleSend} disabled={!canSend}
-          className={`px-3 md:px-4 py-2 font-pixel text-[6px] text-white border-l-[3px] border-black/60 focus:outline-none transition-all active:scale-95 ${canSend ? 'cursor-pointer hover:opacity-90' : 'cursor-not-allowed opacity-40'}`}
-          style={{ background: canSend ? '#5d9e32' : '#444', minHeight: '2.5rem' }}
+
+        {/* Send button */}
+        <button
+          onClick={handleSend}
+          disabled={!canSend}
+          className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+            canSend
+              ? 'btn-gradient text-white shadow-glow-sm hover:shadow-glow-md active:scale-95'
+              : 'bg-bg-elevated text-text-muted cursor-not-allowed opacity-50'
+          }`}
           aria-label="Send message"
-        >SEND ▶</button>
+        >
+          Send →
+        </button>
       </div>
     </div>
   )

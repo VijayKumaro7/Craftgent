@@ -1,79 +1,51 @@
-/**
- * SkyBackground — the Minecraft world behind the UI panels.
- * Renders drifting pixel clouds and a grass/dirt ground strip.
- * Pure CSS — no canvas, no JS needed.
- */
-
-const CLOUDS = [
-  { top: 12,  delay: 0,   duration: 32, scale: 1.0 },
-  { top: 28,  delay: -10, duration: 45, scale: 0.7 },
-  { top: 8,   delay: -22, duration: 38, scale: 1.2 },
-  { top: 40,  delay: -5,  duration: 52, scale: 0.8 },
-  { top: 18,  delay: -30, duration: 41, scale: 0.9 },
+const ORBS = [
+  { size: 600, x: 10,  y: 20,  color: 'rgba(99,102,241,0.12)',  delay: '0s',   duration: '12s' },
+  { size: 400, x: 75,  y: 60,  color: 'rgba(168,85,247,0.10)',  delay: '3s',   duration: '15s' },
+  { size: 350, x: 50,  y: 80,  color: 'rgba(6,182,212,0.08)',   delay: '6s',   duration: '10s' },
+  { size: 280, x: 85,  y: 15,  color: 'rgba(99,102,241,0.07)',  delay: '1.5s', duration: '18s' },
+  { size: 220, x: 20,  y: 70,  color: 'rgba(168,85,247,0.06)',  delay: '4s',   duration: '14s' },
 ]
-
-function Cloud({ top, delay, duration, scale }: typeof CLOUDS[0]) {
-  const w = 96 * scale
-  const h = 32 * scale
-
-  return (
-    <div
-      className="absolute"
-      style={{
-        top,
-        width: w,
-        height: h,
-        animation: `cloudDrift ${duration}s linear ${delay}s infinite`,
-      }}
-    >
-      {/* Main body */}
-      <div className="absolute bg-white" style={{ left: 0, top: h * 0.4, width: '100%', height: h * 0.6 }} />
-      {/* Top bumps */}
-      <div className="absolute bg-white" style={{ left: '10%', top: 0, width: '45%', height: h * 0.55 }} />
-      <div className="absolute bg-white" style={{ left: '40%', top: h * 0.1, width: '40%', height: h * 0.45 }} />
-    </div>
-  )
-}
 
 export function SkyBackground() {
   return (
-    <>
-      {/* Sky */}
+    <div
+      className="fixed inset-0 pointer-events-none overflow-hidden"
+      style={{ zIndex: 0, background: 'linear-gradient(135deg,#0a0a0f 0%,#0f0a1e 50%,#0a0f1e 100%)' }}
+      aria-hidden="true"
+    >
+      {/* Subtle mesh grid */}
       <div
-        className="fixed inset-0 sky-gradient"
-        style={{ zIndex: 0 }}
-        aria-hidden="true"
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            'linear-gradient(rgba(99,102,241,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.03) 1px,transparent 1px)',
+          backgroundSize: '60px 60px',
+        }}
       />
 
-      {/* Clouds */}
-      <div
-        className="fixed top-0 left-0 right-0 overflow-hidden pointer-events-none"
-        style={{ height: 120, zIndex: 1 }}
-        aria-hidden="true"
-      >
-        <style>{`
-          @keyframes cloudDrift {
-            from { transform: translateX(-200px); }
-            to   { transform: translateX(110vw);  }
-          }
-        `}</style>
-        {CLOUDS.map((c, i) => <Cloud key={i} {...c} />)}
-      </div>
-
-      {/* Ground — grass + dirt strip at the very bottom */}
-      <div
-        className="fixed bottom-0 left-0 right-0 pointer-events-none"
-        style={{ zIndex: 1 }}
-        aria-hidden="true"
-      >
-        <div style={{ height: 16, background: '#5d9e32', borderTop: '4px solid #6abf38' }} />
+      {/* Floating ambient orbs */}
+      {ORBS.map((orb, i) => (
         <div
+          key={i}
+          className="absolute rounded-full"
           style={{
-            height: 32,
-            background: 'repeating-linear-gradient(0deg,#5c3d1e 0,#5c3d1e 2px,#866043 2px,#866043 14px)',
+            width:  orb.size,
+            height: orb.size,
+            left:   `${orb.x}%`,
+            top:    `${orb.y}%`,
+            transform: 'translate(-50%,-50%)',
+            background: `radial-gradient(circle at center,${orb.color},transparent 70%)`,
+            animation: `orbFloat ${orb.duration} ease-in-out infinite`,
+            animationDelay: orb.delay,
           }}
         />
-      </div>
-    </>
+      ))}
+
+      {/* Top accent gradient */}
+      <div
+        className="absolute inset-x-0 top-0 h-64"
+        style={{ background: 'linear-gradient(180deg,rgba(99,102,241,0.06) 0%,transparent 100%)' }}
+      />
+    </div>
   )
 }
