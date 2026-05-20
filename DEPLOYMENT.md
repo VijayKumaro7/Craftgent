@@ -52,7 +52,7 @@
 - [ ] All migrations tested locally
 - [ ] Test migration rollback: `alembic downgrade -1`
 - [ ] Production migration backed up before running
-- [ ] Zero-downtime migrations considered
+- [ ] Zero-downtime migrations considered to pushed 
 
 ## 📦 Application
 
