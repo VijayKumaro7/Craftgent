@@ -19,6 +19,7 @@ import { Hotbar }             from '@/components/layout/Hotbar'
 import { AgentSidebar }       from '@/components/agents/AgentSidebar'
 import { NotificationStack }  from '@/components/ui/NotificationStack'
 import { SkeletonMessages }   from '@/components/ui/SkeletonMessage'
+import { ReportPage }         from '@/pages/ReportPage'
 
 const ChatPanel = lazy(() => import('@/components/chat/ChatPanel').then(m => ({ default: m.ChatPanel })))
 const TaskPanel = lazy(() => import('@/components/tasks/TaskPanel').then(m => ({ default: m.TaskPanel })))
@@ -133,6 +134,7 @@ function AppRoutes() {
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginScreen />} />
       <Route path="/chat" element={<ProtectedRoute element={<Shell />} />} />
+      <Route path="/reports/:sessionId" element={<ProtectedRoute element={<ReportPage />} />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )

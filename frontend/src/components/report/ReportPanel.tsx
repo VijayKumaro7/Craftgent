@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { FileText, AlertCircle } from 'lucide-react';
+import { FileText, AlertCircle, Settings } from 'lucide-react';
 import { ExportButton } from './ExportButton';
+import { ReportCustomizer, type ReportTemplate } from './ReportCustomizer';
 
 interface ReportPanelProps {
   sessionId: string;
@@ -10,10 +11,28 @@ interface ReportPanelProps {
   }>;
 }
 
+const DEFAULT_TEMPLATE: ReportTemplate = {
+  name: 'Modern',
+  includeSections: {
+    findings: true,
+    sources: true,
+    conclusion: true,
+    metadata: true,
+    timestamp: true,
+  },
+  styling: {
+    theme: 'modern',
+    fontSize: 'medium',
+    color: 'blue',
+  },
+};
+
 export const ReportPanel: React.FC<ReportPanelProps> = ({ sessionId, messages }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [previewData, setPreviewData] = useState<any>(null);
+  const [template, setTemplate] = useState<ReportTemplate>(DEFAULT_TEMPLATE);
+  const [showCustomizer, setShowCustomizer] = useState(false);
 
   useEffect(() => {
     const fetchPreview = async () => {
@@ -64,6 +83,15 @@ export const ReportPanel: React.FC<ReportPanelProps> = ({ sessionId, messages })
     );
   }
 
+  const themeColors = {
+    blue: { primary: '#2563eb', light: '#3b82f6', bg: '#eff6ff', border: '#bfdbfe' },
+    green: { primary: '#059669', light: '#10b981', bg: '#ecfdf5', border: '#a7f3d0' },
+    purple: { primary: '#7c3aed', light: '#a855f7', bg: '#f5f3ff', border: '#ddd6fe' },
+    red: { primary: '#dc2626', light: '#ef4444', bg: '#fef2f2', border: '#fecaca' },
+  };
+
+  const color = themeColors[template.styling.color as keyof typeof themeColors] || themeColors.blue;
+
   const extractedFindings = messages
     .filter(m => m.role === 'assistant')
     .map(m => m.content)
@@ -81,27 +109,35 @@ export const ReportPanel: React.FC<ReportPanelProps> = ({ sessionId, messages })
     ?.substring(0, 500) || '';
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg print:shadow-none">
-      {/* Header */}
-      <div className="mb-8 pb-8 border-b-2 border-gray-200 print:border-gray-400">
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <FileText className="w-8 h-8 text-blue-500" />
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Research Report</h1>
-              <p className="text-gray-500 text-sm mt-1">
-                Generated on {new Date().toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-              </p>
+    <>
+      <div className="w-full max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg print:shadow-none">
+        {/* Header */}
+        <div className="mb-8 pb-8 border-b-2 border-gray-200 print:border-gray-400">
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <FileText className="w-8 h-8" style={{ color: color.primary }} />
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">Research Report</h1>
+                <p className="text-gray-500 text-sm mt-1">
+                  {template.name} Theme • Generated on {new Date().toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                  })}
+                </p>
+              </div>
+            </div>
+            <div className="print:hidden flex gap-2">
+              <button
+                onClick={() => setShowCustomizer(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors"
+              >
+                <Settings className="w-4 h-4" />
+                Customize
+              </button>
+              <ExportButton sessionId={sessionId} />
             </div>
           </div>
-          <div className="print:hidden">
-            <ExportButton sessionId={sessionId} />
-          </div>
-        </div>
 
         {previewData && (
           <div className="grid grid-cols-2 gap-4 text-sm">
@@ -117,63 +153,96 @@ export const ReportPanel: React.FC<ReportPanelProps> = ({ sessionId, messages })
         )}
       </div>
 
-      {/* Key Findings */}
-      {extractedFindings.length > 0 && (
-        <section className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Key Findings</h2>
-          <div className="space-y-3">
-            {extractedFindings.map((finding, idx) => (
-              <div
-                key={idx}
-                className="p-4 bg-blue-50 border-l-4 border-blue-400 rounded"
-              >
-                <p className="text-gray-700 text-sm line-clamp-3">
-                  {finding.substring(0, 300)}
-                  {finding.length > 300 ? '...' : ''}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Sources */}
-      {extractedSources.length > 0 && (
-        <section className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Sources</h2>
-          <ul className="space-y-2">
-            {extractedSources.map((source, idx) => (
-              <li key={idx}>
-                <a
-                  href={source}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-800 text-sm break-all"
+        {/* Key Findings */}
+        {template.includeSections.findings && extractedFindings.length > 0 && (
+          <section className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4" style={{ color: color.primary }}>
+              Key Findings
+            </h2>
+            <div className="space-y-3">
+              {extractedFindings.map((finding, idx) => (
+                <div
+                  key={idx}
+                  className="p-4 rounded border-l-4"
+                  style={{ backgroundColor: color.bg, borderColor: color.primary }}
                 >
-                  {source}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+                  <p className="text-gray-700 text-sm line-clamp-3">
+                    {finding.substring(0, 300)}
+                    {finding.length > 300 ? '...' : ''}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
-      {/* Conclusion */}
-      {conclusion && (
-        <section className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Conclusion</h2>
-          <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
-            <p className="text-gray-700 leading-relaxed">{conclusion}</p>
-          </div>
-        </section>
-      )}
+        {/* Sources */}
+        {template.includeSections.sources && extractedSources.length > 0 && (
+          <section className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4" style={{ color: color.primary }}>
+              Sources
+            </h2>
+            <ul className="space-y-2">
+              {extractedSources.map((source, idx) => (
+                <li key={idx}>
+                  <a
+                    href={source}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm break-all hover:underline"
+                    style={{ color: color.light }}
+                  >
+                    {source}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
-      {/* Footer */}
-      <div className="mt-12 pt-8 border-t border-gray-200 text-center">
-        <p className="text-gray-500 text-xs">
-          Generated by Craftgent AI Agent • {new Date().toLocaleTimeString()}
-        </p>
+        {/* Conclusion */}
+        {template.includeSections.conclusion && conclusion && (
+          <section className="mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4" style={{ color: color.primary }}>
+              Conclusion
+            </h2>
+            <div className="p-4 rounded-lg border" style={{ backgroundColor: color.bg, borderColor: color.border }}>
+              <p className="text-gray-700 leading-relaxed">{conclusion}</p>
+            </div>
+          </section>
+        )}
+
+        {/* Metadata */}
+        {template.includeSections.metadata && previewData && (
+          <section className="mb-8 p-4 rounded-lg bg-gray-50 border border-gray-200">
+            <h3 className="text-sm font-semibold text-gray-900 mb-2">Metadata</h3>
+            <div className="grid grid-cols-2 gap-4 text-xs text-gray-600">
+              <div>Session: {previewData.session_id?.substring(0, 8)}...</div>
+              <div>Messages: {previewData.message_count}</div>
+            </div>
+          </section>
+        )}
+
+        {/* Footer */}
+        <div className="mt-12 pt-8 border-t border-gray-200 text-center">
+          <p className="text-gray-500 text-xs">
+            {template.includeSections.timestamp && (
+              <>Generated by Craftgent AI Agent • {new Date().toLocaleTimeString()}</>
+            )}
+          </p>
+        </div>
       </div>
-    </div>
+
+      {/* Customizer Modal */}
+      {showCustomizer && (
+        <ReportCustomizer
+          onApply={(newTemplate) => {
+            setTemplate(newTemplate);
+            setShowCustomizer(false);
+          }}
+          onClose={() => setShowCustomizer(false)}
+        />
+      )}
+    </>
   );
 };

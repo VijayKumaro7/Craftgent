@@ -59,6 +59,13 @@ class Settings(BaseSettings):
     # Rate limiting
     rate_limit_per_minute: int = 20
 
+    # Email (Phase 4 — optional)
+    smtp_host: str = ""
+    smtp_port: int = 587
+    smtp_user: str = ""
+    smtp_password: str = ""
+    smtp_use_tls: bool = True
+
     @property
     def cors_origin_list(self) -> list[str]:
         return [o.strip() for o in self.cors_origins.split(",")]
