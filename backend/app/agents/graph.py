@@ -28,9 +28,47 @@ from app.memory.service import MemoryService
 from app.tools.web_search import web_search
 from app.tools.code_exec import execute_python
 from app.tools.sql_tool import query_analytics
+from app.tools.web_scraper import scrape_website as _scrape_website_impl
 
 logger = structlog.get_logger()
 MODEL = "claude-sonnet-4-20250514"
+
+
+# ── Web Scraper Tool ──────────────────────────────────────────────────────
+from langchain_core.tools import tool
+
+@tool
+def scrape_website(url: str) -> str:
+    """
+    Scrape a website and extract structured content.
+    Use this to get detailed information from a specific webpage.
+
+    Args:
+        url: The complete URL to scrape (e.g., https://example.com/page)
+
+    Returns:
+        Extracted content including title, main text, links, and tables.
+    """
+    result = _scrape_website_impl(url)
+    if not result.get("success"):
+        return f"[SCRAPE FAILED] {result.get('error', 'Unknown error')}"
+
+    parts = [f"**Title:** {result.get('title', 'N/A')}"]
+    if result.get("main_text"):
+        parts.append(f"\n**Main Content:**\n{result['main_text']}")
+    if result.get("links"):
+        parts.append("\n**Links:**")
+        for link in result["links"][:5]:
+            parts.append(f"- {link['text']}: {link['url']}")
+    if result.get("tables"):
+        parts.append("\n**Tables:**")
+        for i, table in enumerate(result["tables"], 1):
+            parts.append(f"\n_Table {i}:_")
+            for row in table[:3]:
+                parts.append(f"  {' | '.join(row)}")
+
+    return "\n".join(parts)
+
 
 # ── Per-agent context-window config ───────────────────────────────────────
 # max_tokens    : maximum output tokens (how much the agent can write per turn)
@@ -53,10 +91,10 @@ AGENT_HISTORY_WINDOW: dict[AgentName, int] = {
 }
 
 AGENT_TOOLS: dict[AgentName, list[BaseTool]] = {
-    AgentName.NEXUS:      [web_search],
+    AgentName.NEXUS:      [web_search, scrape_website],
     AgentName.ALEX:       [execute_python, web_search],
     AgentName.VORTEX:     [query_analytics, web_search],
-    AgentName.RESEARCHER: [web_search],
+    AgentName.RESEARCHER: [web_search, scrape_website],
 }
 
 

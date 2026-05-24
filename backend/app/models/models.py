@@ -116,3 +116,28 @@ class FileUpload(Base):
 
     session: Mapped["ChatSession"] = relationship()
     user: Mapped["User"] = relationship()
+
+
+class Report(Base):
+    """Generated reports from chat sessions."""
+    __tablename__ = "reports"
+
+    id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    session_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("chat_sessions.id", ondelete="CASCADE"), nullable=False
+    )
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    title: Mapped[str] = mapped_column(String(256), nullable=False)
+    format: Mapped[str] = mapped_column(String(32), nullable=False)  # 'pdf' or 'docx'
+    file_path: Mapped[str | None] = mapped_column(String(512), nullable=True)  # storage path
+    file_size: Mapped[int] = mapped_column(Integer, default=0, nullable=False)  # bytes
+    generated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=utcnow, nullable=False
+    )
+
+    session: Mapped["ChatSession"] = relationship()
+    user: Mapped["User"] = relationship()
