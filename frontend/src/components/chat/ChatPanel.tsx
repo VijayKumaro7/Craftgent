@@ -5,6 +5,7 @@ import { VirtualizedMessageList } from './VirtualizedMessageList'
 import { TypingIndicator } from './TypingIndicator'
 import { SessionTabs } from './SessionTabs'
 import { FileUpload } from './FileUpload'
+import { ExportButton } from '../report/ExportButton'
 import type { UploadedFile } from '@/hooks/useFileUpload'
 
 const STATUS_CONFIG: Record<WsStatus, { color: string; label: string; pulse: boolean }> = {
@@ -30,7 +31,7 @@ function StatusDot({ status }: { status: WsStatus }) {
 export function ChatPanel() {
   const {
     messages, addSystemMessage, addUserMessage, clearMessages,
-    isStreaming, activeAgent, inputValue, setInputValue,
+    isStreaming, activeAgent, inputValue, setInputValue, sessionId,
   } = useAppStore(s => ({
     messages:        s.messages,
     addSystemMessage: s.addSystemMessage,
@@ -40,6 +41,7 @@ export function ChatPanel() {
     activeAgent:     s.activeAgent,
     inputValue:      s.inputValue,
     setInputValue:   s.setInputValue,
+    sessionId:       s.sessionId,
   }))
   const { status, send } = useWebSocket()
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([])
@@ -102,6 +104,13 @@ export function ChatPanel() {
       {showFileUpload && (
         <div className="px-4 py-3 border-t border-border-subtle glass-strong">
           <FileUpload onFilesSelected={setUploadedFiles} />
+        </div>
+      )}
+
+      {/* Export report button */}
+      {messages.length > 0 && sessionId && (
+        <div className="px-4 py-3 border-t border-border-subtle glass-strong flex justify-end">
+          <ExportButton sessionId={sessionId} />
         </div>
       )}
 
