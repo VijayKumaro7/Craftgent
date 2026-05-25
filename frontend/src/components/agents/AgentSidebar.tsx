@@ -2,16 +2,16 @@ import React from 'react'
 import { AGENTS } from '@/types'
 import type { AgentName } from '@/types'
 import { useAppStore } from '@/store/useAppStore'
-import { PixelHead }   from '@/components/ui/PixelHead'
+import { AvatarCircle } from '@/components/ui/AvatarCircle'
 import { SessionHistory }    from '@/components/chat/SessionHistory'
 import { TemplatesPanel }    from '@/components/chat/TemplatesPanel'
 import { AgentHistoryPanel } from '@/components/agents/AgentHistoryPanel'
 
 const AGENT_COLORS: Record<string, string> = {
-  NEXUS:      '#6366f1',
-  ALEX:       '#10b981',
-  VORTEX:     '#a855f7',
-  RESEARCHER: '#f59e0b',
+  NEXUS:      '#7c3aed',
+  ALEX:       '#059669',
+  VORTEX:     '#a78bfa',
+  RESEARCHER: '#f97316',
 }
 
 const ABILITIES = [
@@ -41,8 +41,8 @@ export function AgentSidebar() {
 
   return (
     <aside
-      className="flex flex-col overflow-y-auto border-r border-border-subtle"
-      style={{ background: 'rgba(10,10,15,0.85)', scrollbarWidth: 'none' }}
+      className="flex flex-col overflow-y-auto border-r border-border-default bg-bg-primary"
+      style={{ scrollbarWidth: 'none' }}
     >
       <SectionLabel>Agents</SectionLabel>
 
@@ -68,13 +68,11 @@ export function AgentSidebar() {
             <div className="flex gap-3 items-start">
               {/* Avatar */}
               <div className="relative flex-shrink-0">
-                <div className="rounded-lg overflow-hidden" style={{ width: 32, height: 32 }}>
-                  <PixelHead agent={name} size={32} />
-                </div>
+                <AvatarCircle agent={name.toLowerCase() as any} size="md" />
                 {/* Status dot */}
                 <span
                   className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-bg-primary ${isPulsing ? 'animate-pulse' : ''}`}
-                  style={{ background: isPulsing ? '#f59e0b' : color }}
+                  style={{ background: isPulsing ? '#f97316' : color }}
                 />
               </div>
 
@@ -107,7 +105,7 @@ export function AgentSidebar() {
                       <span className="text-[10px] text-text-muted">{agent.mp}%</span>
                     </div>
                     <div className="h-1 rounded-full bg-white/5">
-                      <div className="h-full rounded-full bg-accent-cyan transition-all" style={{ width: `${agent.mp}%` }} />
+                      <div className="h-full rounded-full bg-accent-secondary transition-all" style={{ width: `${agent.mp}%` }} />
                     </div>
                   </div>
                 </div>
@@ -124,7 +122,7 @@ export function AgentSidebar() {
           <div key={label} className="flex items-center gap-2">
             <span
               className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-              style={{ background: on ? '#6366f1' : '#475569' }}
+              style={{ background: on ? '#7c3aed' : '#64748b' }}
             />
             <span className={`text-xs ${on ? 'text-text-secondary' : 'text-text-muted'}`}>{label}</span>
             {isNew && (

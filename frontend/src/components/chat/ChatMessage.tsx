@@ -12,10 +12,10 @@ interface ChatMessageProps {
 }
 
 const AGENT_COLORS: Record<string, string> = {
-  NEXUS:      '#818cf8',
-  ALEX:       '#34d399',
-  VORTEX:     '#c084fc',
-  RESEARCHER: '#fbbf24',
+  NEXUS:      '#7c3aed',
+  ALEX:       '#059669',
+  VORTEX:     '#a78bfa',
+  RESEARCHER: '#f97316',
 }
 
 function StreamCursor() {
@@ -29,7 +29,7 @@ function ChatMessageComponent({ msg, isStreaming = false }: ChatMessageProps) {
 
   const isSystem = msg.role === 'system'
   const isUser   = msg.role === 'user'
-  const agentColor = msg.agent ? (AGENT_COLORS[msg.agent] ?? '#818cf8') : '#818cf8'
+  const agentColor = msg.agent ? (AGENT_COLORS[msg.agent] ?? '#7c3aed') : '#7c3aed'
   const sender = isSystem ? 'System' : isUser ? 'You' : (msg.agent ?? 'NEXUS')
   const timestamp = msg.createdAt ? formatRelativeTime(msg.createdAt) : null
 
@@ -62,11 +62,11 @@ function ChatMessageComponent({ msg, isStreaming = false }: ChatMessageProps) {
         <div className="flex items-center gap-2">
           {!isUser && msg.agent && (
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            <AgentAvatar agent={msg.agent as any} size={24} className="flex-shrink-0 rounded-full overflow-hidden" />
+            <AgentAvatar agent={msg.agent as any} size="md" className="flex-shrink-0" />
           )}
           {isUser && (
-            <div className="w-6 h-6 rounded-full bg-accent-primary/20 border border-accent-primary/30 flex items-center justify-center text-xs text-accent-hover flex-shrink-0">
-              U
+            <div className="w-6 h-6 rounded-full bg-accent-primary/20 border border-accent-primary/30 flex items-center justify-center text-xs font-semibold text-accent-primary flex-shrink-0">
+              You
             </div>
           )}
           <span
