@@ -9,10 +9,10 @@ import { ExportButton } from '../report/ExportButton'
 import type { UploadedFile } from '@/hooks/useFileUpload'
 
 const STATUS_CONFIG: Record<WsStatus, { color: string; label: string; pulse: boolean }> = {
-  connected:    { color: '#10b981', label: 'Connected',    pulse: false },
-  connecting:   { color: '#f59e0b', label: 'Connecting…',  pulse: true  },
-  disconnected: { color: '#6b7280', label: 'Offline',      pulse: false },
-  error:        { color: '#ef4444', label: 'Error',        pulse: false },
+  connected:    { color: '#059669', label: 'Connected',    pulse: false },
+  connecting:   { color: '#f97316', label: 'Connecting…',  pulse: true  },
+  disconnected: { color: '#64748b', label: 'Offline',      pulse: false },
+  error:        { color: '#dc2626', label: 'Error',        pulse: false },
 }
 
 function StatusDot({ status }: { status: WsStatus }) {
@@ -102,21 +102,21 @@ export function ChatPanel() {
 
       {/* File upload panel */}
       {showFileUpload && (
-        <div className="px-4 py-3 border-t border-border-subtle glass-strong">
+        <div className="px-4 py-3 border-t border-border-default bg-bg-secondary">
           <FileUpload onFilesSelected={setUploadedFiles} />
         </div>
       )}
 
       {/* Export report button */}
       {messages.length > 0 && sessionId && (
-        <div className="px-4 py-3 border-t border-border-subtle glass-strong flex justify-end">
+        <div className="px-4 py-3 border-t border-border-default bg-bg-secondary flex justify-end">
           <ExportButton sessionId={sessionId} />
         </div>
       )}
 
       {/* Input bar */}
       <div
-        className="flex items-center gap-2 px-3 py-2 border-t border-border-subtle glass-strong flex-shrink-0"
+        className="flex items-center gap-2 px-3 py-2 border-t border-border-default bg-bg-secondary flex-shrink-0"
         style={{ minHeight: 56 }}
       >
         <StatusDot status={status} />
@@ -138,7 +138,7 @@ export function ChatPanel() {
         {/* Agent label */}
         <div
           className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium flex-shrink-0"
-          style={{ background: 'rgba(99,102,241,0.12)', color: '#818cf8', border: '1px solid rgba(99,102,241,0.2)' }}
+          style={{ background: 'rgba(124,58,237,0.12)', color: '#a78bfa', border: '1px solid rgba(124,58,237,0.2)' }}
         >
           <span className="w-1.5 h-1.5 rounded-full bg-accent-primary inline-block" />
           {activeAgent}
@@ -169,7 +169,7 @@ export function ChatPanel() {
           disabled={!canSend}
           className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
             canSend
-              ? 'btn-gradient text-white shadow-glow-sm hover:shadow-glow-md active:scale-95'
+              ? 'btn-gradient text-white shadow-md hover:shadow-lg active:scale-95'
               : 'bg-bg-elevated text-text-muted cursor-not-allowed opacity-50'
           }`}
           aria-label="Send message"
