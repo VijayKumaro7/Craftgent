@@ -8,19 +8,19 @@ export function HeroSection() {
 
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center py-24 px-6 overflow-hidden">
-      {/* Decorative radial glow behind hero */}
+      {/* Decorative subtle gradient behind hero */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
         style={{
           width: 800,
           height: 800,
-          background: 'radial-gradient(circle at center,rgba(99,102,241,0.12) 0%,transparent 70%)',
+          background: 'radial-gradient(circle at center,rgba(124,58,237,0.08) 0%,transparent 70%)',
         }}
       />
 
       <div className="relative text-center max-w-4xl mx-auto animate-fade-in">
         {/* Eyebrow label */}
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-sm text-text-secondary mb-8">
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent-primary/10 border border-accent-primary/30 text-sm text-text-secondary mb-8">
           <span className="w-2 h-2 rounded-full bg-success animate-pulse inline-block" />
           Multi-Agent AI Platform · v0.2.0
         </div>
@@ -43,7 +43,7 @@ export function HeroSection() {
           <Button
             variant="primary"
             onClick={() => navigate('/login')}
-            className="w-full sm:w-auto text-base px-8 py-3 shadow-glow-md"
+            className="w-full sm:w-auto text-base px-8 py-3"
           >
             Start for free →
           </Button>
@@ -61,7 +61,7 @@ export function HeroSection() {
           {BADGES.map((badge, i) => (
             <span
               key={i}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium glass text-text-secondary"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-bg-secondary border border-border-subtle text-text-secondary"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-accent-primary/70 inline-block" />
               {badge}
