@@ -7,7 +7,7 @@ const AGENTS = [
     role: 'Research Orchestrator',
     description: 'The command center. NEXUS handles general Q&A, synthesizes research, and intelligently routes complex tasks to the right specialist agent.',
     imageSrc: '/assets/agents/nexus.png',
-    color: '#6366f1',
+    color: '#7c3aed',
     abilities: ['Orchestrate', 'Research', 'Delegate'],
   },
   {
@@ -15,7 +15,7 @@ const AGENTS = [
     role: 'Code Specialist',
     description: 'Your engineering co-pilot. ALEX generates, debugs, and optimizes code across any language — and can execute it in a sandboxed environment.',
     imageSrc: '/assets/agents/alex.png',
-    color: '#10b981',
+    color: '#059669',
     abilities: ['Generate', 'Debug', 'Execute'],
   },
   {
@@ -23,7 +23,7 @@ const AGENTS = [
     role: 'Data Analyst',
     description: 'Master of structured data. VORTEX runs SQL queries, performs statistical analysis, and extracts actionable insights from raw datasets.',
     imageSrc: '/assets/agents/vortex.png',
-    color: '#a855f7',
+    color: '#a78bfa',
     abilities: ['Analyze', 'Query', 'Visualize'],
   },
   {
@@ -31,7 +31,7 @@ const AGENTS = [
     role: 'Deep Investigator',
     description: 'The fact-finder. RESEARCHER performs multi-step web research, verifies sources, and synthesizes comprehensive reports from live information.',
     imageSrc: '/assets/agents/researcher.png',
-    color: '#f59e0b',
+    color: '#f97316',
     abilities: ['Investigate', 'Verify', 'Report'],
   },
 ]
@@ -69,7 +69,7 @@ export function AgentShowcase() {
       id="agents"
       ref={ref}
       className="py-24 px-6"
-      style={{ background: 'rgba(99,102,241,0.03)' }}
+      style={{ background: 'rgba(124,58,237,0.03)' }}
     >
       <div className="max-w-6xl mx-auto">
         {/* Header */}

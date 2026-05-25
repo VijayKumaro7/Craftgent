@@ -13,12 +13,12 @@ export function CTASection() {
   return (
     <section id="security" className="py-24 px-6">
       <div className="max-w-3xl mx-auto text-center">
-        {/* Glass card container */}
-        <div className="glass rounded-2xl p-10 sm:p-14">
+        {/* Card container */}
+        <div className="bg-bg-secondary border border-border-subtle rounded-2xl p-10 sm:p-14">
           {/* Gradient accent bar */}
           <div
             className="h-1 w-20 mx-auto mb-8 rounded-full"
-            style={{ background: 'linear-gradient(90deg,#6366f1,#a855f7,#06b6d4)' }}
+            style={{ background: 'linear-gradient(90deg,#7c3aed,#a78bfa)' }}
           />
 
           <h2 className="text-4xl sm:text-5xl font-bold text-text-primary mb-4 leading-tight">
@@ -33,7 +33,7 @@ export function CTASection() {
             <Button
               variant="primary"
               onClick={() => navigate('/login')}
-              className="w-full sm:w-auto text-base px-10 py-3 shadow-glow-md"
+              className="w-full sm:w-auto text-base px-10 py-3"
             >
               Create free account →
             </Button>
