@@ -29,7 +29,7 @@ export function TopBar() {
     >
       {/* Left — brand + status */}
       <div className="flex items-center gap-3">
-        <div className="w-7 h-7 rounded-md btn-gradient flex items-center justify-center text-xs font-bold text-white shadow-glow-sm">
+        <div className="w-7 h-7 rounded-md btn-gradient flex items-center justify-center text-xs font-bold text-white">
           CG
         </div>
         <span className="text-text-primary font-semibold text-sm">Craftgent</span>

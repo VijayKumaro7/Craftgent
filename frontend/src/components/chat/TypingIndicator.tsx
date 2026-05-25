@@ -3,14 +3,14 @@ interface TypingIndicatorProps {
 }
 
 const AGENT_COLOR: Record<string, string> = {
-  NEXUS:      '#6366f1',
-  ALEX:       '#10b981',
-  VORTEX:     '#a855f7',
-  RESEARCHER: '#f59e0b',
+  NEXUS:      '#7c3aed',
+  ALEX:       '#059669',
+  VORTEX:     '#a78bfa',
+  RESEARCHER: '#f97316',
 }
 
 export function TypingIndicator({ agentName = 'NEXUS' }: TypingIndicatorProps) {
-  const color = AGENT_COLOR[agentName] ?? '#6366f1'
+  const color = AGENT_COLOR[agentName] ?? '#7c3aed'
 
   return (
     <div className="flex items-center gap-3 px-4 py-3 animate-fade-in">
