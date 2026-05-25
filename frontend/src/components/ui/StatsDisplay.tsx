@@ -7,7 +7,7 @@ import { apiClient } from '@/api/client'
 import { AGENTS } from '@/types'
 import type { AgentName } from '@/types'
 import { AgentAvatar } from './AgentAvatar'
-import { McBar } from './McBar'
+import { ProgressBar } from './ProgressBar'
 import { getAgentColor } from '@/constants/colors'
 
 interface AgentStatData {
@@ -82,11 +82,11 @@ export function StatsDisplay() {
           <div
             key={agentName}
             className="p-2 bg-black/40 border border-white/10 rounded"
-            style={{ borderLeftColor: color.primary, borderLeftWidth: '3px' }}
+            style={{ borderLeftColor: color, borderLeftWidth: '3px' }}
           >
             {/* Agent header */}
             <div className="flex items-center gap-2 mb-1">
-              <AgentAvatar agent={agentName} size={24} className="flex-shrink-0" />
+              <AgentAvatar agent={agentName} size="md" className="flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <div className="font-pixel text-[5px] text-white">
                   {agentName}
@@ -101,25 +101,17 @@ export function StatsDisplay() {
             </div>
 
             {/* XP bar */}
-            <div className="flex items-center gap-1 mb-1">
-              <span className="font-pixel text-[3px] text-white/50 w-6">XP</span>
-              <div className="flex-1">
-                <McBar value={stat.xp_percent} variant="xp" />
-              </div>
-              <span className="font-pixel text-[3px] text-white/50">
-                {stat.xp_percent}%
-              </span>
+            <div className="mb-1">
+              <ProgressBar current={stat.xp_percent} max={100} label="XP" showLabel color="primary" />
             </div>
 
             {/* HP/MP bars */}
-            <div className="grid grid-cols-2 gap-1">
-              <div className="flex items-center gap-1">
-                <span className="font-pixel text-[3px] text-white/50">HP</span>
-                <McBar value={stat.hp} variant="hp" />
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <ProgressBar current={stat.hp} max={100} label="HP" color="success" />
               </div>
-              <div className="flex items-center gap-1">
-                <span className="font-pixel text-[3px] text-white/50">MP</span>
-                <McBar value={stat.mp} variant="mp" />
+              <div>
+                <ProgressBar current={stat.mp} max={100} label="MP" color="primary" />
               </div>
             </div>
           </div>

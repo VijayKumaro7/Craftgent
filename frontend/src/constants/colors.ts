@@ -86,7 +86,7 @@ export const LIGHT_COLORS = {
 } as const;
 
 export type ThemeType = 'dark' | 'light';
-export type ColorScheme = typeof DARK_COLORS;
+export type ColorScheme = typeof DARK_COLORS | typeof LIGHT_COLORS;
 
 export const getColorScheme = (theme: ThemeType): ColorScheme => {
   return theme === 'dark' ? DARK_COLORS : LIGHT_COLORS;
