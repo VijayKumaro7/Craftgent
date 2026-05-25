@@ -26,7 +26,7 @@ function AuthField({ label, type = 'text', value, onChange, disabled, autoFocus,
         disabled={disabled}
         autoFocus={autoFocus}
         placeholder={placeholder}
-        className="w-full bg-bg-secondary border border-border-subtle rounded-lg px-4 py-2.5 text-text-primary text-sm placeholder:text-text-muted outline-none transition-all duration-200 focus:border-accent-primary focus:shadow-glow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full bg-bg-secondary border border-border-subtle rounded-lg px-4 py-2.5 text-text-primary text-sm placeholder:text-text-muted outline-none transition-all duration-200 focus:border-accent-primary disabled:opacity-50 disabled:cursor-not-allowed"
       />
     </div>
   )
@@ -71,12 +71,12 @@ export function LoginScreen() {
 
       <div className="fixed inset-0 flex items-center justify-center px-4" style={{ zIndex: 10 }}>
         <div
-          className="w-full max-w-sm glass-strong rounded-2xl p-8 animate-scale-in"
+          className="w-full max-w-sm bg-bg-secondary border border-border-default rounded-2xl p-8 animate-scale-in"
           onKeyDown={handleKey}
         >
           {/* Logo */}
           <div className="text-center mb-8">
-            <div className="w-12 h-12 rounded-xl btn-gradient flex items-center justify-center text-xl font-bold text-white mx-auto mb-4 shadow-glow-md">
+            <div className="w-12 h-12 rounded-xl btn-gradient flex items-center justify-center text-xl font-bold text-white mx-auto mb-4">
               CG
             </div>
             <h1 className="text-text-primary font-bold text-xl mb-1">Craftgent</h1>
@@ -91,7 +91,7 @@ export function LoginScreen() {
                 onClick={() => { setMode(m); clearError() }}
                 className={`flex-1 py-2 text-sm font-medium rounded-md transition-all duration-200 ${
                   mode === m
-                    ? 'bg-accent-primary text-white shadow-glow-sm'
+                    ? 'bg-accent-primary text-white shadow-md'
                     : 'text-text-muted hover:text-text-secondary'
                 }`}
               >
@@ -148,7 +148,7 @@ export function LoginScreen() {
           <button
             onClick={handleSubmit}
             disabled={isLoading || isInvalid}
-            className="mt-6 w-full btn-gradient text-white font-semibold py-2.5 rounded-lg text-sm shadow-glow-sm hover:shadow-glow-md transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
+            className="mt-6 w-full btn-gradient text-white font-semibold py-2.5 rounded-lg text-sm shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
           >
             {isLoading
               ? 'Loading…'

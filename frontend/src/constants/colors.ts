@@ -1,70 +1,108 @@
 /**
- * Color palette constants for CraftAgent UI.
- * Minecraft-inspired color scheme with agent-specific colors.
+ * Color palette constants for dark and light themes
+ * Used for dynamic theme switching and color references throughout the app
  */
 
-export const AGENT_COLORS = {
-  NEXUS: {
-    primary: "#1E90FF",      // Bright blue
-    secondary: "#64C8FF",    // Light blue
-    dark: "#0052CC",         // Dark blue
+export const DARK_COLORS = {
+  // Backgrounds
+  bg: {
+    primary: '#09090e',
+    secondary: '#12121a',
+    card: 'rgba(18,18,26,0.85)',
+    elevated: '#1a1a27',
   },
-  ALEX: {
-    primary: "#228B22",      // Forest green
-    secondary: "#90EE90",    // Light green
-    dark: "#0D5D0D",         // Dark green
+  // Accents
+  accent: {
+    primary: '#7c3aed',
+    hover: '#8b5cf6',
+    secondary: '#a78bfa',
+    bright: '#8b5cf6',
   },
-  VORTEX: {
-    primary: "#8A2BE2",      // Blue violet
-    secondary: "#C864FF",    // Light purple
-    dark: "#4A0080",         // Dark purple
+  // Text
+  text: {
+    primary: '#f8fafc',
+    secondary: '#cbd5e1',
+    muted: '#64748b',
+    accent: '#a78bfa',
   },
-  RESEARCHER: {
-    primary: "#FF8C00",      // Dark orange
-    secondary: "#FFC864",    // Light orange
-    dark: "#CC6600",         // Dark orange
+  // Borders
+  border: {
+    subtle: 'rgba(124,58,237,0.08)',
+    default: 'rgba(124,58,237,0.15)',
+    strong: 'rgba(124,58,237,0.3)',
+  },
+  // Status
+  success: '#059669',
+  warning: '#f97316',
+  error: '#dc2626',
+  // Agent colors
+  agent: {
+    nexus: '#7c3aed',
+    alex: '#059669',
+    vortex: '#a78bfa',
+    researcher: '#f97316',
   },
 } as const;
 
-export const STATUS_COLORS = {
-  online: "#32CD32",         // Lime green
-  offline: "#808080",        // Gray
-  busy: "#DC143C",           // Crimson red
-  idle: "#FFD700",           // Gold
+export const LIGHT_COLORS = {
+  // Backgrounds
+  bg: {
+    primary: '#fafbfc',
+    secondary: '#f1f5f9',
+    card: 'rgba(241,245,249,0.9)',
+    elevated: '#ffffff',
+  },
+  // Accents
+  accent: {
+    primary: '#7c3aed',
+    hover: '#8b5cf6',
+    secondary: '#a78bfa',
+    bright: '#8b5cf6',
+  },
+  // Text
+  text: {
+    primary: '#09090e',
+    secondary: '#475569',
+    muted: '#94a3b8',
+    accent: '#7c3aed',
+  },
+  // Borders
+  border: {
+    subtle: 'rgba(124,58,237,0.1)',
+    default: 'rgba(124,58,237,0.2)',
+    strong: 'rgba(124,58,237,0.4)',
+  },
+  // Status
+  success: '#059669',
+  warning: '#f97316',
+  error: '#dc2626',
+  // Agent colors
+  agent: {
+    nexus: '#7c3aed',
+    alex: '#059669',
+    vortex: '#a78bfa',
+    researcher: '#f97316',
+  },
 } as const;
 
-export const UI_COLORS = {
-  success: "#50C878",        // Emerald green
-  warning: "#FFA500",        // Orange
-  error: "#FF4444",          // Red
-  info: "#4169E1",           // Royal blue
-  background: "#000000",
-  surface: "#1A1A1A",
-  border: "#404040",
-  text: "#E8E8E8",
-  textMuted: "#808080",
+export type ThemeType = 'dark' | 'light';
+export type ColorScheme = typeof DARK_COLORS | typeof LIGHT_COLORS;
+
+export const getColorScheme = (theme: ThemeType): ColorScheme => {
+  return theme === 'dark' ? DARK_COLORS : LIGHT_COLORS;
+};
+
+export const AGENT_NAMES = {
+  nexus: 'NEXUS',
+  alex: 'ALEX',
+  vortex: 'VORTEX',
+  researcher: 'RESEARCHER',
 } as const;
 
-export const CATEGORY_COLORS = {
-  knowledge: "#4169E1",      // Royal blue
-  utility: "#228B22",        // Forest green
-  analysis: "#8A2BE2",       // Blue violet
-  creation: "#FF8C00",       // Dark orange
-} as const;
+export const AGENT_COLORS = DARK_COLORS.agent;
 
-/**
- * Get agent color by agent name
- */
-export function getAgentColor(agentName: string) {
-  const normalized = agentName.toUpperCase();
-  const agentColor = AGENT_COLORS[normalized as keyof typeof AGENT_COLORS];
-  return agentColor || AGENT_COLORS.NEXUS;
-}
-
-/**
- * Get category color by category name
- */
-export function getCategoryColor(category: string): string {
-  const normalized = category.toLowerCase();
-  return CATEGORY_COLORS[normalized as keyof typeof CATEGORY_COLORS] || CATEGORY_COLORS.knowledge;
-}
+export const getAgentColor = (agent: string, theme: ThemeType = 'dark'): string => {
+  const scheme = getColorScheme(theme);
+  const lowerAgent = agent.toLowerCase();
+  return scheme.agent[lowerAgent as keyof typeof scheme.agent] || scheme.accent.primary;
+};

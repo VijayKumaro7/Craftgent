@@ -10,8 +10,8 @@ interface AgentCardProps {
 export function AgentCard({ name, role, description, color, abilities }: AgentCardProps) {
   return (
     <div
-      className="glass-card rounded-xl overflow-hidden group transition-all duration-300 hover:-translate-y-2 hover:shadow-card-hover"
-      style={{ borderColor: `${color}25` }}
+      className="bg-bg-secondary border rounded-xl overflow-hidden group transition-all duration-300 hover:-translate-y-2 hover:shadow-lg"
+      style={{ borderColor: `${color}30` }}
     >
       {/* Color bar accent */}
       <div className="h-1 w-full" style={{ background: `linear-gradient(90deg, ${color}, transparent)` }} />

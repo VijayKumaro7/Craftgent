@@ -87,7 +87,7 @@ export function ToastContainer() {
       {toasts.map((toast) => (
         <div
           key={toast.id}
-          className={`glass-strong rounded-xl px-4 py-3 border animate-slide-in-left ${typeStyles[toast.type]} pointer-events-auto shadow-card`}
+          className={`bg-bg-elevated rounded-xl px-4 py-3 border animate-slide-in-left ${typeStyles[toast.type]} pointer-events-auto shadow-lg`}
         >
           <div className="flex items-start gap-3">
             <span className="text-sm font-bold flex-shrink-0 w-5 h-5 flex items-center justify-center rounded-full border border-current">

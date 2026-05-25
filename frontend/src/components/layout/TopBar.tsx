@@ -1,12 +1,14 @@
 import { useAppStore }  from '@/store/useAppStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import { CustomizationPanel } from './CustomizationPanel'
+import { useTheme } from '@/hooks/useTheme'
+import { Moon, Sun } from 'lucide-react'
 
 const STATUS_COLOR: Record<string, string> = {
-  connected:    '#10b981',
-  connecting:   '#f59e0b',
-  disconnected: '#6b7280',
-  error:        '#ef4444',
+  connected:    '#059669',
+  connecting:   '#f97316',
+  disconnected: '#64748b',
+  error:        '#dc2626',
 }
 
 export function TopBar() {
@@ -18,15 +20,16 @@ export function TopBar() {
     username: s.username,
     logout: s.logout,
   }))
+  const { theme, toggleTheme } = useTheme()
 
   return (
     <header
-      className="col-span-3 flex items-center justify-between px-4 glass-strong border-b border-border-subtle"
+      className="col-span-3 flex items-center justify-between px-4 bg-bg-secondary border-b border-border-default"
       style={{ height: 52, zIndex: 20 }}
     >
       {/* Left — brand + status */}
       <div className="flex items-center gap-3">
-        <div className="w-7 h-7 rounded-md btn-gradient flex items-center justify-center text-xs font-bold text-white shadow-glow-sm">
+        <div className="w-7 h-7 rounded-md btn-gradient flex items-center justify-center text-xs font-bold text-white">
           CG
         </div>
         <span className="text-text-primary font-semibold text-sm">Craftgent</span>
@@ -42,9 +45,9 @@ export function TopBar() {
       </div>
 
       {/* Right — user + controls */}
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-2">
         {/* Connection status */}
-        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-success/10 border border-success/20 mr-2">
+        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-success/10 border border-success/20">
           <span
             className="w-2 h-2 rounded-full inline-block"
             style={{ background: STATUS_COLOR.connected }}
@@ -53,12 +56,25 @@ export function TopBar() {
         </div>
 
         {username && (
-          <span className="text-text-secondary text-xs mr-1 hidden sm:block">
+          <span className="text-text-secondary text-xs hidden sm:block">
             {username}
           </span>
         )}
 
         <CustomizationPanel />
+
+        {/* Theme toggle */}
+        <button
+          onClick={toggleTheme}
+          className="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-bg-elevated transition-all duration-200"
+          title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+        >
+          {theme === 'dark' ? (
+            <Sun className="w-4 h-4" />
+          ) : (
+            <Moon className="w-4 h-4" />
+          )}
+        </button>
 
         <button
           onClick={logout}

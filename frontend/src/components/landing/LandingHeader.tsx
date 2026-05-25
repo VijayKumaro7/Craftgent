@@ -7,7 +7,7 @@ export function LandingHeader() {
   const { isAuthenticated, username } = useAuthStore()
 
   return (
-    <header className="sticky top-0 w-full z-50 glass-strong">
+    <header className="sticky top-0 w-full z-50 bg-bg-secondary border-b border-border-default">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
         <button
@@ -15,7 +15,7 @@ export function LandingHeader() {
           className="flex items-center gap-2.5 group"
           aria-label="Craftgent home"
         >
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center btn-gradient text-white text-sm font-bold shadow-glow-sm">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center btn-gradient text-white text-sm font-bold">
             CG
           </div>
           <span className="text-text-primary font-semibold text-lg tracking-tight group-hover:text-accent-hover transition-colors">
