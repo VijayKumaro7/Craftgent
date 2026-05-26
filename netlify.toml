@@ -9,7 +9,7 @@
 # Without these variables, the frontend will fail to connect to the backend.
 
 [build]
-  command = "cd frontend && npm run build"
+  command = "cd frontend && npm ci && npm run build"
   publish = "frontend/dist"
   base = "/"
 
