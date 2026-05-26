@@ -21,11 +21,11 @@ function HotbarComponent() {
 
   return (
     <div
-      className="col-span-3 flex items-center justify-center py-2 glass-strong border-t border-border-subtle"
-      style={{ minHeight: 60 }}
+      className="col-span-3 flex items-center justify-center py-2 border-t border-border-subtle"
+      style={{ minHeight: 60, background: 'rgba(18, 18, 26, 0.8)' }}
     >
       {/* Slot bar */}
-      <div className="flex items-center gap-1.5 px-2 py-1.5 glass rounded-xl">
+      <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-xl" style={{ background: 'rgba(30, 30, 40, 0.6)' }}>
         {slots.map((slot, i) => {
           const selected = selectedSlot === i
           return (
@@ -35,18 +35,18 @@ function HotbarComponent() {
               title={slot.label}
               className={`relative flex items-center justify-center rounded-lg transition-all duration-150 focus:outline-none ${
                 selected
-                  ? 'shadow-glow-sm'
+                  ? 'shadow-md'
                   : 'hover:bg-white/5'
               }`}
               style={{
                 width: 44,
                 height: 44,
                 background: selected
-                  ? 'rgba(99,102,241,0.15)'
-                  : 'rgba(17,24,39,0.5)',
+                  ? 'rgba(124, 58, 237, 0.15)'
+                  : 'rgba(30, 30, 40, 0.6)',
                 border: selected
-                  ? '1px solid rgba(99,102,241,0.5)'
-                  : '1px solid rgba(99,102,241,0.1)',
+                  ? '1px solid rgba(124, 58, 237, 0.5)'
+                  : '1px solid rgba(124, 58, 237, 0.1)',
               }}
               aria-label={`${slot.label} (key ${i + 1})`}
               aria-pressed={selected}

@@ -69,8 +69,8 @@ export function TaskPanel() {
 
   return (
     <aside
-      className="flex flex-col overflow-y-auto border-l border-border-subtle"
-      style={{ background: 'rgba(10,10,15,0.85)', scrollbarWidth: 'none' }}
+      className="flex flex-col overflow-y-auto border-l border-border-subtle bg-bg-secondary"
+      style={{ scrollbarWidth: 'none' }}
     >
       {/* Inventory */}
       <SectionLabel>Inventory</SectionLabel>
@@ -79,12 +79,13 @@ export function TaskPanel() {
           <div
             key={slot.id}
             title={slot.label}
-            className="aspect-square glass-card rounded-lg flex items-center justify-center relative cursor-pointer group"
+            className="aspect-square rounded-lg flex items-center justify-center relative cursor-pointer group border border-border-subtle hover:border-accent-primary transition-colors duration-200"
+            style={{ background: 'rgba(30, 30, 40, 0.4)' }}
           >
             <span className="text-xl leading-none">{slot.emoji}</span>
             <span className="absolute bottom-1 right-1 text-[10px] text-text-muted font-mono">{slot.count}</span>
             {/* Tooltip */}
-            <div className="absolute bottom-[110%] left-1/2 -translate-x-1/2 hidden group-hover:block z-50 whitespace-nowrap glass-strong rounded-lg text-xs text-text-secondary px-2.5 py-1.5 pointer-events-none">
+            <div className="absolute bottom-[110%] left-1/2 -translate-x-1/2 hidden group-hover:block z-50 whitespace-nowrap rounded-lg text-xs text-text-secondary px-2.5 py-1.5 pointer-events-none border border-border-subtle shadow-md" style={{ background: 'rgba(18, 18, 26, 0.95)' }}>
               {slot.label}
             </div>
           </div>
@@ -155,7 +156,8 @@ export function TaskPanel() {
         ].map(action => (
           <button
             key={action.label}
-            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg glass-card text-left text-sm text-text-secondary hover:text-text-primary transition-all duration-200"
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-left text-sm text-text-secondary hover:text-text-primary transition-all duration-200 border border-border-subtle hover:border-accent-primary"
+            style={{ background: 'rgba(30, 30, 40, 0.4)' }}
           >
             <span>{action.icon}</span>
             <span>{action.label}</span>
