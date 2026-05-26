@@ -86,7 +86,7 @@ export const ReportPanel: React.FC<ReportPanelProps> = ({ sessionId, messages })
   const themeColors = {
     blue: { primary: '#2563eb', light: '#3b82f6', bg: '#eff6ff', border: '#bfdbfe' },
     green: { primary: '#059669', light: '#10b981', bg: '#ecfdf5', border: '#a7f3d0' },
-    purple: { primary: '#7c3aed', light: '#a855f7', bg: '#f5f3ff', border: '#ddd6fe' },
+    purple: { primary: '#7c3aed', light: '#a78bfa', bg: '#f5f3ff', border: '#ddd6fe' },
     red: { primary: '#dc2626', light: '#ef4444', bg: '#fef2f2', border: '#fecaca' },
   };
 

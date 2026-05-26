@@ -243,7 +243,7 @@ export const ReportCustomizer: React.FC<ReportCustomizerProps> = ({ onApply, onC
                           backgroundColor: {
                             blue: '#3b82f6',
                             green: '#10b981',
-                            purple: '#a855f7',
+                            purple: '#a78bfa',
                             red: '#ef4444',
                             orange: '#f97316',
                           }[color],

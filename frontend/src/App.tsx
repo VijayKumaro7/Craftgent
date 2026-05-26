@@ -108,8 +108,8 @@ function BootScreen() {
         <div
           className="w-8 h-8 rounded-full border-2"
           style={{
-            borderColor: 'rgba(99,102,241,0.3)',
-            borderTopColor: '#6366f1',
+            borderColor: 'rgba(124,58,237,0.3)',
+            borderTopColor: '#7c3aed',
             animation: 'spinSlow 1s linear infinite',
           }}
         />
