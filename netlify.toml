@@ -1,5 +1,12 @@
-# Netlify configuration for CraftAgent
+# Netlify configuration for Craftgent
 # https://docs.netlify.com/configure-builds/file-conventions/
+#
+# IMPORTANT: Required Environment Variables
+# Set these in Netlify UI (Site settings → Build & deploy → Environment)
+#   VITE_API_URL: Backend API endpoint (e.g., https://api.yourdomain.com or https://backend.netlify.app)
+#   VITE_WS_URL: WebSocket endpoint (e.g., wss://api.yourdomain.com - note: wss for HTTPS)
+#
+# Without these variables, the frontend will fail to connect to the backend.
 
 [build]
   command = "cd frontend && npm run build"
@@ -7,7 +14,7 @@
   base = "/"
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "18.19.0"
 
 # Rewrite all non-file requests to index.html for React Router (SPA)
 [[redirects]]

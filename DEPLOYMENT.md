@@ -1,215 +1,147 @@
-"""Production deployment checklist and guide."""
+# Craftgent Deployment Guide
 
-# Craftgent Production Deployment Checklist
+## Netlify Deployment (Frontend)
 
-## ✅ Pre-Deployment
+### Prerequisites
+- GitHub account with the Craftgent repository
+- Netlify account (free tier available)
+- Deployed backend API (FastAPI service)
 
-- [ ] All tests passing: `make test`
-- [ ] Linting passes: `make lint`
-- [ ] Security report reviewed: `SECURITY_REPORT.md`
-- [ ] Environment variables set in production
-- [ ] Database backups enabled
-- [ ] SSL/TLS certificates ready (Let's Encrypt)
+### Step 1: Connect GitHub to Netlify
 
-## 🔐 Security Configuration
+1. Go to [Netlify](https://netlify.com) and sign in
+2. Click "Add new site" → "Import an existing project"
+3. Connect your GitHub account
+4. Select the Craftgent repository
+5. Configure build settings:
+   - **Build command**: `cd frontend && npm run build`
+   - **Publish directory**: `frontend/dist`
+   - **Node version**: `18.19.0`
 
-### Secrets Management
-- [ ] Generate strong `SECRET_KEY`: 
-  ```bash
-  python -c "import secrets; print(secrets.token_urlsafe(32))"
-  ```
-- [ ] Store in secure vault (Railway, Render, AWS Secrets Manager)
-- [ ] Never commit `.env` to repository
-- [ ] Rotate secrets quarterly
+### Step 2: Set Required Environment Variables
 
-### HTTPS/TLS
-- [ ] Valid SSL certificate (not self-signed)
-- [ ] HTTPS enforced (redirect HTTP → HTTPS)
-- [ ] HSTS header enabled: `Strict-Transport-Security: max-age=31536000`
-- [ ] Certificate auto-renewal configured (certbot)
+**CRITICAL**: The frontend needs these environment variables to communicate with your backend API.
 
-### CORS Configuration
-- [ ] Update `CORS_ORIGINS` to production domain only
-- [ ] Remove development origins (localhost:5173)
-- [ ] Whitelist-based approach (not wildcard "*")
+In Netlify UI: **Site settings** → **Build & deploy** → **Environment**
 
-### Rate Limiting
-- [ ] Adjust `RATE_LIMIT_PER_MINUTE` based on expected load
-- [ ] Per-user rate limits considered
-- [ ] API key rate limiting planned for future public API
+Add these variables:
 
-## 🗄️ Database
+#### VITE_API_URL
+- **Value**: URL to your deployed backend API
+- **Examples**:
+  - Local development: `http://localhost:8000`
+  - Heroku: `https://your-app.herokuapp.com`
+  - Railway: `https://your-app.up.railway.app`
+  - Custom domain: `https://api.yourdomain.com`
 
-### PostgreSQL
-- [ ] Connection pooling configured (pool_size=20)
-- [ ] Connection timeout set
-- [ ] Backups automated (daily)
-- [ ] Backup retention: 30 days
-- [ ] Point-in-time recovery enabled
-- [ ] Read replicas considered for scaling
+#### VITE_WS_URL
+- **Value**: WebSocket URL to your backend
+- **Examples**:
+  - Local development: `ws://localhost:8000`
+  - Heroku/Railway (HTTPS): `wss://your-app.herokuapp.com`
+  - Custom domain (HTTPS): `wss://api.yourdomain.com`
+- **Note**: Use `wss://` (secure WebSocket) for production HTTPS deployments
 
-### Alembic Migrations
-- [ ] All migrations tested locally
-- [ ] Test migration rollback: `alembic downgrade -1`
-- [ ] Production migration backed up before running
-- [ ] Zero-downtime migrations considered to pushed 
+### Step 3: Deploy Backend
 
-## 📦 Application
+Choose one of these options:
 
-### Environment
-- [ ] `APP_ENV=production` set
-- [ ] `DEBUG=false` enforced
-- [ ] Logging level: `INFO` or `WARNING`
-- [ ] Sentry/error tracking configured
+#### Option A: Heroku (Simple)
+```bash
+heroku login
+heroku create your-app-name
+heroku addons:create heroku-postgresql:hobby-dev
+heroku addons:create heroku-redis:premium-0
+git push heroku main
+```
 
-### Performance
-- [ ] Gunicorn workers: 4-8 (based on CPU cores)
-- [ ] Worker timeout: 60-120 seconds
-- [ ] Max requests per worker: 1000
-- [ ] Health checks working: `GET /api/health`
+#### Option B: Railway (Recommended)
+1. Connect GitHub to [Railway](https://railway.app)
+2. Create new project from repository
+3. Add PostgreSQL and Redis plugins
+4. Set environment variables from `.env.example`
+5. Railway auto-deploys on git push
 
-### Monitoring
-- [ ] Application logs aggregated (Datadog, New Relic, Sentry)
-- [ ] Performance metrics tracked (APM)
-- [ ] Alerts configured:
-  - High error rate (>5%)
-  - Database connection pool exhaustion
-  - API response time >1s
-  - Memory usage >80%
+#### Option C: Docker (Self-hosted)
+```bash
+docker-compose -f docker-compose.prod.yml up -d
+```
 
-## 🔄 Task Queue (Celery)
+### Step 4: Test Deployment
 
-### Redis
-- [ ] Redis persistence enabled (`save` configuration)
-- [ ] Memory limit set: `maxmemory 512mb`
-- [ ] Eviction policy: `allkeys-lru`
-- [ ] Password required: `requirepass`
-- [ ] Replication/HA considered
+1. Open your Netlify site URL
+2. Try logging in or using chat
+3. Check browser console for errors (F12 → Console)
+4. Verify API calls are reaching your backend
 
-### Celery Workers
-- [ ] Worker concurrency: 2-4 (based on workload)
-- [ ] Task time limit: 15 minutes
-- [ ] Dead letter queue monitoring
-- [ ] Worker health checks configured
+## Common Issues & Solutions
 
-## 🧠 AI / LLM
+### ❌ "Cannot connect to API" / "Failed to fetch"
 
-### Anthropic API
-- [ ] API key secured in secrets manager
-- [ ] Rate limiting configured
-- [ ] Usage monitoring enabled
-- [ ] Cost limits set (if available)
-- [ ] Fallback strategy planned
+**Cause**: VITE_API_URL not set or incorrect
 
-### ChromaDB
-- [ ] Vector storage persistence enabled
-- [ ] Memory limits configured
-- [ ] Backup strategy for vectors
-- [ ] Collection initialization verified
+**Fix**:
+1. In Netlify settings, verify `VITE_API_URL` is set
+2. Test the URL in browser: `https://your-api-url/api/health`
+3. Should return: `{"status": "ok"}`
 
-## 🌐 Frontend
+### ❌ "WebSocket connection failed"
 
-### Build
-- [ ] Production build tested: `npm run build`
-- [ ] Bundle size optimized (<500KB main bundle)
-- [ ] Source maps only in staging (not production)
-- [ ] Service worker for offline support (optional)
+**Cause**: VITE_WS_URL not set or using wrong protocol
 
-### Deployment
-- [ ] Build artifacts cached for faster deploys
-- [ ] Content Security Policy (CSP) headers set
-- [ ] CORS correctly configured for API
-- [ ] Nginx gzip compression enabled
-- [ ] Nginx caching headers optimized
+**Fix**:
+- Use `wss://` for HTTPS (production)
+- Use `ws://` for HTTP (development only)
+- Verify URL matches your API domain
 
-## 📊 Infrastructure
+### ❌ "CORS error" in browser console
 
-### Docker
-- [ ] Multi-stage builds for smaller images
-- [ ] Security scanning enabled (Trivy, Docker Scout)
-- [ ] Images signed and verified
-- [ ] Private registry used (if applicable)
+**Cause**: Backend not configured to accept requests from Netlify domain
 
-### Orchestration (if using Kubernetes)
-- [ ] Persistent volumes for database/Redis data
-- [ ] StatefulSets for databases
-- [ ] Pod disruption budgets set
-- [ ] Resource limits defined
-- [ ] Health checks (liveness, readiness) configured
-- [ ] Horizontal Pod Autoscaling (HPA) tested
+**Fix**: Update backend `CORS_ORIGINS` environment variable:
+```
+CORS_ORIGINS=https://your-netlify-app.netlify.app,https://your-api.yourdomain.com
+```
 
-## 📝 Logging & Monitoring
+### ❌ "401 Unauthorized" errors
 
-### Structured Logging
-- [ ] All logs in JSON format (structlog)
-- [ ] Sensitive data (tokens, passwords) never logged
-- [ ] Log retention: 30-90 days
-- [ ] Log search enabled
+**Cause**: Auth tokens expired or not being sent
 
-### Metrics
-- [ ] Response times tracked
-- [ ] Request volume monitored
-- [ ] Database query performance
-- [ ] Cache hit rates
-- [ ] Error rates by endpoint
+**Fix**:
+1. Clear browser localStorage: `localStorage.clear()`
+2. Refresh page and log in again
+3. Check that refresh token is stored in httpOnly cookies
 
-### Alerts
-- [ ] Critical errors → PagerDuty/Slack
-- [ ] Deployment notifications
-- [ ] Uptime monitoring (external)
+### ❌ Build fails on Netlify
 
-## 🔐 Access Control
+**Cause**: Missing dependencies or Node version mismatch
 
-### API Authentication
-- [ ] JWT tokens properly validated on every request
-- [ ] Token expiration enforced
-- [ ] Refresh token rotation working
-- [ ] No hardcoded credentials in code
+**Fix**:
+1. Check Netlify build logs for specific error
+2. Verify `Node version` is set to `18.19.0` or higher
+3. Run locally: `cd frontend && npm install && npm run build`
+4. Commit package-lock.json to git
 
-### Database Access
-- [ ] Database credentials rotated
-- [ ] IP allowlist configured
-- [ ] Read-only replica user for backups
-- [ ] No direct public access to database
+## Production Checklist
 
-## 🧪 Testing
+- [ ] Backend deployed and responding to health check
+- [ ] VITE_API_URL set in Netlify
+- [ ] VITE_WS_URL set in Netlify
+- [ ] CORS_ORIGINS updated in backend
+- [ ] SSL/HTTPS enabled (automatic on Netlify)
+- [ ] Custom domain configured (optional)
+- [ ] Environment variables (.env) never committed to git
+- [ ] Database backups configured
+- [ ] Error tracking enabled (Sentry)
+- [ ] Rate limiting enabled on API
 
-### Pre-Deployment
-- [ ] Smoke tests passed on staging
-- [ ] Load testing: 100+ concurrent users
-- [ ] Security testing: penetration test completed
-- [ ] Database failover tested
-- [ ] Backup restoration tested
+## Quick Reference
 
-## 📋 Post-Deployment
+| Component | Status Check |
+|-----------|--------------|
+| **Frontend** | `GET https://your-netlify-app.netlify.app` |
+| **Backend API** | `GET https://your-api-url/api/health` |
+| **WebSocket** | Browser DevTools → Network → WS filter |
+| **Database** | Connect via psql CLI |
+| **Cache** | redis-cli ping |
 
-- [ ] Deployment verified: health checks passing
-- [ ] API endpoints responding
-- [ ] Frontend loads and authenticates
-- [ ] WebSocket connections working
-- [ ] Agent responses returning
-- [ ] Monitoring dashboards active
-- [ ] Team notified
-
-## 🚨 Rollback Plan
-
-- [ ] Previous version tagged and available
-- [ ] Database migration rollback procedure documented
-- [ ] Rollback tested in staging
-- [ ] Rollback can execute in <5 minutes
-- [ ] Post-rollback verification steps clear
-
-## 📅 Maintenance
-
-- [ ] Weekly: Log rotation, cache cleanup
-- [ ] Monthly: Dependency updates, security scanning
-- [ ] Quarterly: Security audit, performance review
-- [ ] Annually: Capacity planning, architecture review
-
-## 🎯 Performance Targets
-
-- API response time: <200ms p95
-- Frontend load time: <2s
-- Database query time: <50ms p95
-- WebSocket message latency: <100ms
-- Uptime: 99.5%+ (4.5 hours downtime/month)
