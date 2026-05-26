@@ -1,9 +1,9 @@
 # Dependencies
 node_modules/
-package-lock.json
-package.json
-yarn.lock
-pnpm-lock.yaml
+/package-lock.json
+/package.json
+/yarn.lock
+/pnpm-lock.yaml
 
 # Frontend build
 frontend/dist/
