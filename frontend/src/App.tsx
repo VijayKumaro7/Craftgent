@@ -74,7 +74,7 @@ function Shell() {
           </Suspense>
         </main>
         {!isMobile && (
-          <Suspense fallback={<div className="glass-strong" />}>
+          <Suspense fallback={<div className="bg-bg-secondary" />}>
             <TaskPanel />
           </Suspense>
         )}
@@ -84,7 +84,7 @@ function Shell() {
         {isMobile && (
           <div
             style={{ gridColumn: '1 / -1' }}
-            className="glass-strong border-t border-border-subtle overflow-hidden"
+            className="bg-bg-secondary border-t border-border-subtle overflow-hidden"
           >
             <div className="flex h-full">
               <div className="flex-1 overflow-y-auto"><AgentSidebar /></div>
@@ -108,8 +108,8 @@ function BootScreen() {
         <div
           className="w-8 h-8 rounded-full border-2"
           style={{
-            borderColor: 'rgba(99,102,241,0.3)',
-            borderTopColor: '#6366f1',
+            borderColor: 'rgba(124,58,237,0.3)',
+            borderTopColor: '#7c3aed',
             animation: 'spinSlow 1s linear infinite',
           }}
         />

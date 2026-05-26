@@ -50,7 +50,7 @@ export function AgentSidebar() {
         const agent    = AGENTS[name]
         const isActive = activeAgent === name
         const isPulsing = isActive && isStreaming
-        const color = AGENT_COLORS[name] ?? '#6366f1'
+        const color = AGENT_COLORS[name] ?? '#7c3aed'
 
         return (
           <button

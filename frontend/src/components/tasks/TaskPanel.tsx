@@ -11,7 +11,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   )
 }
 
-function ProgressBar({ value, color = '#6366f1', animate = false }: { value: number; color?: string; animate?: boolean }) {
+function ProgressBar({ value, color = '#7c3aed', animate = false }: { value: number; color?: string; animate?: boolean }) {
   return (
     <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
       <div
@@ -24,9 +24,9 @@ function ProgressBar({ value, color = '#6366f1', animate = false }: { value: num
 
 function StatusBadge({ status }: { status: string }) {
   const cfg: Record<string, { label: string; color: string; bg: string }> = {
-    done:    { label: 'Done',    color: '#10b981', bg: 'rgba(16,185,129,0.12)' },
-    running: { label: 'Running', color: '#f59e0b', bg: 'rgba(245,158,11,0.12)' },
-    queued:  { label: 'Queued',  color: '#475569', bg: 'rgba(71,85,105,0.12)'  },
+    done:    { label: 'Done',    color: '#059669', bg: 'rgba(5,150,105,0.12)' },
+    running: { label: 'Running', color: '#f97316', bg: 'rgba(249,115,22,0.12)' },
+    queued:  { label: 'Queued',  color: '#64748b', bg: 'rgba(100,116,139,0.12)'  },
   }
   const c = cfg[status] ?? cfg.queued
   return (
@@ -69,8 +69,8 @@ export function TaskPanel() {
 
   return (
     <aside
-      className="flex flex-col overflow-y-auto border-l border-border-subtle"
-      style={{ background: 'rgba(10,10,15,0.85)', scrollbarWidth: 'none' }}
+      className="flex flex-col overflow-y-auto border-l border-border-subtle bg-bg-secondary"
+      style={{ scrollbarWidth: 'none' }}
     >
       {/* Inventory */}
       <SectionLabel>Inventory</SectionLabel>
@@ -79,12 +79,13 @@ export function TaskPanel() {
           <div
             key={slot.id}
             title={slot.label}
-            className="aspect-square glass-card rounded-lg flex items-center justify-center relative cursor-pointer group"
+            className="aspect-square rounded-lg flex items-center justify-center relative cursor-pointer group border border-border-subtle hover:border-accent-primary transition-colors duration-200"
+            style={{ background: 'rgba(30, 30, 40, 0.4)' }}
           >
             <span className="text-xl leading-none">{slot.emoji}</span>
             <span className="absolute bottom-1 right-1 text-[10px] text-text-muted font-mono">{slot.count}</span>
             {/* Tooltip */}
-            <div className="absolute bottom-[110%] left-1/2 -translate-x-1/2 hidden group-hover:block z-50 whitespace-nowrap glass-strong rounded-lg text-xs text-text-secondary px-2.5 py-1.5 pointer-events-none">
+            <div className="absolute bottom-[110%] left-1/2 -translate-x-1/2 hidden group-hover:block z-50 whitespace-nowrap rounded-lg text-xs text-text-secondary px-2.5 py-1.5 pointer-events-none border border-border-subtle shadow-md" style={{ background: 'rgba(18, 18, 26, 0.95)' }}>
               {slot.label}
             </div>
           </div>
@@ -98,7 +99,7 @@ export function TaskPanel() {
           <span className="text-sm font-semibold text-text-primary">{activeAgent}</span>
           <span
             className="text-xs px-2 py-0.5 rounded-full font-medium"
-            style={{ background: 'rgba(99,102,241,0.15)', color: '#818cf8' }}
+            style={{ background: 'rgba(124,58,237,0.15)', color: '#a78bfa' }}
           >
             Lv.{level}
           </span>
@@ -106,20 +107,20 @@ export function TaskPanel() {
         <div className="flex justify-between text-xs text-text-muted mb-1">
           <span>XP</span><span>{xpPct}%</span>
         </div>
-        <ProgressBar value={xpPct} color="linear-gradient(90deg,#6366f1,#a855f7)" animate />
+        <ProgressBar value={xpPct} color="linear-gradient(90deg,#7c3aed,#a78bfa)" animate />
 
         <div className="flex gap-3 mt-2.5">
           <div className="flex-1">
             <div className="flex justify-between text-[10px] text-text-muted mb-1">
               <span>HP</span><span>{hp}%</span>
             </div>
-            <ProgressBar value={hp} color="#10b981" />
+            <ProgressBar value={hp} color="#059669" />
           </div>
           <div className="flex-1">
             <div className="flex justify-between text-[10px] text-text-muted mb-1">
               <span>MP</span><span>{mp}%</span>
             </div>
-            <ProgressBar value={mp} color="#06b6d4" />
+            <ProgressBar value={mp} color="#8b5cf6" />
           </div>
         </div>
         {msgCount > 0 && (
@@ -138,7 +139,7 @@ export function TaskPanel() {
           </div>
           <ProgressBar
             value={task.progress}
-            color={task.status === 'done' ? '#10b981' : task.status === 'running' ? '#f59e0b' : '#475569'}
+            color={task.status === 'done' ? '#059669' : task.status === 'running' ? '#f97316' : '#64748b'}
             animate={task.status === 'running'}
           />
         </div>
@@ -155,7 +156,8 @@ export function TaskPanel() {
         ].map(action => (
           <button
             key={action.label}
-            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg glass-card text-left text-sm text-text-secondary hover:text-text-primary transition-all duration-200"
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-left text-sm text-text-secondary hover:text-text-primary transition-all duration-200 border border-border-subtle hover:border-accent-primary"
+            style={{ background: 'rgba(30, 30, 40, 0.4)' }}
           >
             <span>{action.icon}</span>
             <span>{action.label}</span>
