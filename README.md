@@ -1,178 +1,287 @@
-# CraftAgent ⛏
+# Craftgent ⛏
 
 **Minecraft-style AI Agent Command Center**
 
-Multi-agent chat system powered by Claude Sonnet, FastAPI, LangGraph, WebSockets, ChromaDB, and Celery.
+A full-stack multi-agent chat application powered by Claude Sonnet, FastAPI, LangGraph, WebSockets, ChromaDB, and Celery. Four specialized AI agents — each with distinct personalities and capabilities — collaborate in real time to answer questions, write code, analyze data, and conduct deep research.
 
-**📍 Project Status:** Currently in **Phase 3 (Frontend Development & Full Integration)**. Backend infrastructure complete and functional. Frontend UI implementation in progress with landing page, login integration, and multi-agent chat interface. Deployment infrastructure planned for final phase.
+![UI Layout](./docs/images/ui-layout.png)
 
 ---
 
-## Planned Architecture
+## Features at a Glance
+
+- **4 Specialized AI Agents** with intelligent query routing via LangGraph
+- **Real-time streaming** over WebSocket with per-token delivery
+- **RAG memory** — ChromaDB stores and retrieves cross-session context per user
+- **File upload** — attach CSV, JSON, PDF, Python, TypeScript and more
+- **Prompt templates** — browse by category, search, and insert with one click
+- **Multi-session tabs** — open and switch between independent chat sessions
+- **Response customization** — choose format, tone, and output language
+- **Agent stats & XP** — each agent tracks HP, MP, level, and experience
+- **Minecraft-themed UI** — pixel fonts, scanlines, sky background, and Hotbar
+
+---
+
+## Stack
+
+| Layer    | Technology                                                         |
+|----------|--------------------------------------------------------------------|
+| Frontend | React 18, Vite, TypeScript, Tailwind CSS, Zustand                  |
+| Backend  | FastAPI, Python 3.12, SQLAlchemy (async), Alembic                  |
+| AI       | Anthropic Claude Sonnet 4, LangGraph, LangChain                    |
+| Memory   | ChromaDB, sentence-transformers                                    |
+| Tasks    | Celery 5, Redis 7                                                  |
+| Auth     | JWT (python-jose), bcrypt, httpOnly refresh cookies                |
+| Infra    | Docker Compose, Nginx, GitHub Actions                              |
+
+---
+
+## Architecture
 
 ```
-Browser (React + Vite)          [Phase 3+]
+Browser (React + Vite)
     │  WebSocket  │  REST
     ▼             ▼
-Nginx (prod) → FastAPI (8000)   [✅ In Progress]
-                   │
-          ┌────────┼────────┐
-          ▼        ▼        ▼
-       Celery    Redis    PostgreSQL
-       Worker   (broker   (sessions,
-       (agents)  + pubsub) messages, xp)
-       [Phase 2] [Phase 1] [✅ Phase 1]
-          │
-     LangGraph
-    NEXUS → ALEX / VORTEX
-    [Phase 2+]
-          │
-    ChromaDB (RAG memory)
-    [Phase 2+]
-    Tools: web_search, code_exec, sql_query
+Nginx → FastAPI (port 8000)
+            │
+   ┌────────┼────────┐
+   ▼        ▼        ▼
+Celery    Redis    PostgreSQL
+Worker   (broker   (users,
+(agents)  + pubsub) sessions,
+   │                messages, xp)
+LangGraph
+NEXUS → ALEX / VORTEX / RESEARCHER
+   │
+ChromaDB (RAG memory)
+Tools: web_search, code_exec, sql_query
 ```
-
-## Stack (Target)
-
-| Layer     | Technology                                              | Status |
-|-----------|--------------------------------------------------------|--------|
-| Frontend  | React 18, Vite, TypeScript, Tailwind, Zustand          | ✅ In Progress |
-| Backend   | FastAPI, Python 3.12, SQLAlchemy async, Alembic        | ✅ Complete |
-| AI        | Anthropic Claude Sonnet, LangGraph, LangChain           | ✅ In Progress |
-| Memory    | ChromaDB, sentence-transformers                        | ✅ Complete |
-| Tasks     | Celery 5, Redis 7                                      | ✅ Complete |
-| Auth      | JWT (python-jose), bcrypt                              | ✅ Complete |
-| Infra     | Docker, Nginx, GitHub Actions                          | Phase 4 (Planned) |
 
 ---
 
-## Getting Started (Backend Development)
+## Agents
+
+![Agents Showcase](./docs/images/agents-showcase.png)
+
+Craftgent features four specialized agents. On every message, a lightweight router reads the query and selects the best agent automatically.
+
+| Agent | Class | Specialty | Routes when… |
+|-------|-------|-----------|--------------|
+| **NEXUS** | Research Mage | Research, analysis, Q&A | Default — ambiguous or general queries |
+| **ALEX** | Code Warrior | Code generation, debugging, architecture | `code`, `function`, `debug`, `implement` … |
+| **VORTEX** | Data Creeper | SQL, statistics, data pipelines | `data`, `sql`, `analyze`, `csv`, `dataset` … |
+| **RESEARCHER** | Archaeologist | Deep research, source verification, synthesis | `research`, `investigate`, `survey`, `study` … |
+
+### Routing Logic
+
+```
+User Query
+    ↓
+Router (NEXUS — single-word decision, 16 max tokens)
+    ├─ "code"     → ALEX
+    ├─ "data"     → VORTEX
+    ├─ "research" → RESEARCHER
+    └─ "answer"   → NEXUS (default)
+```
+
+### Agent Stats & Progression
+
+Each agent maintains a live stat block visible in the sidebar:
+
+- **HP** — endurance (drains with heavy use)
+- **MP** — analytical capacity (drains per message, recovers over time)
+- **Level** — `floor(XP / 200) + 1`, max 50
+- **XP** — +1 per message handled
+
+---
+
+## Chat Interface
+
+![Chat Interface](./docs/images/chat-interface-annotated.png)
+
+The main chat shell is a three-column layout:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  ⛏ CRAFTGENT v0.2.0   [ONLINE]  ⚙ CUSTOMIZATION   [LOGOUT] ✕ │  TopBar
+├──────────────┬──────────────────────────────┬───────────────────┤
+│              │ [Session 1 ✕][Session 2 ✕][+]│                   │  SessionTabs
+│  PARTY       │                              │  TASKS /          │
+│  MEMBERS     │  Agent messages stream here  │  HISTORY          │
+│              │  with syntax-highlighted     │                   │
+│  ◀ NEXUS     │  code blocks, markdown, and  │                   │
+│    HP ████   │  typing indicators.          │                   │  ChatPanel
+│    MP ███    │                              │                   │
+│              │                              │                   │
+│  ○ ALEX      │  [📎][T›][input...    ][SEND]│                   │  InputBar
+│  ○ VORTEX    ├──────────────────────────────┤                   │
+│  ○ RESRCH    │  ▶ TEMPLATES  ▶ SESSIONS     │                   │
+│              │                              │                   │
+├──────────────┴──────────────────────────────┴───────────────────┤
+│  [1][2][3][4][5][6][7][8][9]                  Hotbar            │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Frontend Features
+
+![Frontend Features](./docs/images/ui-features.png)
+
+### Multi-Session Tabs
+Open multiple independent sessions simultaneously. Each tab keeps its own agent selection, message history, and WebSocket connection. Switch instantly or close with the ✕ button.
+
+### Prompt Templates
+Browse categorised templates (Code, Data, Research, General), search by name or content, and click to insert into the input bar. Templates persist in localStorage across sessions.
+
+### File Upload
+Drag-drop files directly into chat or click the 📎 button. Supported types: CSV, JSON, PDF, Python, JavaScript, TypeScript, Go, Rust, Markdown. Max 10 MB per file, 5 files per message. File content is referenced in the message sent to the agent.
+
+### Response Customization
+- **Format:** Detailed · Brief · Code Only
+- **Tone:** Professional · Casual · ELI5
+- **Output Language:** English · Spanish · French · German
+
+Settings are saved to localStorage and applied to all future messages.
+
+### Keyboard Shortcuts
+| Key | Action |
+|-----|--------|
+| `Enter` | Send message |
+| `Shift+Enter` | New line |
+| `Esc` | Clear input |
+| `/clear` | Clear message history |
+| `/help` | Show available commands |
+| `/agents` | List agents |
+
+### Performance
+- **Message virtualization** via `@tanstack/react-virtual` — renders 1000+ messages at 60 FPS
+- **Lazy-loaded** ChatPanel and TaskPanel (code-split, ~200 KB chunk)
+- **Skeleton loaders** for all async panels
+- **Auto-reconnect** WebSocket with exponential backoff
+
+---
+
+## Authentication
+
+![Authentication Flow](./docs/images/login-flow.png)
+
+- Register with username + password
+- Login returns a short-lived **access token** (JWT) and an httpOnly **refresh cookie**
+- On hard-refresh the app calls `/api/auth/refresh` automatically to restore session
+- Protected route `/chat` redirects unauthenticated users to landing page
+
+---
+
+## Getting Started
 
 ### Prerequisites
-- Python 3.12+
-- PostgreSQL 14+
-- Redis 7+
 
+- Docker & Docker Compose (recommended), **or**
+- Python 3.12+, PostgreSQL 14+, Redis 7+, Node 20+
 
-### 1. Setup
+### Quick Start with Docker
 
 ```bash
 git clone https://github.com/vijaykumaro7/craftgent.git
-cd craftgent/backend
+cd craftgent
 
-# Create virtual environment
+cp .env.example .env
+# Edit .env — fill in ANTHROPIC_API_KEY and SECRET_KEY at minimum
+
+docker compose up --build
+```
+
+Services started:
+| Service | URL |
+|---------|-----|
+| Frontend (dev) | http://localhost:5173 |
+| Backend API | http://localhost:8000 |
+| Swagger UI | http://localhost:8000/docs |
+| ChromaDB | http://localhost:8001 |
+
+### Manual Setup (Backend)
+
+```bash
+cd backend
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
+source venv/bin/activate          # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
-# Setup environment (copy and fill in required variables)
 cp ../.env.example .env
-# Edit .env — required: ANTHROPIC_API_KEY, SECRET_KEY
+# Edit .env — required: ANTHROPIC_API_KEY, SECRET_KEY, DATABASE_URL
+
+alembic upgrade head               # Run migrations
+uvicorn app.main:app --reload --port 8000
 ```
 
-### 2. Database Setup
+### Manual Setup (Frontend)
 
 ```bash
-# Ensure PostgreSQL is running, then:
-alembic upgrade head    # Run all migrations
+cd frontend
+npm install
+npm run dev                        # Starts at http://localhost:5173
 ```
 
-### 3. Run Backend
+### Environment Variables
 
-```bash
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-# Open http://localhost:8000/docs for Swagger UI
-```
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `ANTHROPIC_API_KEY` | Yes | From console.anthropic.com |
+| `SECRET_KEY` | Yes | JWT signing key (32+ chars) |
+| `DATABASE_URL` | Yes | PostgreSQL connection string |
+| `REDIS_URL` | Yes | Redis connection string |
+| `CHROMA_HOST` / `CHROMA_PORT` | Yes | ChromaDB connection |
+| `TAVILY_API_KEY` | No | Enables web search tool |
+| `VITE_API_URL` | Yes (frontend) | Backend base URL |
+| `VITE_WS_URL` | Yes (frontend) | WebSocket base URL |
 
-### Quick Test
-
-```bash
-curl http://localhost:8000/api/health
-```
+See `.env.example` for the full list with descriptions.
 
 ---
 
-## API Documentation
+## API Reference
 
-### Interactive Swagger UI
+Interactive docs available at `http://localhost:8000/docs` when the backend is running.
 
-The backend includes interactive **Swagger/OpenAPI** documentation. Once the backend is running, open your browser:
+### Authentication
 
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/auth/register` | Create new account |
+| `POST` | `/api/auth/login` | Get access + refresh tokens |
+| `POST` | `/api/auth/refresh` | Refresh access token via cookie |
+| `GET`  | `/api/auth/me` | Current user profile |
 
-The Swagger UI provides:
-- ✅ Full endpoint listing with descriptions
-- ✅ Request/response schemas with examples
-- ✅ **Try-it-out** functionality to test endpoints directly
-- ✅ Authentication examples and JWT workflows
-- ✅ Type hints and validation rules
+### Chat & Sessions
 
-#### Key Endpoints to Explore
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `WS`   | `/api/ws/{session_id}` | Real-time chat WebSocket |
+| `GET`  | `/api/sessions` | List user sessions |
+| `GET`  | `/api/sessions/{id}` | Session + message history |
+| `DELETE` | `/api/sessions/{id}` | Delete a session |
 
-**Authentication Flow:**
-1. `POST /api/auth/register` — Create a new account
-2. `POST /api/auth/login` — Get access & refresh tokens
-3. `GET /api/auth/me` — Get current user info
-4. `POST /api/auth/refresh` — Refresh your access token
+### Agents & Stats
 
-**Health & Status:**
-- `GET /api/health` — Service health check
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET`  | `/api/agents` | List agents with current stats |
+| `GET`  | `/api/stats` | Live agent XP + level summary |
 
-**Phase 2+ Endpoints** (in development):
-- `WS /api/ws/{session_id}` — WebSocket chat connection
-- `GET /api/sessions/{id}` — Retrieve chat history
-- `GET /api/stats` — Agent XP and level stats
+### Files
 
-#### How to Test Endpoints
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/upload` | Upload file (multipart/form-data) |
 
-1. **Without Authentication:**
-   - Click on `GET /api/health`
-   - Click "Try it out"
-   - Click "Execute"
-   - View response
+### Health
 
-2. **With Authentication:**
-   - First, register: `POST /api/auth/register` with email/password
-   - Then login: `POST /api/auth/login` to get token
-   - Copy the access token
-   - Click the 🔒 lock icon in Swagger UI
-   - Paste token in "Value" field
-   - Now test authenticated endpoints
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET`  | `/api/health` | Service health + DB status |
 
-#### API Screenshots
-
-For visual reference of the Swagger UI, see:
-- [Swagger API Documentation](./docs/API-SCREENSHOTS.md) — Guide for capturing and viewing screenshots
-- Screenshots will be added as development progresses
-
----
-
-## Development Workflow
-
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for:
-- Running tests
-- Code style and linting
-- Creating migrations
-- Contributing guidelines
-
----
-
-## API Endpoints
-
-```
-GET  /api/health              → service health + DB status
-POST /api/auth/register       → create account
-POST /api/auth/login          → get access + refresh token
-POST /api/auth/refresh        → refresh access token
-GET  /api/auth/me             → current user info
-WS   /api/ws/{session_id}     → main chat WebSocket [Phase 2+]
-GET  /api/sessions/{id}       → session + message history [Phase 2+]
-GET  /api/stats               → live agent XP + levels [Phase 2+]
-GET  /docs                    → Swagger UI (dev only)
-```
-
-## WebSocket Protocol (Planned for Phase 2)
+### WebSocket Protocol
 
 ```
 Client → Server:
@@ -181,7 +290,7 @@ Client → Server:
 
 Server → Client:
   {"type": "connected",  "session_id": "..."}
-  {"type": "token",      "data": "..."}          ← one per token
+  {"type": "token",      "data": "..."}          ← one event per token (streaming)
   {"type": "done",       "data": "full text", "agent": "NEXUS"}
   {"type": "handoff",    "from_agent": "NEXUS", "to_agent": "ALEX"}
   {"type": "system",     "data": "..."}
@@ -189,325 +298,71 @@ Server → Client:
   {"type": "pong"}
 ```
 
-## Agents (Phase 2+)
-
-Craftgent features a multi-agent system with specialized agents, each with distinct personalities and capabilities. The system automatically routes queries to the most appropriate agent.
-
-### Agent Team Overview
-
-![Agents Showcase](./docs/images/agents-showcase.png)
-
-### Agent Overview
-
-| Agent | Role | Class | Level | Specialty | Routes when... |
-|-------|------|-------|-------|-----------|----------------|
-| **NEXUS** | Orchestrator & Researcher | Research Mage | 12 | Research, Analysis, Q&A | Default — ambiguous queries, general research |
-| **ALEX** | Code Specialist | Code Warrior | 8 | Code Gen, Debugging, Architecture | Code generation, debugging, technical implementation |
-| **VORTEX** | Data Specialist | Data Creeper | 15 | Analytics, SQL, Data Pipelines | SQL, statistics, data analysis queries |
-| **RESEARCHER** | Elite Investigator | Archaeologist | 18 | Deep Research, Source Verification, Synthesis | Deep investigation, literature review, evidence synthesis |
-
 ---
 
-### Agent Profiles
-
-#### 🔮 **NEXUS** — Research Mage (Orchestrator)
+## Project Structure
 
 ```
-        ▄▄▄▄
-       █████
-       █ ● █  🧙 Research Mage
-       █████
-       ▀▀▀▀▀
-
-Stats: HP 90 | MP 74 | Level 12 | XP 67%
-Color Palette: Tan skin, Brown hair, Teal eyes
+craftgent/
+├── README.md
+├── CONTRIBUTING.md
+├── DEPLOYMENT.md
+├── docker-compose.yml           ← full dev stack (DB + Redis + Chroma + API + Worker)
+├── docker-compose.prod.yml      ← production overrides
+├── .env.example                 ← all environment variables documented
+├── nginx/                       ← Nginx reverse-proxy config
+│   ├── craftgent.conf
+│   └── craftgent-https.conf
+│
+├── backend/
+│   ├── app/
+│   │   ├── main.py              ← FastAPI app factory, CORS, rate limiter
+│   │   ├── core/                ← config, structured logging (structlog), metrics
+│   │   ├── db/                  ← async SQLAlchemy engine + session factory
+│   │   ├── models/              ← User, ChatSession, Message, AgentStats, FileUpload
+│   │   ├── schemas/             ← Pydantic request/response models
+│   │   ├── auth/                ← JWT creation, bcrypt hashing, password policy
+│   │   ├── agents/              ← LangGraph graph, system prompts, routing
+│   │   ├── memory/              ← ChromaDB RAG — store + retrieve per user/agent
+│   │   ├── tools/               ← web_search (Tavily), code_exec (subprocess), sql_query
+│   │   ├── tasks/               ← Celery app, Redis pub/sub bus, agent task dispatch
+│   │   ├── ws/                  ← WebSocket connection manager
+│   │   └── api/                 ← routers: health, auth, chat, ws, stats, sessions, files, agents
+│   ├── alembic/                 ← database migrations
+│   └── tests/
+│       ├── test_phase1.py       ← health, auth endpoints
+│       ├── test_phase2.py       ← JWT, WebSocket manager
+│       ├── test_phase3.py       ← memory, tools, XP, routing
+│       └── test_phase4.py       ← file upload, sessions, agents API
+│
+├── frontend/
+│   └── src/
+│       ├── App.tsx              ← routing, auth gate, Shell layout
+│       ├── pages/               ← LandingPage
+│       ├── components/
+│       │   ├── agents/          ← AgentSidebar, AgentHistoryPanel
+│       │   ├── auth/            ← LoginScreen
+│       │   ├── chat/            ← ChatPanel, ChatMessage, CodeBlock, FileUpload,
+│       │   │                       SessionTabs, SessionHistory, TemplatesPanel,
+│       │   │                       TypingIndicator, VirtualizedMessageList
+│       │   ├── landing/         ← HeroSection, FeaturesSection, AgentShowcase, CTASection
+│       │   ├── layout/          ← TopBar, Hotbar, CustomizationPanel, SkyBackground
+│       │   ├── tasks/           ← TaskPanel
+│       │   └── ui/              ← AgentAvatar, Leaderboard, McBar, NotificationStack,
+│       │                           PixelHead, StatsDisplay, Toast, ErrorBoundary, …
+│       ├── store/               ← Zustand: useAppStore, useAuthStore, usePreferencesStore,
+│       │                           useNotificationStore, useTemplatesStore
+│       ├── hooks/               ← useWebSocket, useFileUpload, useAgentStats,
+│       │                           useSessionList, useKeyboardShortcut, useAgentHistory
+│       ├── api/                 ← axios client, chat API helpers
+│       └── types/               ← shared TypeScript interfaces
+│
+└── docs/
+    ├── GETTING_STARTED.md
+    ├── USER_GUIDE.md
+    ├── FEATURES_OVERVIEW.md
+    └── images/                  ← annotated screenshots used in this README
 ```
-
-**Role:** Default orchestrator and research specialist
-**Personality:** Scholarly, thorough, precise
-**Tools:** Web search, memory injection, routing
-**Specialties:**
-- Research and analysis
-- General Q&A and explanations
-- Knowledge synthesis
-- System orchestration
-
-**Speaking Style:** Cites sources, uses Minecraft metaphors ("mining data", "enchanting answers")
-**Example Query:** "What is machine learning?" → NEXUS responds with comprehensive overview
-
----
-
-#### ⚡ **ALEX** — Code Warrior (Code Specialist)
-
-```
-        ▄▄▄▄
-       █████
-       █ ◆ █  ⚔️ Code Warrior
-       █████
-       ▀▀▀▀▀
-
-Stats: HP 55 | MP 99 | Level 8 | XP 42%
-Color Palette: Dark tan skin, Dark green hair, Bright green eyes
-```
-
-**Role:** Code generation, debugging, and technical architecture
-**Personality:** Direct, efficient, dry-humored
-**Tools:** Python execution, web search
-**Specialties:**
-- Code generation (Python, TypeScript, SQL)
-- Debugging and optimization
-- Architecture design
-- Technical explanations
-
-**Speaking Style:** Solution-first, uses quality metaphors ("Diamond-tier efficiency", "Netherite architecture")
-**Example Query:** "Write a function to parse JSON" → ALEX provides optimized code with explanation
-
----
-
-#### 👾 **VORTEX** — Data Creeper (Data Specialist)
-
-```
-        ▄▄▄▄
-       █████
-       █ ✕ █  👾 Data Creeper
-       █████
-       ▀▀▀▀▀
-
-Stats: HP 72 | MP 88 | Level 15 | XP 81%
-Color Palette: Dark gray skin, Black hair, Red eyes
-```
-
-**Role:** Data analysis, SQL queries, statistics, and data pipelines
-**Personality:** Analytical, pattern-obsessed, calculated
-**Tools:** SQL analytics, web search
-**Specialties:**
-- Data analysis and insights
-- SQL query optimization
-- Statistical analysis
-- ETL and data pipelines
-- Visualization recommendations
-
-**Speaking Style:** Pattern-focused, occasionally excitable ("Ss-ss-ss..." for exciting patterns), uses mining metaphors
-**Example Query:** "Analyze this CSV for trends" → VORTEX extracts insights and suggests visualizations
-
----
-
-#### 🔍 **RESEARCHER** — Chief Investigator (Elite Research Agent)
-
-```
-        ▄▄▄▄
-       █████
-       █ ◉ █  🔍 Archaeologist
-       █████
-       ▀▀▀▀▀
-
-Stats: HP 85 | MP 95 | Level 18 | XP 33%
-Color Palette: Tan brown skin, Gold-brown hair, Amber eyes
-```
-
-**Role:** Elite research specialist with focus on evidence verification and synthesis
-**Personality:** Methodical, evidence-focused, meticulous archaeologist
-**Tools:** Web search (enhanced for academic sources)
-**Specialties:**
-- Deep research and investigation
-- Source verification and cross-referencing
-- Literature synthesis
-- Academic analysis
-- Evidence gathering and evaluation
-
-**Speaking Style:** Citation-heavy ("According to [Source]..."), builds research maps, excavation metaphors ("The excavation reveals...", "Sifting through sources shows...")
-**Key Phrases:**
-- "According to [Source]..."
-- "First, we'll examine [area]. Then [area]. Finally [area]."
-- "However, [Source B] suggests..."
-- "The excavation reveals..."
-- "We could excavate further into [topic]..."
-
-**Example Query:** "Research the history and impact of machine learning" → RESEARCHER provides comprehensive analysis with citations, cross-referenced sources, and identifies areas for deeper investigation
-
----
-
-### Agent Routing Logic
-
-The system uses intelligent routing to direct queries to the most appropriate agent:
-
-```
-User Query
-    ↓
-Router (NEXUS analyzes intent)
-    ├─ Contains "code" keywords? → ALEX
-    ├─ Contains "data/SQL" keywords? → VORTEX
-    ├─ Contains "research/investigate/study" keywords? → RESEARCHER
-    └─ Default → NEXUS
-```
-
-**Routing Keywords:**
-- **ALEX:** code, function, debug, error, implement, refactor, optimize
-- **VORTEX:** data, SQL, analyze, dataset, CSV, database, statistics
-- **RESEARCHER:** research, investigate, study, survey, analyze sources, review literature
-- **NEXUS:** all other queries, ambiguous intent
-
----
-
-### Agent Stats & Progression
-
-Each agent tracks experience:
-- **XP:** Accumulated per message (1 XP per message)
-- **Level:** Calculated as `floor(XP / 200) + 1` (max level 50)
-- **HP:** Health/endurance (0-100), decreases with use
-- **MP:** Mana/analytical capacity (0-100), drains per message, recovers over time
-
-Players can level up agents through conversation to unlock enhanced capabilities (future phases).
-
----
-
-## Frontend UI Overview
-
-The Craftgent frontend is a **Minecraft-themed command center** built with React 18, Vite, TypeScript, Tailwind CSS, and Zustand.
-
-### Full UI Layout
-
-![UI Layout](./docs/images/ui-layout.png)
-
-### UI Components & Layout
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│  ⛏ CRAFTGENT v0.2.0    [ONLINE] ⚙ CUSTOMIZATION  [LOGOUT] ✕  │ ← TopBar
-├──────────────┬─────────────────────────────────────────────────┤
-│              │  [Session-1 ✕] [Session-2 ✕] [+ NEW]           │ ← SessionTabs
-│ PARTY        │                                                  │
-│ MEMBERS      │  ╔═════════════════════════════════════╗         │
-│              │  ║ 🤖 Agent: NEXUS                     ║         │
-│ ◀ NEXUS      │  ║ Agent is thinking...                ║         │ ← ChatPanel
-│   HP: ████   │  ║                                     ║         │ (MessageList)
-│   MP: ███    │  ║ Recent message from ALEX            ║         │
-│              │  ║ ...                                 ║         │
-│ ○ ALEX       │  ║                                     ║         │
-│   HP: ██     │  ║ [TypingIndicator]                   ║         │
-│   MP: █████  │  ╚═════════════════════════════════════╝         │
-│              │                                                  │
-│ ○ VORTEX     │  [📎] [T›] [Chat input...         ] [SEND ▶]   │ ← InputBar
-│   HP: ███    │                                                  │
-│   MP: ████   │  📂 Drag files or click to upload               │ ← FileUpload
-│              │                                                  │
-│ ○ RESEARCHER │  ▶ TEMPLATES          ▼ (collapsed)            │ ← TemplatesPanel
-│   HP: ████   │  ▶ SESSION HISTORY                             │ ← SessionHistory
-│   MP: █████  │                                                  │
-│              │                                                  │
-└──────────────┴─────────────────────────────────────────────────┘
-
-Legend:
-  TopBar → Status, user info, customization settings
-  SessionTabs → Open session switcher with close buttons
-  ChatPanel → Message display area with virtualization
-  InputBar → Message input, file upload button, send button
-  AgentSidebar → Party members (agents), stats, abilities, templates, history
-```
-
-### Frontend Features Overview
-
-![Frontend Features](./docs/images/ui-features.png)
-
----
-
-## 📖 User Documentation & Guides
-
-New to Craftgent? Start here! We've created comprehensive guides with visual examples to help you get the most out of the platform.
-
-### Quick Start
-- **⚡ [Getting Started](./docs/GETTING_STARTED.md)** - 3-step quick start guide (5 minutes)
-- **📚 [User Guide](./docs/USER_GUIDE.md)** - Complete feature documentation with examples
-- **🎯 [Features Overview](./docs/FEATURES_OVERVIEW.md)** - Detailed description of all capabilities
-
-### Visual Guides
-Access detailed visual documentation with annotated screenshots:
-
-| Guide | Description | Image |
-|-------|-------------|-------|
-| **Website Overview** | All main interface sections | ![user-guide-sections](./docs/images/user-guide-sections.png) |
-| **Login & Registration** | Authentication flow step-by-step | ![login-flow](./docs/images/login-flow.png) |
-| **Chat Interface** | Annotated main chat area | ![chat-interface](./docs/images/chat-interface-annotated.png) |
-| **Agent Selection** | How to choose and switch agents | ![agent-selection](./docs/images/agent-selection-guide.png) |
-| **Message Types** | Different response formats with examples | ![message-types](./docs/images/message-types-examples.png) |
-| **Templates Library** | Browse and use prompt templates | ![templates](./docs/images/templates-library.png) |
-| **File Upload** | Upload & process documents step-by-step | ![file-upload](./docs/images/file-upload-workflow.png) |
-| **Session Management** | Create, switch, and organize sessions | ![sessions](./docs/images/session-management.png) |
-| **Customization** | Personalize response format & tone | ![customization](./docs/images/customization-panel.png) |
-| **Hotbar Controls** | Quick actions and keyboard shortcuts | ![hotbar](./docs/images/hotbar-controls.png) |
-| **Status Indicators** | Understanding connection and agent status | ![status](./docs/images/status-indicators.png) |
-
-### Agent Capabilities
-Each agent has unique strengths. Learn when to use each:
-- **NEXUS 🧠** - Planning, strategy, brainstorming
-- **ALEX 🔧** - Code, debugging, API design
-- **VORTEX 📊** - Data analysis, statistics, visualization
-- **RESEARCHER 🔍** - Research, information gathering, sources
-
----
-
-### Key UI Features
-
-**1. Agent Selection (AgentSidebar)**
-- Click any agent to select it
-- Active agent highlighted with green border
-- Real-time stats: HP, MP, Level, XP
-- Agent animations during streaming
-
-**2. Multi-Session Tabs**
-- Open multiple sessions simultaneously
-- Switch between sessions instantly
-- Each session maintains its own agent selection
-- Close individual session tabs with ✕ button
-
-**3. Prompt Templates Library**
-- Browse templates by category (Code, Data, Research, General)
-- Search templates by name or content
-- Click to insert template into chat input
-- Persist templates across sessions (localStorage)
-
-**4. Response Customization**
-- **Format:** Detailed, Brief, Code Only
-- **Tone:** Professional, Casual, ELI5
-- **Code Language:** JavaScript, Python, Go, Rust
-- **Output Language:** English, Spanish, French, German
-
-**5. File Upload**
-- Drag-drop files directly into chat
-- Click upload button (📎) to select files
-- Supported types: CSV, JSON, PDF, Python, JavaScript, Go, Rust, Markdown, TypeScript
-- Max 10MB per file, 5 files per message
-- File references included with message
-
-**6. Message Virtualization**
-- Efficiently renders 1000+ messages at 60 FPS
-- Auto-scroll to latest message
-- Smooth scrolling performance
-
-**7. Session History**
-- Browse past sessions
-- Filter by date or agent
-- Search session content
-- Load previous session into new tab
-
-### Color Palette & Theme
-
-The UI uses a Minecraft-inspired color scheme:
-
-- **Background:** Dark (#0a0e27)
-- **Agent Panel (NEXUS):** Cyan (#55ffff)
-- **Agent Panel (ALEX):** Lime green (#aaffaa)
-- **Agent Panel (VORTEX):** Purple (#cc88ff)
-- **Agent Panel (RESEARCHER):** Amber (#d4a574)
-- **Success/Health:** Green (#5d9e32)
-- **Error:** Red (#e02020)
-- **Text:** White with transparency for hierarchy
-
-### Typography
-
-- **Pixel Font:** Ultra-crisp "Press Start 2P" for labels
-- **Terminal Font:** Monospace for code and input
-- **Sizes:** 6px (labels), 8px (UI elements), 11px (content), 20px (input)
 
 ---
 
@@ -515,50 +370,27 @@ The UI uses a Minecraft-inspired color scheme:
 
 ```bash
 cd backend
-pytest tests/ -v                # Run all tests
-pytest tests/test_phase1.py     # Phase 1: health, auth endpoints
-pytest tests/test_phase2.py     # Phase 2: JWT, WebSocket manager
-pytest tests/test_phase3.py     # Phase 3: memory, tools, XP, routing
-```
-
-## Current Project Structure
-
-```
-craftgent/
-├── README.md                   ✅ (you are here)
-├── ROADMAP.md                  ✅ Project phases and timeline
-├── CONTRIBUTING.md             ✅ Development guidelines
-├── backend/                    ✅ Phase 1-2
-│   ├── app/
-│   │   ├── main.py             ← FastAPI app factory
-│   │   ├── core/               ← config, logging, metrics
-│   │   ├── db/                 ← async SQLAlchemy, models
-│   │   ├── models/             ← User, ChatSession, Message, AgentStats
-│   │   ├── schemas/            ← Pydantic request/response models
-│   │   ├── auth/               ← JWT + bcrypt authentication
-│   │   ├── agents/             ← LangGraph graph + system prompts [Phase 2+]
-│   │   ├── memory/             ← ChromaDB RAG memory service [Phase 2+]
-│   │   ├── tools/              ← web_search, code_exec, sql_query [Phase 2+]
-│   │   ├── tasks/              ← Celery app, Redis bus, tasks [Phase 2+]
-│   │   ├── ws/                 ← WebSocket connection manager [Phase 2+]
-│   │   └── api/                ← routers: health, auth, chat (Phase 2+), ws, stats
-│   ├── alembic/                ← Database migrations
-│   └── tests/                  ← Test suite
-├── frontend/                   [Phase 3+] Not yet implemented
-│   └── src/
-│       ├── components/
-│       ├── store/              ← Zustand: app + auth state
-│       └── types/              ← TypeScript interfaces
-├── .github/workflows/          [Phase 3+] CI/CD pipelines - planned
-├── docker-compose.yml          [Phase 3+] Full stack - planned
-├── nginx/                      [Phase 3+] Reverse proxy - planned
-└── Dockerfile / docker-compose configs for production - [Phase 3+]
+pytest tests/ -v                # all tests
+pytest tests/test_phase1.py     # health + auth endpoints
+pytest tests/test_phase2.py     # JWT, WebSocket manager
+pytest tests/test_phase3.py     # memory, tools, XP, routing
+pytest tests/test_phase4.py     # file upload, sessions, agents API
 ```
 
 ---
 
-## Resources
+## Documentation
 
-- **Interactive API Docs:** `http://localhost:8000/docs` (when backend is running locally)
-- **API Documentation Guide:** [docs/API-SCREENSHOTS.md](./docs/API-SCREENSHOTS.md) — How to capture and view Swagger UI
-- **Anthropic Claude API:** https://console.anthropic.com
+| Guide | Description |
+|-------|-------------|
+| [Getting Started](./docs/GETTING_STARTED.md) | 3-step quick start (5 min) |
+| [User Guide](./docs/USER_GUIDE.md) | Full feature walkthrough |
+| [Features Overview](./docs/FEATURES_OVERVIEW.md) | All capabilities in detail |
+| [Deployment](./DEPLOYMENT.md) | Production deployment checklist |
+| [Contributing](./CONTRIBUTING.md) | Dev workflow, migrations, style guide |
+
+---
+
+## License
+
+[MIT](./LICENSE)
