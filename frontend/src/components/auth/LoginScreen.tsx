@@ -3,6 +3,17 @@ import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/useAuthStore'
 import { SkyBackground } from '@/components/layout/SkyBackground'
 
+function validatePasswordStrength(password: string, username: string = ''): string[] {
+  const errors: string[] = []
+  if (password.length < 12) errors.push('At least 12 characters')
+  if (!/[a-z]/.test(password)) errors.push('At least one lowercase letter')
+  if (!/[A-Z]/.test(password)) errors.push('At least one uppercase letter')
+  if (!/\d/.test(password)) errors.push('At least one digit')
+  if (!/[^A-Za-z0-9]/.test(password)) errors.push('At least one special character (!@#$%)')
+  if (username && password.toLowerCase().includes(username.toLowerCase())) errors.push('Cannot contain username')
+  return errors
+}
+
 interface FieldProps {
   label: string
   type?: string
@@ -11,9 +22,10 @@ interface FieldProps {
   disabled?: boolean
   autoFocus?: boolean
   placeholder?: string
+  hint?: string
 }
 
-function AuthField({ label, type = 'text', value, onChange, disabled, autoFocus, placeholder }: FieldProps) {
+function AuthField({ label, type = 'text', value, onChange, disabled, autoFocus, placeholder, hint }: FieldProps) {
   return (
     <div className="flex flex-col gap-1.5">
       <label className="text-text-secondary text-xs font-medium uppercase tracking-wider">
@@ -28,6 +40,7 @@ function AuthField({ label, type = 'text', value, onChange, disabled, autoFocus,
         placeholder={placeholder}
         className="w-full bg-bg-secondary border border-border-subtle rounded-lg px-4 py-2.5 text-text-primary text-sm placeholder:text-text-muted outline-none transition-all duration-200 focus:border-accent-primary disabled:opacity-50 disabled:cursor-not-allowed"
       />
+      {hint && <p className="text-xs text-text-muted">{hint}</p>}
     </div>
   )
 }
@@ -45,13 +58,15 @@ export function LoginScreen() {
   }, [isAuthenticated, navigate])
 
   const handleSubmit = async () => {
-    if (!username.trim() || !password.trim()) return
+    const trimmedUsername = username.trim()
+    const trimmedPassword = password.trim()
+    if (!trimmedUsername || !trimmedPassword) return
     let success = false
     if (mode === 'register') {
-      if (password !== confirm) return
-      success = await register(username.trim(), password)
+      if (trimmedPassword !== confirm.trim()) return
+      success = await register(trimmedUsername, trimmedPassword)
     } else {
-      success = await login(username.trim(), password)
+      success = await login(trimmedUsername, trimmedPassword)
     }
     if (success) navigate('/chat', { replace: true })
   }
@@ -60,10 +75,12 @@ export function LoginScreen() {
     if (e.key === 'Enter') handleSubmit()
   }
 
+  const passwordValidationErrors = mode === 'register' && password ? validatePasswordStrength(password, username) : []
   const isInvalid =
     !username.trim() ||
     !password.trim() ||
-    (mode === 'register' && password !== confirm)
+    (mode === 'register' && password.trim() !== confirm.trim()) ||
+    (mode === 'register' && passwordValidationErrors.length > 0)
 
   return (
     <>
@@ -109,15 +126,34 @@ export function LoginScreen() {
               disabled={isLoading}
               autoFocus
               placeholder="Enter your username"
+              hint="3-32 characters (whitespace trimmed)"
             />
-            <AuthField
-              label="Password"
-              type="password"
-              value={password}
-              onChange={setPassword}
-              disabled={isLoading}
-              placeholder="Enter your password"
-            />
+            <div>
+              <AuthField
+                label="Password"
+                type="password"
+                value={password}
+                onChange={setPassword}
+                disabled={isLoading}
+                placeholder="Enter your password"
+              />
+              {mode === 'register' && password && (
+                <div className="mt-2 p-2 bg-bg-secondary border border-border-subtle rounded text-xs space-y-1" role="status" aria-live="polite" aria-label="Password validation status">
+                  {passwordValidationErrors.length === 0 ? (
+                    <p className="text-success">✓ Password meets all requirements</p>
+                  ) : (
+                    <>
+                      <p className="text-text-muted font-medium mb-1">Password requirements:</p>
+                      <ul className="list-none space-y-1" role="list" aria-label="Missing password requirements">
+                        {passwordValidationErrors.map((req) => (
+                          <li key={req} className="text-error" role="listitem">✗ {req}</li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
             {mode === 'register' && (
               <AuthField
                 label="Confirm Password"
