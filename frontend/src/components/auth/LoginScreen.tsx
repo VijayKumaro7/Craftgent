@@ -58,13 +58,15 @@ export function LoginScreen() {
   }, [isAuthenticated, navigate])
 
   const handleSubmit = async () => {
-    if (!username.trim() || !password.trim()) return
+    const trimmedUsername = username.trim()
+    const trimmedPassword = password.trim()
+    if (!trimmedUsername || !trimmedPassword) return
     let success = false
     if (mode === 'register') {
-      if (password !== confirm) return
-      success = await register(username.trim(), password)
+      if (trimmedPassword !== confirm.trim()) return
+      success = await register(trimmedUsername, trimmedPassword)
     } else {
-      success = await login(username.trim(), password)
+      success = await login(trimmedUsername, trimmedPassword)
     }
     if (success) navigate('/chat', { replace: true })
   }
@@ -73,10 +75,12 @@ export function LoginScreen() {
     if (e.key === 'Enter') handleSubmit()
   }
 
+  const passwordValidationErrors = mode === 'register' && password ? validatePasswordStrength(password, username) : []
   const isInvalid =
     !username.trim() ||
     !password.trim() ||
-    (mode === 'register' && password !== confirm)
+    (mode === 'register' && password.trim() !== confirm.trim()) ||
+    (mode === 'register' && passwordValidationErrors.length > 0)
 
   return (
     <>
@@ -122,7 +126,7 @@ export function LoginScreen() {
               disabled={isLoading}
               autoFocus
               placeholder="Enter your username"
-              hint="3-32 characters"
+              hint="3-32 characters (whitespace trimmed)"
             />
             <div>
               <AuthField
@@ -134,15 +138,17 @@ export function LoginScreen() {
                 placeholder="Enter your password"
               />
               {mode === 'register' && password && (
-                <div className="mt-2 p-2 bg-bg-secondary border border-border-subtle rounded text-xs space-y-1">
-                  {validatePasswordStrength(password, username).length === 0 ? (
+                <div className="mt-2 p-2 bg-bg-secondary border border-border-subtle rounded text-xs space-y-1" role="status" aria-live="polite" aria-label="Password validation status">
+                  {passwordValidationErrors.length === 0 ? (
                     <p className="text-success">✓ Password meets all requirements</p>
                   ) : (
                     <>
                       <p className="text-text-muted font-medium mb-1">Password requirements:</p>
-                      {validatePasswordStrength(password, username).map((req) => (
-                        <p key={req} className="text-error">✗ {req}</p>
-                      ))}
+                      <ul className="list-none space-y-1" role="list" aria-label="Missing password requirements">
+                        {passwordValidationErrors.map((req) => (
+                          <li key={req} className="text-error" role="listitem">✗ {req}</li>
+                        ))}
+                      </ul>
                     </>
                   )}
                 </div>
