@@ -2,7 +2,7 @@
 # https://docs.netlify.com/configure-builds/file-conventions/
 
 [build]
-  command = "cd frontend && npm run build"
+  command = "cd frontend && npm ci && npm run build"
   publish = "frontend/dist"
   base = "/"
 
