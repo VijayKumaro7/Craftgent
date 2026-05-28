@@ -1,6 +1,6 @@
 # 🏗️ Craftgent — AI Agent Command Center
 
-> **A Minecraft-style multi-agent chat platform** where specialized AI agents collaborate in real-time to answer questions, write code, analyze data, and conduct deep research. Built with React, FastAPI, LangGraph, WebSockets, and Claude Sonnet.
+> **A multi-agent chat platform** where specialized AI agents collaborate in real-time to answer questions, write code, analyze data, and conduct deep research. Built with React, FastAPI, LangGraph, WebSockets, and Claude Sonnet.
 
 ![Craftgent Frontend](./frontend/landing-page-screenshot.png)
 
@@ -25,7 +25,7 @@
 
 ## 🎯 Overview
 
-**Craftgent** is a full-stack web application that brings AI-powered assistance to life with a Minecraft-inspired interface. Four specialized agents—NEXUS, ALEX, VORTEX, and RESEARCHER—work together to provide intelligent assistance across multiple domains.
+**Craftgent** is a full-stack web application that brings AI-powered assistance to life with an intuitive, modern interface. Four specialized agents—NEXUS, ALEX, VORTEX, and RESEARCHER—work together to provide intelligent assistance across multiple domains.
 
 ### What Makes Craftgent Different?
 
@@ -34,8 +34,7 @@
 - **Persistent Memory:** RAG-enabled context awareness using ChromaDB
 - **Session Management:** Multiple independent chat sessions with state persistence
 - **File Intelligence:** Upload and analyze CSV, JSON, PDF, code files and more
-- **Agent Progression:** Track agent stats (HP, MP, XP, Level) as they "level up"
-- **Minecraft Aesthetics:** Pixel fonts, scanlines, hotbar interface, and sky background
+- **Agent Progression:** Track agent stats (HP, MP, XP, Level) as they gain experience
 
 ---
 
@@ -47,10 +46,10 @@ Each agent is optimized for specific tasks and has distinct expertise:
 
 | Agent | Role | Specialty | Auto-Routes On |
 |-------|------|-----------|----------------|
-| **NEXUS** | Research Mage | General Q&A, analysis, synthesis | General/ambiguous queries |
-| **ALEX** | Code Warrior | Code generation, debugging, architecture | `code`, `debug`, `function` |
-| **VORTEX** | Data Creeper | SQL, statistics, data pipelines | `data`, `sql`, `analyze` |
-| **RESEARCHER** | Archaeologist | Deep research, fact-checking, surveys | `research`, `investigate` |
+| **NEXUS** | Research Specialist | General Q&A, analysis, synthesis | General/ambiguous queries |
+| **ALEX** | Code Expert | Code generation, debugging, architecture | `code`, `debug`, `function` |
+| **VORTEX** | Data Analyst | SQL, statistics, data pipelines | `data`, `sql`, `analyze` |
+| **RESEARCHER** | Research Investigator | Deep research, fact-checking, surveys | `research`, `investigate` |
 
 ### 💬 Real-time Chat Interface
 
@@ -83,14 +82,14 @@ Control how agents respond to your needs:
 - **One-click insert** — Add templates directly to chat input
 - **User-managed** — Create, save, and organize your own templates
 
-### 📊 Agent Stats & Progression
+### 📊 Agent Performance Metrics
 
-Monitor each agent's performance with real-time stats:
+Monitor each agent's performance with real-time statistics:
 
-- **HP (Health Points):** Endurance meter, drains with heavy usage
+- **HP (Health Points):** Operational capacity, decreases with heavy usage
 - **MP (Mana Points):** Analytical capacity, recovers over time
-- **XP (Experience):** +1 per message handled, persistent across sessions
-- **Level:** `floor(XP / 200) + 1`, max level 50
+- **XP (Experience Points):** +1 per message handled, persistent across sessions
+- **Level:** Computed as `floor(XP / 200) + 1`, max level 50
 
 ### ⌨️ Keyboard Shortcuts
 
@@ -240,25 +239,25 @@ Monitor each agent's performance with real-time stats:
 
 ### Agent Profiles
 
-#### **NEXUS** — The Research Mage
+#### **NEXUS** — Research Specialist
 - **Specialty:** General Q&A, research synthesis, information gathering
 - **Routes to:** Default agent for ambiguous or general queries
 - **Best for:** "Explain X", "What is...", "How does...", "Analyze..."
 - **Tools:** Web search (Tavily), code execution
 
-#### **ALEX** — The Code Warrior
+#### **ALEX** — Code Expert
 - **Specialty:** Code generation, debugging, architecture, implementation
 - **Routes to:** Queries mentioning `code`, `debug`, `function`, `implement`, `refactor`
 - **Best for:** "Write a function...", "Fix this bug...", "Design API..."
 - **Tools:** Code execution (subprocess), web search
 
-#### **VORTEX** — The Data Creeper
+#### **VORTEX** — Data Analyst
 - **Specialty:** SQL queries, data analysis, statistics, data pipelines
 - **Routes to:** Queries mentioning `data`, `sql`, `csv`, `dataset`, `analyze`
 - **Best for:** "Write SQL...", "Analyze this CSV...", "What's the pattern..."
 - **Tools:** SQL query execution, code execution
 
-#### **RESEARCHER** — The Archaeologist
+#### **RESEARCHER** — Research Investigator
 - **Specialty:** Deep research, fact-checking, comprehensive surveys, synthesis
 - **Routes to:** Queries mentioning `research`, `investigate`, `survey`, `study`
 - **Best for:** "Research...", "Compare...", "What are best practices..."
@@ -502,7 +501,7 @@ craftgent/
 │   │   │   ├── auth/               ← Login screen
 │   │   │   ├── chat/               ← Chat UI components
 │   │   │   ├── landing/            ← Marketing sections
-│   │   │   ├── layout/             ← TopBar, Hotbar, etc
+│   │   │   ├── layout/             ← TopBar, Navigation, etc
 │   │   │   ├── tasks/              ← Task panel
 │   │   │   └── ui/                 ← Reusable UI elements
 │   │   ├── store/                  ← Zustand state
