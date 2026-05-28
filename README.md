@@ -2,7 +2,7 @@
 
 > **A multi-agent chat platform** where specialized AI agents collaborate in real-time to answer questions, write code, analyze data, and conduct deep research. Built with React, FastAPI, LangGraph, WebSockets, and Claude Sonnet.
 
-![Craftgent Frontend](./frontend/landing-page-screenshot.png)
+
 
 ---
 
