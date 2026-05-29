@@ -10,6 +10,7 @@
 import { useEffect, useRef, useCallback, useState } from 'react'
 import { useAppStore } from '@/store/useAppStore'
 import { useAuthStore } from '@/store/useAuthStore'
+import { supabase } from '@/lib/supabase'
 
 export type WsStatus = 'connecting' | 'connected' | 'disconnected' | 'error'
 
@@ -35,7 +36,7 @@ export function useWebSocket(): UseWebSocketReturn {
     activeAgent, setActiveAgent, sessionId,
   } = useAppStore()
 
-  const { accessToken } = useAuthStore()
+  const { isAuthenticated } = useAuthStore()
 
   const connect = useCallback(() => {
     if (wsRef.current?.readyState === WebSocket.OPEN) return
@@ -147,7 +148,7 @@ export function useWebSocket(): UseWebSocketReturn {
   }, [activeAgent, addStreamingMessage, appendToken, finaliseMessage,
       addSystemMessage, setIsStreaming, setSessionId, setActiveAgent])
 
-  const send = useCallback((message: string) => {
+  const send = useCallback(async (message: string) => {
     const ws = wsRef.current
     if (!ws || ws.readyState !== WebSocket.OPEN) {
       addSystemMessage('[ERROR] Not connected. Reconnecting...')
@@ -155,8 +156,14 @@ export function useWebSocket(): UseWebSocketReturn {
       return
     }
 
-    if (!accessToken) {
+    if (!isAuthenticated) {
       addSystemMessage('[ERROR] Not authenticated. Please log in.')
+      return
+    }
+
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session?.access_token) {
+      addSystemMessage('[ERROR] No active session. Please log in.')
       return
     }
 
@@ -168,9 +175,9 @@ export function useWebSocket(): UseWebSocketReturn {
       type: 'chat',
       message,
       agent: activeAgent,
-      token: accessToken,
+      token: session.access_token,
     }))
-  }, [activeAgent, accessToken, addStreamingMessage, setIsStreaming, addSystemMessage, connect])
+  }, [activeAgent, isAuthenticated, addStreamingMessage, setIsStreaming, addSystemMessage, connect])
 
   useEffect(() => {
     connect()

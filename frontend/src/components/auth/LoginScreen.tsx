@@ -3,14 +3,13 @@ import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/useAuthStore'
 import { SkyBackground } from '@/components/layout/SkyBackground'
 
-function validatePasswordStrength(password: string, username: string = ''): string[] {
+function validatePasswordStrength(password: string): string[] {
   const errors: string[] = []
   if (password.length < 12) errors.push('At least 12 characters')
   if (!/[a-z]/.test(password)) errors.push('At least one lowercase letter')
   if (!/[A-Z]/.test(password)) errors.push('At least one uppercase letter')
   if (!/\d/.test(password)) errors.push('At least one digit')
   if (!/[^A-Za-z0-9]/.test(password)) errors.push('At least one special character (!@#$%)')
-  if (username && password.toLowerCase().includes(username.toLowerCase())) errors.push('Cannot contain username')
   return errors
 }
 
@@ -47,8 +46,8 @@ function AuthField({ label, type = 'text', value, onChange, disabled, autoFocus,
 
 export function LoginScreen() {
   const navigate = useNavigate()
-  const [mode, setMode]         = useState<'login' | 'register'>('login')
-  const [username, setUsername] = useState('')
+  const [mode, setMode]     = useState<'login' | 'register'>('login')
+  const [email, setEmail]   = useState('')
   const [password, setPassword] = useState('')
   const [confirm,  setConfirm]  = useState('')
   const { login, register, isLoading, error, clearError, isAuthenticated } = useAuthStore()
@@ -58,15 +57,15 @@ export function LoginScreen() {
   }, [isAuthenticated, navigate])
 
   const handleSubmit = async () => {
-    const trimmedUsername = username.trim()
+    const trimmedEmail = email.trim()
     const trimmedPassword = password.trim()
-    if (!trimmedUsername || !trimmedPassword) return
+    if (!trimmedEmail || !trimmedPassword) return
     let success = false
     if (mode === 'register') {
       if (trimmedPassword !== confirm.trim()) return
-      success = await register(trimmedUsername, trimmedPassword)
+      success = await register(trimmedEmail, trimmedPassword)
     } else {
-      success = await login(trimmedUsername, trimmedPassword)
+      success = await login(trimmedEmail, trimmedPassword)
     }
     if (success) navigate('/chat', { replace: true })
   }
@@ -75,9 +74,9 @@ export function LoginScreen() {
     if (e.key === 'Enter') handleSubmit()
   }
 
-  const passwordValidationErrors = mode === 'register' && password ? validatePasswordStrength(password, username) : []
+  const passwordValidationErrors = mode === 'register' && password ? validatePasswordStrength(password) : []
   const isInvalid =
-    !username.trim() ||
+    !email.trim() ||
     !password.trim() ||
     (mode === 'register' && password.trim() !== confirm.trim()) ||
     (mode === 'register' && passwordValidationErrors.length > 0)
@@ -120,13 +119,13 @@ export function LoginScreen() {
           {/* Fields */}
           <div className="flex flex-col gap-4">
             <AuthField
-              label="Username"
-              value={username}
-              onChange={setUsername}
+              label="Email"
+              type="email"
+              value={email}
+              onChange={setEmail}
               disabled={isLoading}
               autoFocus
-              placeholder="Enter your username"
-              hint="3-32 characters (whitespace trimmed)"
+              placeholder="you@example.com"
             />
             <div>
               <AuthField
