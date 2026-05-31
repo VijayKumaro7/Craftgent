@@ -21,8 +21,6 @@ Complete guide to using all features of the Craftgent AI Agent Command Center.
 
 ### Main Interface Components
 
-**See:** [`user-guide-sections.png`](./images/user-guide-sections.png)
-
 The Craftgent interface is divided into 4 main sections:
 
 #### 🧭 Left Sidebar - Agent Selection
@@ -49,7 +47,6 @@ The Craftgent interface is divided into 4 main sections:
 
 ### Status Indicators
 
-**See:** [`status-indicators.png`](./images/status-indicators.png)
 
 | Indicator | Meaning | Action |
 |-----------|---------|--------|
@@ -66,7 +63,6 @@ The Craftgent interface is divided into 4 main sections:
 
 ### Creating Your Account
 
-**See:** [`login-flow.png`](./images/login-flow.png)
 
 1. **Visit the website** → Craftgent login page
 2. **Create account:**
@@ -106,7 +102,6 @@ After logging in for the first time:
 
 ### Sending Messages
 
-**See:** [`chat-interface-annotated.png`](./images/chat-interface-annotated.png)
 
 #### Method 1: Type & Send
 ```
@@ -131,7 +126,6 @@ After logging in for the first time:
 
 ### Understanding Responses
 
-**See:** [`message-types-examples.png`](./images/message-types-examples.png)
 
 #### Text Responses
 - Agents reply with text explanations
@@ -190,7 +184,6 @@ Agents support markdown formatting:
 
 ### Agent Profiles
 
-**See:** [`agent-selection-guide.png`](./images/agent-selection-guide.png)
 
 #### NEXUS 🧠 - The Strategist
 - **Level:** Usually Level 5 (highest)
@@ -290,7 +283,6 @@ You can use multiple agents in one session:
 
 Templates are pre-written prompts that help you get better responses. Instead of typing everything from scratch, you can use a template and customize it.
 
-**See:** [`templates-library.png`](./images/templates-library.png)
 
 ### Accessing Templates
 
@@ -373,7 +365,6 @@ Your template will appear in:
 
 ### Supported File Types
 
-**See:** [`file-upload-workflow.png`](./images/file-upload-workflow.png)
 
 | Category | Types | Max Size |
 |----------|-------|----------|
@@ -465,7 +456,6 @@ Sessions are conversations with your agents. Each session:
 - Is saved automatically
 - Has a title and creation time
 
-**See:** [`session-management.png`](./images/session-management.png)
 
 ### Managing Sessions
 
@@ -536,7 +526,6 @@ Sessions are conversations with your agents. Each session:
 
 ### Accessing Settings
 
-**See:** [`customization-panel.png`](./images/customization-panel.png)
 
 ```
 1. Click ⚙️ Settings (top-right or right sidebar)

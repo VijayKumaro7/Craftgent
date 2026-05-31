@@ -530,6 +530,5 @@ Agent: [understands this is for your Python web app]
 For detailed instructions on each feature, see:
 - [Getting Started](./GETTING_STARTED.md) - Quick 3-step guide
 - [User Guide](./USER_GUIDE.md) - Comprehensive documentation
-- [Feature Images](./images/) - Visual guides
 
 Need help? Check the [Troubleshooting section](./USER_GUIDE.md#10-troubleshooting) in the User Guide!
