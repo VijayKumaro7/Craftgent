@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { FeatureCard } from '@/components/common/FeatureCard'
+import { useMouseParallax } from '@/hooks/useMouseParallax'
 
 const FEATURES = [
   {
@@ -44,6 +45,35 @@ const FEATURES = [
   },
 ]
 
+function TiltCard({ feature, visible }: { feature: (typeof FEATURES)[0]; visible: boolean }) {
+  const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0 })
+  const { onMouseMove, onMouseLeave } = useMouseParallax(12)
+
+  return (
+    <div
+      style={{ perspective: '800px' }}
+      onMouseMove={e => onMouseMove(e, setTilt)}
+      onMouseLeave={() => onMouseLeave(setTilt)}
+    >
+      <div
+        style={{
+          transform: visible
+            ? `perspective(800px) rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg) translateZ(0)`
+            : 'perspective(800px) rotateX(20deg) translateY(30px)',
+          opacity: visible ? 1 : 0,
+          transition: visible
+            ? 'transform 0.15s ease-out, opacity 0.5s ease-out'
+            : 'opacity 0.5s ease-out',
+          transformStyle: 'preserve-3d',
+          willChange: 'transform',
+        }}
+      >
+        <FeatureCard icon={feature.icon} title={feature.title} description={feature.description} />
+      </div>
+    </div>
+  )
+}
+
 export function FeaturesSection() {
   const [visible, setVisible] = useState<boolean[]>(Array(FEATURES.length).fill(false))
   const ref = useRef<HTMLDivElement>(null)
@@ -73,7 +103,7 @@ export function FeaturesSection() {
   }, [])
 
   return (
-    <section id="features" ref={ref} className="py-24 px-6">
+    <section id="features" ref={ref} className="py-24 px-6" style={{ perspective: '1200px' }}>
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
@@ -87,12 +117,8 @@ export function FeaturesSection() {
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {FEATURES.map((feature, idx) => (
-            <div
-              key={idx}
-              style={{ transitionDelay: `${idx * 60}ms` }}
-              className={`transition-all duration-500 ${visible[idx] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
-            >
-              <FeatureCard icon={feature.icon} title={feature.title} description={feature.description} />
+            <div key={idx} style={{ transitionDelay: `${idx * 60}ms` }}>
+              <TiltCard feature={feature} visible={visible[idx]} />
             </div>
           ))}
         </div>
