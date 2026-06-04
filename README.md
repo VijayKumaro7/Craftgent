@@ -491,35 +491,6 @@ Choose one approach based on your preference:
 - PostgreSQL 14+
 - Redis 7+
 
-### Quick Start with Docker
-
-```bash
-# 1. Clone the repository
-git clone https://github.com/vijaykumaro7/craftgent.git
-cd craftgent
-
-# 2. Configure environment
-cp .env.example .env
-# Edit .env and add:
-#   ANTHROPIC_API_KEY=sk-ant-... (from console.anthropic.com)
-#   SECRET_KEY=generate-a-random-32-character-string
-
-# 3. Start all services
-docker compose up --build
-
-# Wait 30-60 seconds for all services to initialize...
-```
-
-**Available Services After Startup:**
-| Service | URL | Purpose |
-|---------|-----|---------|
-| Frontend | http://localhost:5173 | React development server |
-| Backend API | http://localhost:8000 | FastAPI application |
-| API Documentation | http://localhost:8000/docs | Interactive Swagger UI |
-| ChromaDB UI | http://localhost:8001 | Vector database interface |
-| PostgreSQL | localhost:5432 | Database (internal) |
-| Redis | localhost:6379 | Message broker (internal) |
-
 ---
 
 ### Manual Setup — Backend (Local Development)
