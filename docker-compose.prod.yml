@@ -162,7 +162,7 @@ services:
     security_opt:
       - no-new-privileges:true
 
-volumes:
+volumes: 
   redis_data:
     driver: local
   chroma_data:
