@@ -14,6 +14,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.auth.mfa import user_requires_aal2
 from app.auth.security import verify_supabase_token
 from app.db.base import get_db
 from app.models.models import User
@@ -25,6 +26,22 @@ CREDENTIALS_EXCEPTION = HTTPException(
     detail="Invalid or expired token",
     headers={"WWW-Authenticate": "Bearer"},
 )
+
+MFA_REQUIRED_EXCEPTION = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="Multi-factor authentication required",
+    headers={"WWW-Authenticate": "Bearer"},
+)
+
+
+async def _check_aal(payload: dict) -> bool:
+    """
+    True if the token's assurance level is acceptable: AAL2 tokens always
+    pass; AAL1 tokens pass only when the user has no verified MFA factor.
+    """
+    if payload.get("aal") == "aal2":
+        return True
+    return not await user_requires_aal2(payload["sub"])
 
 
 async def get_current_user(
@@ -44,6 +61,9 @@ async def get_current_user(
     except (JWTError, KeyError):
         raise CREDENTIALS_EXCEPTION
 
+    if not await _check_aal(payload):
+        raise MFA_REQUIRED_EXCEPTION
+
     user = await db.get(User, uuid.UUID(user_id))
     if not user:
         raise CREDENTIALS_EXCEPTION
@@ -61,5 +81,7 @@ async def get_ws_user(token: str, db: AsyncSession) -> User | None:
         user_id: str = payload["sub"]
         parsed_id = uuid.UUID(user_id)
     except (JWTError, KeyError, ValueError):
+        return None
+    if not await _check_aal(payload):
         return None
     return await db.get(User, parsed_id)
