@@ -1,6 +1,10 @@
 import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
-import { supabase } from '@/lib/supabase'
+import { supabase, isSupabaseConfigured } from '@/lib/supabase'
+
+const NOT_CONFIGURED_ERROR =
+  'Authentication is not configured on this deployment (missing Supabase settings). ' +
+  'Please contact the site administrator.'
 
 interface AuthState {
   email: string | null
@@ -49,6 +53,10 @@ export const useAuthStore = create<AuthState>()(
       mfaRequired: false,
 
       login: async (email, password) => {
+        if (!isSupabaseConfigured) {
+          set({ error: NOT_CONFIGURED_ERROR })
+          return false
+        }
         set({ isLoading: true, error: null, info: null })
         const { data, error } = await supabase.auth.signInWithPassword({ email, password })
         if (error || !data.session) {
@@ -100,6 +108,10 @@ export const useAuthStore = create<AuthState>()(
       },
 
       register: async (email, password) => {
+        if (!isSupabaseConfigured) {
+          set({ error: NOT_CONFIGURED_ERROR })
+          return false
+        }
         set({ isLoading: true, error: null, info: null })
         const { data, error } = await supabase.auth.signUp({
           email,
@@ -127,6 +139,10 @@ export const useAuthStore = create<AuthState>()(
       },
 
       loginWithGoogle: async () => {
+        if (!isSupabaseConfigured) {
+          set({ error: NOT_CONFIGURED_ERROR })
+          return
+        }
         set({ isLoading: true, error: null, info: null })
         const { error } = await supabase.auth.signInWithOAuth({
           provider: 'google',
@@ -149,6 +165,7 @@ export const useAuthStore = create<AuthState>()(
       },
 
       tryRefresh: async () => {
+        if (!isSupabaseConfigured) return false
         const { data } = await supabase.auth.getSession()
         if (!data.session) return false
         if (await needsMfaStepUp()) {
