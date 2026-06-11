@@ -3,9 +3,10 @@
 
 [build]
   # base must point at the directory containing package.json so Netlify
-  # installs dependencies before running the build
+  # installs dependencies before running the build; the explicit install
+  # in the command is a safety net in case auto-install is skipped
   base = "frontend"
-  command = "npm run build"
+  command = "npm install && npm run build"
   publish = "dist"
 
 [build.environment]
