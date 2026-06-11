@@ -2,9 +2,11 @@
 # https://docs.netlify.com/configure-builds/file-conventions/
 
 [build]
-  command = "cd frontend && npm run build"
-  publish = "frontend/dist"
-  base = "/"
+  # base must point at the directory containing package.json so Netlify
+  # installs dependencies before running the build
+  base = "frontend"
+  command = "npm run build"
+  publish = "dist"
 
 [build.environment]
   NODE_VERSION = "18"
