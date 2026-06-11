@@ -1,8 +1,10 @@
+import { useState } from 'react'
 import { useAppStore }  from '@/store/useAppStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import { CustomizationPanel } from './CustomizationPanel'
+import { TwoFactorSetup } from '@/components/auth/TwoFactorSetup'
 import { useTheme } from '@/hooks/useTheme'
-import { Moon, Sun } from 'lucide-react'
+import { Moon, Sun, ShieldCheck } from 'lucide-react'
 
 const STATUS_COLOR: Record<string, string> = {
   connected:    '#059669',
@@ -21,6 +23,7 @@ export function TopBar() {
     logout: s.logout,
   }))
   const { theme, toggleTheme } = useTheme()
+  const [show2fa, setShow2fa] = useState(false)
 
   return (
     <header
@@ -63,6 +66,15 @@ export function TopBar() {
 
         <CustomizationPanel />
 
+        {/* 2FA settings */}
+        <button
+          onClick={() => setShow2fa(true)}
+          className="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-bg-elevated transition-all duration-200"
+          title="Two-factor authentication"
+        >
+          <ShieldCheck className="w-4 h-4" />
+        </button>
+
         {/* Theme toggle */}
         <button
           onClick={toggleTheme}
@@ -83,6 +95,8 @@ export function TopBar() {
           Sign out
         </button>
       </div>
+
+      {show2fa && <TwoFactorSetup onClose={() => setShow2fa(false)} />}
     </header>
   )
 }
