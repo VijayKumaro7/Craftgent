@@ -45,7 +45,18 @@ export function useWebSocket(): UseWebSocketReturn {
     const url = `${WS_BASE}/api/ws/${sid}`
 
     setStatus('connecting')
-    const ws = new WebSocket(url)
+    let ws: WebSocket
+    try {
+      ws = new WebSocket(url)
+    } catch (err) {
+      // new WebSocket() throws synchronously for invalid URLs and for
+      // insecure ws:// connections from an https page (e.g. when
+      // VITE_WS_URL is unset in production) — degrade to "error" status
+      // instead of crashing the app
+      console.error('[WS] Cannot connect to', url, err)
+      setStatus('error')
+      return
+    }
     wsRef.current = ws
 
     ws.onopen = () => {
