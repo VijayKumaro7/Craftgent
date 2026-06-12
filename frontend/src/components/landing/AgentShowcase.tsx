@@ -1,4 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAuthStore } from '@/store/useAuthStore'
+import { useAppStore } from '@/store/useAppStore'
+import type { AgentName } from '@/types'
 
 const AGENTS = [
   {
@@ -39,7 +43,15 @@ const AGENTS = [
   },
 ]
 
-function AgentFlipCard({ agent, visible }: { agent: (typeof AGENTS)[0]; visible: boolean }) {
+function AgentFlipCard({
+  agent,
+  visible,
+  onChat,
+}: {
+  agent: (typeof AGENTS)[0]
+  visible: boolean
+  onChat?: () => void
+}) {
   return (
     <div
       className="flip-card h-72"
@@ -99,12 +111,12 @@ function AgentFlipCard({ agent, visible }: { agent: (typeof AGENTS)[0]; visible:
             borderColor: `${agent.color}40`,
           }}
         >
-          <div className="text-4xl mb-4">{agent.icon}</div>
-          <h3 className="font-bold text-text-primary text-xl mb-2">{agent.name}</h3>
-          <p className="text-xs uppercase tracking-widest mb-6" style={{ color: agent.color }}>
+          <div className="text-4xl mb-2">{agent.icon}</div>
+          <h3 className="font-bold text-text-primary text-xl mb-1">{agent.name}</h3>
+          <p className="text-xs uppercase tracking-widest mb-3" style={{ color: agent.color }}>
             Core Abilities
           </p>
-          <div className="flex flex-col gap-3 w-full">
+          <div className="flex flex-col gap-2 w-full">
             {agent.abilities.map((ability, i) => (
               <div
                 key={i}
@@ -123,6 +135,16 @@ function AgentFlipCard({ agent, visible }: { agent: (typeof AGENTS)[0]; visible:
               </div>
             ))}
           </div>
+
+          {onChat && (
+            <button
+              onClick={onChat}
+              className="mt-3 w-full px-4 py-2 rounded-lg text-sm font-bold text-white transition-transform duration-150 hover:scale-[1.03]"
+              style={{ background: agent.color }}
+            >
+              Chat with {agent.name} →
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -132,6 +154,14 @@ function AgentFlipCard({ agent, visible }: { agent: (typeof AGENTS)[0]; visible:
 export function AgentShowcase() {
   const [visible, setVisible] = useState<boolean[]>(Array(4).fill(false))
   const ref = useRef<HTMLDivElement>(null)
+  const navigate = useNavigate()
+  const { isAuthenticated } = useAuthStore()
+  const setActiveAgent = useAppStore(s => s.setActiveAgent)
+
+  const startChatWith = (agent: AgentName) => {
+    setActiveAgent(agent)
+    navigate('/chat')
+  }
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -170,7 +200,9 @@ export function AgentShowcase() {
           <p className="text-accent-primary text-sm font-semibold uppercase tracking-widest mb-3">Meet the team</p>
           <h2 className="text-4xl font-bold text-text-primary mb-4">Your AI agent squad</h2>
           <p className="text-text-secondary text-lg max-w-2xl mx-auto">
-            Four specialized agents collaborate through LangGraph — each expert in their domain, coordinated by NEXUS.
+            {isAuthenticated
+              ? 'You’re signed in — pick the specialist that fits your task and start chatting right away.'
+              : 'Four specialized agents collaborate through LangGraph — each expert in their domain, coordinated by NEXUS.'}
           </p>
         </div>
 
@@ -178,13 +210,19 @@ export function AgentShowcase() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {AGENTS.map((agent, idx) => (
             <div key={idx} style={{ transitionDelay: `${idx * 100}ms` }}>
-              <AgentFlipCard agent={agent} visible={visible[idx]} />
+              <AgentFlipCard
+                agent={agent}
+                visible={visible[idx]}
+                onChat={isAuthenticated ? () => startChatWith(agent.name as AgentName) : undefined}
+              />
             </div>
           ))}
         </div>
 
         <p className="text-center text-text-muted text-sm mt-10">
-          Hover each agent card to reveal their core abilities.
+          {isAuthenticated
+            ? 'Hover a card and hit “Chat with…” to open the workspace with that agent selected.'
+            : 'Hover each agent card to reveal their core abilities.'}
         </p>
       </div>
     </section>

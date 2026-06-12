@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/common/Button'
 import { Hero3DScene } from './Hero3DScene'
 import { useMouseParallax } from '@/hooks/useMouseParallax'
+import { useAuthStore } from '@/store/useAuthStore'
 
 const BADGES = ['Real-time Streaming', 'Multi-Agent Routing', 'File Analysis', 'Web Search', 'Code Execution']
 
 export function HeroSection() {
   const navigate = useNavigate()
+  const { isAuthenticated, username } = useAuthStore()
   const sectionRef = useRef<HTMLElement>(null)
   const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0 })
   const [scrollZ, setScrollZ] = useState(0)
@@ -68,38 +70,72 @@ export function HeroSection() {
           {/* Eyebrow label */}
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent-primary/10 border border-accent-primary/30 text-sm text-text-secondary mb-8">
             <span className="w-2 h-2 rounded-full bg-success animate-pulse inline-block" />
-            Multi-Agent AI Platform · v0.2.0
+            {isAuthenticated
+              ? `Signed in as ${username ?? 'Operator'} · agents standing by`
+              : 'Multi-Agent AI Platform · v0.2.0'}
           </div>
 
           {/* Main headline */}
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold mb-6 leading-tight tracking-tight">
-            <span className="text-text-primary">AI Agents That</span>
-            <br />
-            <span className="gradient-text">Think, Build &amp; Deliver</span>
+            {isAuthenticated ? (
+              <>
+                <span className="text-text-primary">Welcome back.</span>
+                <br />
+                <span className="gradient-text">Your Squad Is Ready</span>
+              </>
+            ) : (
+              <>
+                <span className="text-text-primary">AI Agents That</span>
+                <br />
+                <span className="gradient-text">Think, Build &amp; Deliver</span>
+              </>
+            )}
           </h1>
 
           {/* Sub-headline */}
           <p className="text-text-secondary text-lg sm:text-xl mb-10 leading-relaxed">
-            Craftgent orchestrates four specialized AI agents — NEXUS, ALEX, VORTEX, and RESEARCHER —
-            routing your tasks intelligently through LangGraph to deliver accurate, real-time results.
+            {isAuthenticated
+              ? 'NEXUS, ALEX, VORTEX, and RESEARCHER are waiting in your workspace. Jump back into the chat, or pick the specialist below that fits your next task.'
+              : 'Craftgent orchestrates four specialized AI agents — NEXUS, ALEX, VORTEX, and RESEARCHER — routing your tasks intelligently through LangGraph to deliver accurate, real-time results.'}
           </p>
 
           {/* CTA buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-10">
-            <Button
-              variant="primary"
-              onClick={() => navigate('/login')}
-              className="w-full sm:w-auto text-base px-8 py-3"
-            >
-              Start for free →
-            </Button>
-            <Button
-              variant="secondary"
-              onClick={() => navigate('/login')}
-              className="w-full sm:w-auto text-base px-8 py-3"
-            >
-              Sign in
-            </Button>
+            {isAuthenticated ? (
+              <>
+                <Button
+                  variant="primary"
+                  onClick={() => navigate('/chat')}
+                  className="w-full sm:w-auto text-base px-8 py-3"
+                >
+                  Open the chat →
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={() => document.getElementById('agents')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="w-full sm:w-auto text-base px-8 py-3"
+                >
+                  Choose an agent
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="primary"
+                  onClick={() => navigate('/login')}
+                  className="w-full sm:w-auto text-base px-8 py-3"
+                >
+                  Start for free →
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={() => navigate('/login')}
+                  className="w-full sm:w-auto text-base px-8 py-3"
+                >
+                  Sign in
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Feature badges */}

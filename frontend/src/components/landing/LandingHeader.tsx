@@ -4,7 +4,7 @@ import { Button } from '@/components/common/Button'
 
 export function LandingHeader() {
   const navigate = useNavigate()
-  const { isAuthenticated, username } = useAuthStore()
+  const { isAuthenticated, username, logout } = useAuthStore()
 
   return (
     <header className="sticky top-0 w-full z-50 bg-bg-secondary border-b border-border-default">
@@ -39,6 +39,9 @@ export function LandingHeader() {
               </span>
               <Button variant="primary" onClick={() => navigate('/chat')} className="text-sm px-4 py-2">
                 Open App →
+              </Button>
+              <Button variant="ghost" onClick={logout} className="text-sm">
+                Sign out
               </Button>
             </>
           ) : (

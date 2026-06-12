@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '@/components/common/Button'
 import { NeuralNet3D } from './NeuralNet3D'
 import { useMouseParallax } from '@/hooks/useMouseParallax'
+import { useAuthStore } from '@/store/useAuthStore'
 
 const TRUST_ITEMS = [
   { icon: '🔒', label: 'Bcrypt Password Hashing' },
@@ -12,6 +13,7 @@ const TRUST_ITEMS = [
 
 export function CTASection() {
   const navigate = useNavigate()
+  const { isAuthenticated } = useAuthStore()
   const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0 })
   const { onMouseMove, onMouseLeave } = useMouseParallax(5)
 
@@ -45,28 +47,41 @@ export function CTASection() {
             />
 
             <h2 className="text-4xl sm:text-5xl font-bold text-text-primary mb-4 leading-tight">
-              Ready to get started?
+              {isAuthenticated ? 'Your agents are ready' : 'Ready to get started?'}
             </h2>
             <p className="text-text-secondary text-lg mb-10 leading-relaxed">
-              Join developers and researchers using Craftgent to build faster, research deeper,
-              and deliver better results with specialized AI agents.
+              {isAuthenticated
+                ? 'You’re signed in. Head to your workspace and put NEXUS, ALEX, VORTEX, and RESEARCHER to work.'
+                : 'Join developers and researchers using Craftgent to build faster, research deeper, and deliver better results with specialized AI agents.'}
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-              <Button
-                variant="primary"
-                onClick={() => navigate('/login')}
-                className="w-full sm:w-auto text-base px-10 py-3"
-              >
-                Create free account →
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => navigate('/login')}
-                className="w-full sm:w-auto text-base px-10 py-3"
-              >
-                Sign in
-              </Button>
+              {isAuthenticated ? (
+                <Button
+                  variant="primary"
+                  onClick={() => navigate('/chat')}
+                  className="w-full sm:w-auto text-base px-10 py-3"
+                >
+                  Go to your workspace →
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    variant="primary"
+                    onClick={() => navigate('/login')}
+                    className="w-full sm:w-auto text-base px-10 py-3"
+                  >
+                    Create free account →
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => navigate('/login')}
+                    className="w-full sm:w-auto text-base px-10 py-3"
+                  >
+                    Sign in
+                  </Button>
+                </>
+              )}
             </div>
 
             {/* Divider */}
