@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, type ReactElement } from 'react'
 
 const LAYERS = [
   { x: 60,  nodes: [80, 130, 180, 230] },
@@ -10,7 +10,7 @@ const LAYERS = [
 const COLORS = ['#7c3aed', '#8b5cf6', '#a78bfa', '#c4b5fd']
 
 function NeuralConnections() {
-  const lines: JSX.Element[] = []
+  const lines: ReactElement[] = []
   for (let li = 0; li < LAYERS.length - 1; li++) {
     const src = LAYERS[li]
     const dst = LAYERS[li + 1]

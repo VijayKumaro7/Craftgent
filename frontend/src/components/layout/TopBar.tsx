@@ -1,10 +1,11 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAppStore }  from '@/store/useAppStore'
 import { useAuthStore } from '@/store/useAuthStore'
 import { CustomizationPanel } from './CustomizationPanel'
 import { TwoFactorSetup } from '@/components/auth/TwoFactorSetup'
 import { useTheme } from '@/hooks/useTheme'
-import { Moon, Sun, ShieldCheck } from 'lucide-react'
+import { Moon, Sun, ShieldCheck, Home } from 'lucide-react'
 
 const STATUS_COLOR: Record<string, string> = {
   connected:    '#059669',
@@ -24,6 +25,12 @@ export function TopBar() {
   }))
   const { theme, toggleTheme } = useTheme()
   const [show2fa, setShow2fa] = useState(false)
+  const navigate = useNavigate()
+
+  const handleSignOut = async () => {
+    await logout()
+    navigate('/', { replace: true })
+  }
 
   return (
     <header
@@ -64,6 +71,15 @@ export function TopBar() {
           </span>
         )}
 
+        {/* Home — back to landing page */}
+        <button
+          onClick={() => navigate('/')}
+          className="p-1.5 rounded-lg text-text-secondary hover:text-text-primary hover:bg-bg-elevated transition-all duration-200"
+          title="Home page"
+        >
+          <Home className="w-4 h-4" />
+        </button>
+
         <CustomizationPanel />
 
         {/* 2FA settings */}
@@ -89,7 +105,7 @@ export function TopBar() {
         </button>
 
         <button
-          onClick={logout}
+          onClick={handleSignOut}
           className="px-3 py-1.5 rounded-lg text-text-muted text-xs hover:text-error hover:bg-error/10 transition-all duration-200"
         >
           Sign out
