@@ -15,6 +15,7 @@ export const apiClient = axios.create({
   baseURL: BASE_URL,
   headers: {
     'Content-Type': 'application/json',
+    Accept: 'application/json',
   },
   timeout: 10_000,
 })
@@ -28,7 +29,16 @@ apiClient.interceptors.request.use(async (config) => {
 })
 
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // With no backend configured, SPA hosting rewrites /api/* to index.html
+    // with a 200 — treat HTML (or any non-JSON) payloads as errors so callers
+    // hit their error paths instead of rendering garbage data.
+    const contentType = String(response.headers?.['content-type'] ?? '')
+    if (contentType.includes('text/html') || typeof response.data === 'string') {
+      return Promise.reject(new Error('Backend unavailable: received HTML instead of JSON'))
+    }
+    return response
+  },
   (error) => {
     if (import.meta.env.DEV) {
       console.error('[API Error]', error.response?.status)

@@ -6,11 +6,11 @@ export const useTheme = () => {
   const [theme, setThemeState] = useState<Theme>('dark');
 
   useEffect(() => {
-    // Get saved preference or detect system preference
+    // Dark is the app's design default — only use light when the user
+    // explicitly chose it via the toggle.
     const saved = localStorage.getItem('theme') as Theme | null;
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-    const initialTheme: Theme = saved || (prefersDark ? 'dark' : 'light');
+    const initialTheme: Theme = saved ?? 'dark';
     setThemeState(initialTheme);
     applyTheme(initialTheme);
   }, []);

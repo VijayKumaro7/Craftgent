@@ -49,12 +49,14 @@ export function SessionHistory() {
     }
   }
 
-  // Filter sessions by search query
-  const filteredSessions = data?.sessions.filter(session =>
+  // Filter sessions by search query (guard against malformed responses
+  // when the backend is unreachable)
+  const sessions = Array.isArray(data?.sessions) ? data.sessions : []
+  const filteredSessions = sessions.filter(session =>
     session.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
     (session.last_message?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
     session.active_agent.toLowerCase().includes(searchQuery.toLowerCase())
-  ) ?? []
+  )
 
   return (
     <div className="border-t border-white/10">
@@ -93,7 +95,7 @@ export function SessionHistory() {
               </div>
             )}
 
-            {data?.sessions.length === 0 && (
+            {!isLoading && !isError && sessions.length === 0 && (
               <div className="px-2 py-3 font-pixel text-[5px] text-white/30 text-center">
                 NO PAST SESSIONS
               </div>
